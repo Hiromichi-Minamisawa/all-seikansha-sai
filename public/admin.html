@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>出題管理</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+      padding: 2rem;
+    }
+    .question-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    .question-box {
+      background: #333;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      border-left: 5px solid transparent;
+    }
+    .question-box.selected {
+      border-left-color: gold;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+    }
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>クイズ出題管理</h1>
+
+  <div class="question-list" id="questionList"></div>
+
+  <button id="sendBtn">出題する</button>
+  <button id="showCorrectBtn">正解を表示</button>
+  <button id="resetBtn">回答をリセット</button>
+
+  <div style="margin-top: 1rem;">
+    <button onclick="playSE('se1')">🎵 ピンポン</button>
+    <button onclick="playSE('se2')">💥 ブー</button>
+  </div>
+
+  <audio id="se1" src="pinpon.mp3"></audio>
+  <audio id="se2" src="boo.mp3"></audio>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const questionList = [
+      {
+        question: "世界で一番高い山は？",
+        choices: ["キリマンジャロ", "モンブラン", "エベレスト", "富士山"],
+        correct: 2
+      },
+      {
+        question: "日本の首都はどこ？",
+        choices: ["大阪", "名古屋", "京都", "東京"],
+        correct: 3
+      },
+      {
+        question: "2+2は？",
+        choices: ["1", "2", "3", "4"],
+        correct: 3
+      }
+    ];
+
+    const listEl = document.getElementById("questionList");
+    let selectedIndex = null;
+
+    questionList.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = "question-box";
+      div.innerText = `${index + 1}. ${q.question}`;
+      div.onclick = () => {
+        document.querySelectorAll(".question-box").forEach(el => el.classList.remove("selected"));
+        div.classList.add("selected");
+        selectedIndex = index;
+      };
+      listEl.appendChild(div);
+    });
+
+    document.getElementById("sendBtn").onclick = async () => {
+      if (selectedIndex === null) {
+        alert("問題を選んでください");
+        return;
+      }
+      const q = questionList[selectedIndex];
+      const questionRef = ref(db, "currentQuestion");
+      await set(questionRef, {
+        ...q,
+        showAnswer: false,
+        startTime: Date.now()
+      });
+      await set(ref(db, "showCorrect"), false);
+      await set(ref(db, "answers"), {});
+    };
+
+    document.getElementById("showCorrectBtn").onclick = () => {
+      set(ref(db, "showCorrect"), true);
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      set(ref(db, "answers"), {});
+      set(ref(db, "showCorrect"), false);
+    };
+
+    window.playSE = function(id) {
+      const audio = document.getElementById(id);
+      audio.currentTime = 0;
+      audio.play();
+    };
+  </script>
+</body>
+</html>
