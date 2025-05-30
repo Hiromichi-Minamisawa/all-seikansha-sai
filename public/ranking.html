@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ランキング発表</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: black;
+      color: white;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 2rem;
+    }
+    #rankDisplay {
+      font-size: 4rem;
+      margin-top: 3rem;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <h1>ランキング発表</h1>
+  <div id="rankDisplay">集計中...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf",
+      measurementId: "G-4TT9PW75SD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    get(ref(db, "answers")).then(snapshot => {
+      const answers = snapshot.val();
+      if (!answers) return;
+
+      const stats = {};
+
+      Object.entries(answers).forEach(([id, ans]) => {
+        const name = ans.name || "匿名";
+        if (!stats[name]) stats[name] = { correct: 0, time: 0 };
+        if (ans.isCorrect) stats[name].correct += 1;
+        if (ans.timestamp && ans.questionStart) {
+          stats[name].time += (ans.timestamp - ans.questionStart);
+        }
+      });
+
+      const ranking = Object.entries(stats).map(([name, stat]) => ({
+        name,
+        correct: stat.correct,
+        time: stat.time
+      }));
+
+      ranking.sort((a, b) => {
+        if (b.correct !== a.correct) return b.correct - a.correct;
+        return a.time - b.time;
+      });
+
+      const top20 = ranking.slice(0, 20).reverse(); // 20位 → 1位 の順に
+      const rankDisplay = document.getElementById("rankDisplay");
+
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i >= top20.length) {
+          clearInterval(interval);
+          rankDisplay.textContent = "発表終了！";
+          return;
+        }
+        const rank = 20 - i;
+        const person = top20[i];
+        rankDisplay.innerHTML = `第${rank}位<br>${person.name}（正解数: ${person.correct}）`;
+        i++;
+      }, 3000); // 3秒ごとに表示
+    });
+  </script>
+</body>
+</html>

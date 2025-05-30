@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クイズ結果</title>
+</head>
+<body>
+  <h1>最終ランキング</h1>
+  <ol id="rankingList"></ol>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf",
+      measurementId: "G-4TT9PW75SD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const rankingList = document.getElementById("rankingList");
+
+    onValue(ref(db, "answers"), (snapshot) => {
+      const answers = snapshot.val();
+      if (!answers) return;
+
+      const scores = {}; // { username: correctCount }
+
+      for (const id in answers) {
+        const ans = answers[id];
+        if (ans.isCorrect && ans.username) {
+          if (!scores[ans.username]) scores[ans.username] = 0;
+          scores[ans.username]++;
+        }
+      }
+
+      // 正解数の多い順にソート
+      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+
+      rankingList.innerHTML = "";
+      sorted.forEach(([username, score]) => {
+        const li = document.createElement("li");
+        li.textContent = `${username}：${score}問正解`;
+        rankingList.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

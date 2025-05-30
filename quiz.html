@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オールスター感謝祭風クイズ</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #004AAD; color: white; }
+    .question-container { margin-top: 20px; }
+    .image-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 600px; margin: auto; }
+    .image-box { position: relative; overflow: hidden; }
+    .image-box img { width: 100%; transition: transform 3s ease; transform: scale(3); }
+    .image-box.zoomed img { transform: scale(1); }
+    .timer { font-size: 2em; margin-top: 10px; }
+    .choices { margin-top: 20px; }
+    button { font-size: 1.2em; margin: 10px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>クイズ大会</h1>
+  <div class="question-container">
+    <div id="question"></div>
+    <div class="image-grid" id="imageGrid"></div>
+    <div class="timer" id="timer"></div>
+    <div class="choices" id="choices"></div>
+    <button onclick="nextQuestion()" style="display:none;" id="nextBtn">次の問題へ</button>
+  </div>
+
+  <script>
+    // サンプル問題（別扱い）
+    const sampleQuestion = {
+      question: "今日は何の日？",
+      imagePrefix: "社長はどれ", // 画像ファイル名の接頭語
+      choices: ["1", "2", "3", "4"],
+      correct: "1"
+    };
+
+    // ▼▼▼ ここから30問分の問題データ ▼▼▼
+    const quizData = [
+      // --- 1問目 ---
+      {
+        question: "問題1: この中で社長は誰？",
+        imagePrefix: "q1_image",
+        choices: ["1", "2", "3", "4"],
+        correct: "2"
+      },
+      // --- 2問目 ---
+      {
+        question: "問題2: 新人社員は誰？",
+        imagePrefix: "q2_image",
+        choices: ["1", "2", "3", "4"],
+        correct: "3"
+      },
+      // --- 以下、同様に30問まで追加可能 ---
+    ];
+    // ▲▲▲ 30問ここまで ▲▲▲
+
+    let currentQuestionIndex = -1;
+    let isSample = true;
+
+    function showQuestion(questionObj) {
+      document.getElementById('question').textContent = questionObj.question;
+      const grid = document.getElementById('imageGrid');
+      grid.innerHTML = '';
+
+      questionObj.choices.forEach((choice, index) => {
+        const box = document.createElement('div');
+        box.className = 'image-box';
+
+        const img = document.createElement('img');
+        img.src = `/images/${questionObj.imagePrefix}_${choice}.png`;
+        img.alt = `選択肢${choice}`;
+        box.appendChild(img);
+        grid.appendChild(box);
+      });
+
+      document.getElementById('choices').innerHTML = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      startZoomAnimation();
+    }
+
+    function startZoomAnimation() {
+      const boxes = document.querySelectorAll('.image-box');
+      boxes.forEach(b => b.classList.remove('zoomed'));
+
+      let countdown = 5;
+      const timer = document.getElementById('timer');
+      timer.textContent = countdown;
+
+      const interval = setInterval(() => {
+        countdown--;
+        timer.textContent = countdown;
+
+        if (countdown === 3) {
+          boxes.forEach(b => b.classList.add('zoomed'));
+        }
+
+        if (countdown <= 0) {
+          clearInterval(interval);
+          showChoices();
+        }
+      }, 1000);
+    }
+
+    function showChoices() {
+      const container = document.getElementById('choices');
+      const question = isSample ? sampleQuestion : quizData[currentQuestionIndex];
+
+      question.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(choice);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correct = isSample ? sampleQuestion.correct : quizData[currentQuestionIndex].correct;
+      alert(selected === correct ? '正解！' : '不正解');
+      document.getElementById('nextBtn').style.display = isSample ? 'block' : (currentQuestionIndex < quizData.length - 1 ? 'block' : 'none');
+    }
+
+    function nextQuestion() {
+      if (isSample) {
+        isSample = false;
+        currentQuestionIndex = 0;
+      } else {
+        currentQuestionIndex++;
+      }
+      showQuestion(quizData[currentQuestionIndex]);
+    }
+
+    // 初期表示：サンプル問題
+    showQuestion(sampleQuestion);
+  </script>
+</body>
+</html>

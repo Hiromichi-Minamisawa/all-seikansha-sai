@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>モニター画面</title>
+</head>
+<body>
+  <h1>現在の問題</h1>
+  <h2 id="currentQuestion">問題を待っています…</h2>
+  <h2>回答一覧</h2>
+<ul id="answerList"></ul>
+  
+  <h3>参加者の回答一覧</h3>
+  <ul id="answersList"></ul>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b056133f272055cf",
+      measurementId: "G-4TT9PW75SD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const questionEl = document.getElementById("currentQuestion");
+    const answersListEl = document.getElementById("answersList");
+
+    // 現在の問題を監視
+    onValue(ref(db, "currentQuestion"), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        questionEl.textContent = data.question;
+      } else {
+        questionEl.textContent = "問題を待っています…";
+      }
+    });
+
+    // 回答一覧を監視
+　　　onValue(ref(db, "answers"), (snapshot) => {
+ 　　　const answers = snapshot.val();
+ 　　　const list = document.getElementById("answerList");
+ 　　　 list.innerHTML = ""; // 一度リセット
+
+  if (answers) {
+    Object.values(answers).forEach((a) => {
+      const li = document.createElement("li");
+      li.textContent = `${a.name || "匿名"}：選択肢${a.answer}`;
+      list.appendChild(li);
+    });
+  }
+});
+
+  </script>
+</body>
+</html>

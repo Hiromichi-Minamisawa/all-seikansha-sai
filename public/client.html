@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>クイズ解答画面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    #standby {
+      font-size: 2rem;
+      margin-top: 3rem;
+    }
+
+    .choice {
+      background-color: #0074D9;
+      color: white;
+      padding: 1rem;
+      margin: 1rem auto;
+      width: 80%;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .choice.selected {
+      background-color: #FF851B;
+    }
+
+    .result {
+      font-size: 2rem;
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .incorrect {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="questionArea">
+    <div id="standby">問題を待っています...</div>
+    <div id="choices"></div>
+  </div>
+  <div class="result" id="result"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      onValue,
+      set,
+      push,
+      get
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const choicesEl = document.getElementById("choices");
+    const standbyEl = document.getElementById("standby");
+    const resultEl = document.getElementById("result");
+
+    let currentQuestion = null;
+    let hasAnswered = false;
+    let selectedIndex = null;
+
+    // ユーザー名（仮にランダム ID を利用）
+    const userId = "user_" + Math.random().toString(36).substring(2, 10);
+
+    // クイズが更新されたとき
+    onValue(ref(db, "currentQuestion"), (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      currentQuestion = data;
+      hasAnswered = false;
+      selectedIndex = null;
+
+      standbyEl.textContent = data.question;
+      choicesEl.innerHTML = "";
+      resultEl.textContent = "";
+
+      data.choices.forEach((choice, index) => {
+        const div = document.createElement("div");
+        div.className = "choice";
+        div.textContent = choice;
+        div.onclick = () => {
+          if (hasAnswered) return;
+          selectedIndex = index;
+          hasAnswered = true;
+
+          document.querySelectorAll(".choice").forEach((el, i) => {
+            el.classList.toggle("selected", i === index);
+          });
+
+          set(ref(db, `answers/${userId}`), index);
+        };
+        choicesEl.appendChild(div);
+      });
+    });
+
+    // 正解発表モードがONのとき
+    onValue(ref(db, "showCorrect"), (snapshot) => {
+      const show = snapshot.val();
+      if (show && currentQuestion && selectedIndex !== null) {
+        const correct = currentQuestion.correct;
+        if (selectedIndex === correct) {
+          resultEl.textContent = "正解！";
+          resultEl.className = "result correct";
+        } else {
+          resultEl.textContent = "不正解...";
+          resultEl.className = "result incorrect";
+        }
+      } else {
+        resultEl.textContent = "";
+      }
+    });
+  </script>
+</body>
+</html>
