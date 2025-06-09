@@ -254,5 +254,52 @@
       // setTimeout(() => highlightCorrect(0), 12000);
     };
   </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+    authDomain: "all-seikanshasai.firebaseapp.com",
+    databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+    projectId: "all-seikanshasai",
+    storageBucket: "all-seikanshasai.appspot.com",
+    messagingSenderId: "24572064606",
+    appId: "1:24572064606:web:a7f94b0561333f272055cf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // 回答が送られてきたら自動集計して表示
+  const answersRef = ref(db, "answers");
+
+  onValue(answersRef, (snapshot) => {
+    const answers = snapshot.val();
+    if (!answers) return;
+
+    // 回答をカウント（選択肢は0〜3の値を期待）
+    const counts = [0, 0, 0, 0];
+    Object.values(answers).forEach(choice => {
+      if (choice >= 0 && choice < 4) counts[choice]++;
+    });
+
+    // 表示
+    showVotes(counts);
+  });
+const showCorrectRef = ref(db, "showCorrect");
+
+onValue(showCorrectRef, async (snapshot) => {
+  const show = snapshot.val();
+  if (!show) return;
+
+  const qSnap = await get(ref(db, "currentQuestion"));
+  const question = qSnap.val();
+  if (!question || typeof question.correct !== "number") return;
+
+  highlightCorrect(question.correct);
+  showNames();
+});
+</script>
 </body>
 </html>
