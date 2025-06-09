@@ -1,13 +1,31 @@
-/* 背景設定 */
+/* ベース背景と中央16:9の背景画像表示 */
 body {
   margin: 0;
   font-family: sans-serif;
-  background-image: url("https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
+  background: black;
   overflow: hidden;
+}
+
+/* 背景画像を16:9で中央表示 */
+.background-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+}
+
+.background-wrapper img {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
 }
 
 /* 各選択肢の共通ボックス設定 */
@@ -18,15 +36,16 @@ body {
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }
 
-/* それぞれの選択肢位置 */
+/* 選択肢の位置 */
 #img1 { top: 13%; left: 0.7%; }
 #img2 { top: 13%; left: 43.8%; }
 #img3 { top: 55%; left: 0.7%; }
 #img4 { top: 55%; left: 43.8%; }
 
-/* 画像ズームアニメーション */
+/* ズームアニメーション */
 .image-box img {
   width: 100%;
   height: auto;
