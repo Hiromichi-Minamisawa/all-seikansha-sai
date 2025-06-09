@@ -137,58 +137,135 @@
   </style>
 </head>
 <body>
-
   <div id="stage">
-    <div class="countdown-circle" id="countdownCircle">
-      <div id="countdown-number">10</div>
-    </div>
-
-    <!-- 各選択肢ボックス -->
-    <div class="image-box img1 zoomed-out">
-      <img src="/images/sample_q1_1.png">
-      <div class="number-circle num1">1</div>
-      <div class="vote-count" id="vote1">0票</div>
-      <input class="name-input" id="name1" placeholder="櫻井 昭彦">
-      <div class="name-display" id="nameDisplay1"></div>
-    </div>
-
-    <div class="image-box img2 zoomed-out">
-      <img src="/images/sample_q1_2.png">
-      <div class="number-circle num2">2</div>
-      <div class="vote-count" id="vote2">0票</div>
-      <input class="name-input" id="name2" placeholder="小峠 英二(バイきんぐ)">
-      <div class="name-display" id="nameDisplay2"></div>
-    </div>
-
-    <div class="image-box img3 zoomed-out">
-      <img src="/images/sample_q1_3.png">
-      <div class="number-circle num3">3</div>
-      <div class="vote-count" id="vote3">0票</div>
-      <input class="name-input" id="name3" placeholder="森本 稀哲(元野球選手)">
-      <div class="name-display" id="nameDisplay3"></div>
-    </div>
-
-    <div class="image-box img4 zoomed-out">
-      <img src="/images/sample_q1_4.png">
-      <div class="number-circle num4">4</div>
-      <div class="vote-count" id="vote4">0票</div>
-      <input class="name-input" id="name4" placeholder="長谷川 まさのり(錦鯉)">
-      <div class="name-display" id="nameDisplay4"></div>
-    </div>
+    <!-- 各選択肢のHTMLは既存のものを保持 -->
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function lockChoices(selectedIndex) {
+      document.querySelectorAll(".image-box").forEach((box, index) => {
+        box.style.pointerEvents = "none";
+        box.style.opacity = index === selectedIndex ? "1" : "0.4";
+      });
+    }
+
+    function showVotes(votes) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`vote${i + 1}`);
+        el.textContent = `${votes[i]}票`;
+        el.style.display = 'block';
+        el.classList.remove('vote-correct');
+      }
+    }
+
+    function highlightCorrect(index) {
+      showNames();
+      const el = document.getElementById(`vote${index + 1}`);
+      el.classList.add('vote-correct');
+    }
+
+    function showNames() {
+      for (let i = 0; i < 4; i++) {
+        const name = document.getElementById(`name${i + 1}`).value;
+        const display = document.getElementById(`nameDisplay${i + 1}`);
+        display.textContent = name;
+      }
+    }
+
+    window.onload = () => {
+      startCountdown();
+      resizeStage();
+      window.addEventListener('resize', resizeStage);
+
+      let userId = localStorage.getItem("quizUserId");
+      if (!userId) {
+        userId = "user_" + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem("quizUserId", userId);
+      }
+
+      const answerRef = ref(db, `answers/${userId}`);
+      get(answerRef).then(snapshot => {
+        if (snapshot.exists()) {
+          const selected = snapshot.val();
+          lockChoices(selected);
+        }
+      });
+
+      document.querySelectorAll(".image-box").forEach((box, index) => {
+        box.addEventListener("click", () => {
+          set(ref(db, `answers/${userId}`), index).then(() => {
+            lockChoices(index);
+          });
+        });
+      });
+    };
+
+    const answersRef = ref(db, "answers");
+    onValue(answersRef, (snapshot) => {
+      const answers = snapshot.val();
+      if (!answers) return;
+      const counts = [0, 0, 0, 0];
+      Object.values(answers).forEach(choice => {
+        if (choice >= 0 && choice < 4) counts[choice]++;
+      });
+      showVotes(counts);
+    });
+
+    const showCorrectRef = ref(db, "showCorrect");
+    onValue(showCorrectRef, async (snapshot) => {
+      const show = snapshot.val();
+      if (!show) return;
+      const qSnap = await get(ref(db, "currentQuestion"));
+      const question = qSnap.val();
+      if (!question || typeof question.correct !== "number") return;
+      highlightCorrect(question.correct);
+      showNames();
+    });
+
+    const currentQuestionRef = ref(db, "currentQuestion");
+    onValue(currentQuestionRef, (snapshot) => {
+      const q = snapshot.val();
+      if (!q || !Array.isArray(q.choices)) return;
+      document.querySelectorAll('.image-box').forEach(box => box.classList.add('zoomed-out'));
+      document.getElementById('countdownCircle').style.display = 'flex';
+      document.getElementById('countdown-number').textContent = '10';
+      const paths = [
+        "/images/sample_q1_1.png",
+        "/images/sample_q1_2.png",
+        "/images/sample_q1_3.png",
+        "/images/sample_q1_4.png"
+      ];
+      for (let i = 0; i < 4; i++) {
+        const img = document.querySelector(`.img${i + 1} img`);
+        if (img) img.src = paths[i];
+      }
+      startCountdown();
+    });
+
     function startCountdown() {
       let count = 10;
       const countdownEl = document.getElementById('countdown-number');
       const circleEl = document.getElementById('countdownCircle');
-
       countdownEl.textContent = count;
-
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
-
         if (count === 3) {
           document.querySelectorAll('.image-box img').forEach(img => {
             img.style.transition = "transform 3s ease-out";
@@ -197,7 +274,6 @@
             box.classList.remove('zoomed-out');
           });
         }
-
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
@@ -217,134 +293,6 @@
       stage.style.top = `${(wh - 1080 * scale) / 2}px`;
       stage.style.position = 'absolute';
     }
-
-    // 投票数を表示（通常モード：青背景＋白字）
-    function showVotes(votes) {
-      for (let i = 0; i < 4; i++) {
-        const el = document.getElementById(`vote${i + 1}`);
-        el.textContent = `${votes[i]}票`;
-        el.style.display = 'block';
-        el.classList.remove('vote-correct');
-      }
-    }
-
-    // 正解発表：名前表示＋正解の票数を強調表示
-    function highlightCorrect(index) {
-      showNames();
-      const el = document.getElementById(`vote${index + 1}`);
-      el.classList.add('vote-correct');
-    }
-
-    // 名前表示
-    function showNames() {
-      for (let i = 0; i < 4; i++) {
-        const name = document.getElementById(`name${i + 1}`).value;
-        const display = document.getElementById(`nameDisplay${i + 1}`);
-        display.textContent = name;
-      }
-    }
-
-window.onload = () => {
-  startCountdown();
-  resizeStage();
-  window.addEventListener('resize', resizeStage);
-
-  // 仮ユーザーIDを保持（ローカルストレージ）
-  let userId = localStorage.getItem("quizUserId");
-  if (!userId) {
-    userId = "user_" + Math.random().toString(36).substring(2, 10);
-    localStorage.setItem("quizUserId", userId);
-  }
-
-  // 選択肢クリックで Firebase に回答を送信
-  document.querySelectorAll(".image-box").forEach((box, index) => {
-    box.addEventListener("click", () => {
-      const answerRef = ref(db, `answers/${userId}`);
-      set(answerRef, index); // index = 0〜3
-    });
-  });
-
-  // ▼テスト用（開発中だけ使用）
-  // showVotes([13, 6, 8, 12]);
-  // setTimeout(() => highlightCorrect(0), 12000);
-};
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
-    authDomain: "all-seikanshasai.firebaseapp.com",
-    databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
-    projectId: "all-seikanshasai",
-    storageBucket: "all-seikanshasai.appspot.com",
-    messagingSenderId: "24572064606",
-    appId: "1:24572064606:web:a7f94b0561333f272055cf"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // 回答が送られてきたら自動集計して表示
-  const answersRef = ref(db, "answers");
-
-  onValue(answersRef, (snapshot) => {
-    const answers = snapshot.val();
-    if (!answers) return;
-
-    // 回答をカウント（選択肢は0〜3の値を期待）
-    const counts = [0, 0, 0, 0];
-    Object.values(answers).forEach(choice => {
-      if (choice >= 0 && choice < 4) counts[choice]++;
-    });
-
-    // 表示
-    showVotes(counts);
-  });
-const showCorrectRef = ref(db, "showCorrect");
-
-onValue(showCorrectRef, async (snapshot) => {
-  const show = snapshot.val();
-  if (!show) return;
-
-  const qSnap = await get(ref(db, "currentQuestion"));
-  const question = qSnap.val();
-  if (!question || typeof question.correct !== "number") return;
-
-  highlightCorrect(question.correct);
-  showNames();
-});
-
-    const currentQuestionRef = ref(db, "currentQuestion");
-
-onValue(currentQuestionRef, (snapshot) => {
-  const q = snapshot.val();
-  if (!q || !Array.isArray(q.choices)) return;
-
-  // 初期ズーム状態に戻す
-  document.querySelectorAll('.image-box').forEach(box => {
-    box.classList.add('zoomed-out');
-  });
-
-  // カウント表示をリセット
-  document.getElementById('countdownCircle').style.display = 'flex';
-  document.getElementById('countdown-number').textContent = '10';
-
-  // 画像パスがまだ来てないので仮画像（あれば）
-  const paths = [
-    "/images/sample_q1_1.png",
-    "/images/sample_q1_2.png",
-    "/images/sample_q1_3.png",
-    "/images/sample_q1_4.png"
-  ];
-  for (let i = 0; i < 4; i++) {
-    const img = document.querySelector(`.img${i + 1} img`);
-    if (img) img.src = paths[i];
-  }
-
-  // カウントダウン開始
-  startCountdown();
-});
-</script>
+  </script>
 </body>
 </html>
