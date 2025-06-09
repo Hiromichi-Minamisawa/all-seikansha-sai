@@ -300,6 +300,37 @@ onValue(showCorrectRef, async (snapshot) => {
   highlightCorrect(question.correct);
   showNames();
 });
+
+    const currentQuestionRef = ref(db, "currentQuestion");
+
+onValue(currentQuestionRef, (snapshot) => {
+  const q = snapshot.val();
+  if (!q || !Array.isArray(q.choices)) return;
+
+  // 初期ズーム状態に戻す
+  document.querySelectorAll('.image-box').forEach(box => {
+    box.classList.add('zoomed-out');
+  });
+
+  // カウント表示をリセット
+  document.getElementById('countdownCircle').style.display = 'flex';
+  document.getElementById('countdown-number').textContent = '10';
+
+  // 画像パスがまだ来てないので仮画像（あれば）
+  const paths = [
+    "/images/sample_q1_1.png",
+    "/images/sample_q1_2.png",
+    "/images/sample_q1_3.png",
+    "/images/sample_q1_4.png"
+  ];
+  for (let i = 0; i < 4; i++) {
+    const img = document.querySelector(`.img${i + 1} img`);
+    if (img) img.src = paths[i];
+  }
+
+  // カウントダウン開始
+  startCountdown();
+});
 </script>
 </body>
 </html>
