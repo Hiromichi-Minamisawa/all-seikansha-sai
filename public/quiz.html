@@ -7,21 +7,21 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <!-- 背景：16:9中央表示 -->
-  <div class="background-wrapper">
-    <img src="https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703" alt="背景">
-  </div>
+  <div id="stage">
+    <!-- 背景 -->
+    <img id="background" src="https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703" alt="背景">
 
-  <!-- カウントダウン -->
-  <div class="countdown-circle" id="countdownCircle">
-    <div id="countdown-number">10</div>
-  </div>
+    <!-- カウントダウン -->
+    <div class="countdown-circle" id="countdownCircle">
+      <div id="countdown-number">10</div>
+    </div>
 
-  <!-- 選択肢 -->
-  <div class="image-box img1 zoomed-out"><img src="/images/sample_q1_1.png" alt="選択肢1"></div>
-  <div class="image-box img2 zoomed-out"><img src="/images/sample_q1_2.png" alt="選択肢2"></div>
-  <div class="image-box img3 zoomed-out"><img src="/images/sample_q1_3.png" alt="選択肢3"></div>
-  <div class="image-box img4 zoomed-out"><img src="/images/sample_q1_4.png" alt="選択肢4"></div>
+    <!-- 選択肢 -->
+    <div class="image-box img1 zoomed-out"><img src="/images/sample_q1_1.png" alt="1"></div>
+    <div class="image-box img2 zoomed-out"><img src="/images/sample_q1_2.png" alt="2"></div>
+    <div class="image-box img3 zoomed-out"><img src="/images/sample_q1_3.png" alt="3"></div>
+    <div class="image-box img4 zoomed-out"><img src="/images/sample_q1_4.png" alt="4"></div>
+  </div>
 
   <script>
     function startCountdown() {
@@ -34,7 +34,6 @@
         countdownEl.textContent = count;
 
         if (count === 3) {
-          // 残り3秒でズームアウト（クラス削除）
           document.querySelectorAll('.image-box').forEach(box => {
             box.classList.remove('zoomed-out');
           });
@@ -47,8 +46,22 @@
       }, 1000);
     }
 
+    function resizeStage() {
+      const stage = document.getElementById('stage');
+      const ratio = 16 / 9;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w / h > ratio) {
+        stage.style.transform = `scale(${h / 1080})`;
+      } else {
+        stage.style.transform = `scale(${w / 1920})`;
+      }
+    }
+
     window.onload = () => {
       startCountdown();
+      resizeStage();
+      window.addEventListener('resize', resizeStage);
     };
   </script>
 </body>
