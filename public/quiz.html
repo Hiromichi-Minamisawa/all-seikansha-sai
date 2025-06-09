@@ -19,98 +19,115 @@
     <button onclick="nextQuestion()" style="display:none;" id="nextBtn">次の問題へ</button>
   </div>
 
-  <script>
-    const questions = [
-      {
-        question: "社長はどれ？",
-        imagePrefix: "q1",
-        choices: ["1", "2", "3", "4"],
-        correct: "1"
-      },
-      {
-        question: "問題2: この中で社長は誰？",
-        imagePrefix: "q2",
-        choices: ["1", "2", "3", "4"],
-        correct: "2"
-      },
-      // ここに3問目以降を追加可能
-    ];
-
-    let currentQuestionIndex = 0;
-
-    function showQuestion() {
-      const q = questions[currentQuestionIndex];
-      document.getElementById('question').textContent = q.question;
-
-      const grid = document.getElementById('imageGrid');
-      grid.innerHTML = '';
-      q.choices.forEach(choice => {
-        const box = document.createElement('div');
-        box.className = 'zoom-container';
-        const img = document.createElement('img');
-        img.src = `/images/${q.imagePrefix}_${choice}.png`;
-        img.alt = `選択肢${choice}`;
-        img.className = 'zoom-image';
-        img.dataset.answer = choice;
-        box.appendChild(img);
-        grid.appendChild(box);
-      });
-
-      document.getElementById('choices').innerHTML = '';
-      document.getElementById('nextBtn').style.display = 'none';
-      document.getElementById('countdownCircle').style.display = 'flex';
-      document.getElementById('countdown-number').textContent = '10';
-      startCountdown();
+<script>
+  const questions = [
+    {
+      question: "社長はどれ？",
+      imagePrefix: "q1",
+      choices: ["1", "2", "3", "4"],
+      correct: "1",
+      zoom: { scale: 2, x: -25, y: -25 }
+    },
+    {
+      question: "問題2: 社長候補は誰？",
+      imagePrefix: "q2",
+      choices: ["1", "2", "3", "4"],
+      correct: "3",
+      zoom: { scale: 2.2, x: -15, y: -30 }
+    },
+    {
+      question: "問題3: 社員の一人は？",
+      imagePrefix: "q3",
+      choices: ["1", "2", "3", "4"],
+      correct: "4",
+      zoom: { scale: 1.8, x: -10, y: -10 }
     }
+    // ← 追加で何問でも入れられます
+  ];
 
-    function startCountdown() {
-      const images = document.querySelectorAll('.zoom-image');
-      let countdown = 10;
-      const countdownNumber = document.getElementById('countdown-number');
+  let currentQuestionIndex = 0;
 
-      const interval = setInterval(() => {
-        countdown--;
-        countdownNumber.textContent = countdown;
+  function showQuestion() {
+    const q = questions[currentQuestionIndex];
+    document.getElementById('question').textContent = q.question;
 
-        if (countdown === 3) {
-          images.forEach(img => img.classList.add('zoom-out'));
-        }
+    const grid = document.getElementById('imageGrid');
+    grid.innerHTML = '';
 
-        if (countdown <= 0) {
-          clearInterval(interval);
-          document.getElementById('countdownCircle').style.display = 'none';
-          showChoices();
-        }
-      }, 1000);
-    }
+    q.choices.forEach(choice => {
+      const box = document.createElement('div');
+      box.className = 'zoom-container';
 
-    function showChoices() {
-      const q = questions[currentQuestionIndex];
-      const container = document.getElementById('choices');
-      q.choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.textContent = choice;
-        btn.className = 'option';
-        btn.onclick = () => checkAnswer(choice);
-        container.appendChild(btn);
-      });
-    }
+      const img = document.createElement('img');
+      img.src = `/images/${q.imagePrefix}_${choice}.png`;
+      img.alt = `選択肢${choice}`;
+      img.className = 'zoom-image';
+      img.dataset.answer = choice;
 
-    function checkAnswer(selected) {
-      const q = questions[currentQuestionIndex];
-      alert(selected === q.correct ? '正解！' : '不正解');
-      document.getElementById('nextBtn').style.display = (currentQuestionIndex < questions.length - 1) ? 'block' : 'none';
-    }
+      // 🔽 ここがポイント：個別にズーム初期位置を設定
+      const { scale, x, y } = q.zoom;
+      img.style.transform = `scale(${scale}) translate(${x}%, ${y}%)`;
 
-    function nextQuestion() {
-      if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex++;
-        showQuestion();
+      box.appendChild(img);
+      grid.appendChild(box);
+    });
+
+    document.getElementById('choices').innerHTML = '';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('countdownCircle').style.display = 'flex';
+    document.getElementById('countdown-number').textContent = '10';
+    startCountdown();
+  }
+
+  function startCountdown() {
+    const images = document.querySelectorAll('.zoom-image');
+    let countdown = 10;
+    const countdownNumber = document.getElementById('countdown-number');
+
+    const interval = setInterval(() => {
+      countdown--;
+      countdownNumber.textContent = countdown;
+
+      if (countdown === 3) {
+        images.forEach(img => img.classList.add('zoom-out'));
       }
-    }
 
-    // 初期表示
-    showQuestion();
-  </script>
+      if (countdown <= 0) {
+        clearInterval(interval);
+        document.getElementById('countdownCircle').style.display = 'none';
+        showChoices();
+      }
+    }, 1000);
+  }
+
+  function showChoices() {
+    const q = questions[currentQuestionIndex];
+    const container = document.getElementById('choices');
+    q.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.textContent = choice;
+      btn.className = 'option';
+      btn.onclick = () => checkAnswer(choice);
+      container.appendChild(btn);
+    });
+  }
+
+  function checkAnswer(selected) {
+    const q = questions[currentQuestionIndex];
+    alert(selected === q.correct ? '正解！' : '不正解');
+    document.getElementById('nextBtn').style.display =
+      currentQuestionIndex < questions.length - 1 ? 'block' : 'none';
+  }
+
+  function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+  }
+
+  // 初期表示
+  showQuestion();
+</script>
 </body>
 </html>
