@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>選択肢画像付き調整ツール（個別編集対応）</title>
+  <title>選択肢画像付き調整ツール（内部ズーム固定枠）</title>
   <style>
     body {
       margin: 0;
@@ -25,12 +25,17 @@
       cursor: move;
       overflow: hidden;
       border: 2px dashed #0ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #222;
     }
     .choice img {
-      width: 100%;
+      width: auto;
       height: 100%;
       object-fit: cover;
       transition: transform 2s ease;
+      transform-origin: top center;
     }
     .controls {
       background: #111;
@@ -83,9 +88,9 @@
       panel.innerHTML = `
         <strong>${id.toUpperCase()}</strong><br>
         Width: <input type="range" min="5" max="50" value="20" step="1" oninput="resizeChoice('${id}', this.value)"> %<br>
-        Scale: <input type="range" min="1" max="3" value="2" step="0.1" oninput="updateTransform('${id}')" id="scale-${id}">
-        X: <input type="range" min="-50" max="50" value="-25" step="1" oninput="updateTransform('${id}')" id="x-${id}">
-        Y: <input type="range" min="-50" max="50" value="-25" step="1" oninput="updateTransform('${id}')" id="y-${id}">
+        Scale: <input type="range" min="1" max="6" value="3" step="0.1" oninput="updateTransform('${id}')" id="scale-${id}">
+        X: <input type="range" min="-100" max="100" value="0" step="1" oninput="updateTransform('${id}')" id="x-${id}">
+        Y: <input type="range" min="-100" max="100" value="-50" step="1" oninput="updateTransform('${id}')" id="y-${id}">
         <button onclick="zoomOut('${id}')">ズームアウト ▶</button>
         <div class="transform-output" id="output-${id}"></div>
       `;
@@ -113,7 +118,7 @@
       choice.style.width = val + '%';
     }
 
-    // ドラッグ移動機能
+    // ドラッグ移動
     choices.forEach(id => {
       const choice = document.getElementById(id);
       let isDragging = false, offsetX = 0, offsetY = 0;
