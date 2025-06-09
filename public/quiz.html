@@ -67,10 +67,10 @@
 
   <script>
     const sampleTransforms = {
-      "img1": "scale(3.2) translate(0%, -50%)",
-      "img2": "scale(3.0) translate(0%, -45%)",
-      "img3": "scale(3.5) translate(0%, -55%)",
-      "img4": "scale(3.1) translate(0%, -48%)"
+      "img1": "scale(3.2) translate(-3%, 10%)",
+      "img2": "scale(3.9) translate(0%, 10%)",
+      "img3": "scale(3.1) translate(0%, 15%)",
+      "img4": "scale(3.1) translate(8%, 13%)"
     };
 
     const questions = [
@@ -91,12 +91,23 @@
     let currentQuestionIndex = 0;
 
     function loadQuestion(index) {
-      const q = questions[index];
+  const q = questions[index];
+  
+  const boxStyles = {
+    img1: { top: "12.6229%", left: "5.19618%", width: "35%" },
+    img2: { top: "12.9551%", left: "41.7815%", width: "35%" },
+    img3: { top: "55.3084%", left: "5.30223%", width: "35%" },
+    img4: { top: "55.6406%", left: "41.7815%", width: "35%" }
+  };
       ["img1", "img2", "img3", "img4"].forEach((id, i) => {
         const box = document.getElementById(id);
         const img = box.querySelector("img");
         img.src = q.images[i];
         img.style.transform = q.transforms[id];
+            // 👇 ここでスタイルを直接設定
+    box.style.top = boxStyles[id].top;
+    box.style.left = boxStyles[id].left;
+    box.style.width = boxStyles[id].width;
       });
     }
 
