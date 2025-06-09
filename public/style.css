@@ -16,11 +16,22 @@ body {
 }
 
 .image-grid {
+  position: absolute;
+  top: 60%;           /* 背景に合わせて上下位置調整 */
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  max-width: 600px;
-  margin: 20px auto;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;           /* 選択肢間の余白調整 */
+  width: 600px;        /* 選択肢全体の横幅 */
+}
+
+.image-box {
+  width: 280px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 .zoom-container {
