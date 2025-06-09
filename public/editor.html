@@ -2,144 +2,152 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>選択肢画像付き調整ツール（内部ズーム固定枠）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ズーム調整エディタ</title>
   <style>
     body {
       margin: 0;
-      background: #000;
+      background: black;
       font-family: sans-serif;
     }
     #stage {
       position: relative;
-      width: 100%;
-      max-width: 2022px;
-      aspect-ratio: 2022 / 1291;
-      background: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703') no-repeat center center;
-      background-size: contain;
-      margin: auto;
-      overflow: hidden;
+      width: 1920px;
+      height: 1080px;
+      margin: 0 auto;
+      background: url("https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703") no-repeat center;
+      background-size: cover;
+      transform-origin: top left;
     }
-    .choice {
+
+    .image-box {
       position: absolute;
-      aspect-ratio: 4/3;
-      cursor: move;
+      width: 672px;
+      height: 378px;
       overflow: hidden;
-      border: 2px dashed #0ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #222;
+      border: 2px dashed yellow;
     }
-    .choice img {
-      width: auto;
+
+    .image-box img {
+      width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 2s ease;
-      transform-origin: top center;
+      transform-origin: center;
+      transition: transform 0.2s;
     }
+
     .controls {
+      margin: 10px auto;
+      max-width: 960px;
+      background: #222;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-group label {
+      width: 80px;
+    }
+
+    .control-group input[type=number] {
+      width: 60px;
+      margin: 0 5px;
+    }
+
+    pre {
       background: #111;
-      color: #fff;
+      color: #0f0;
       padding: 10px;
+      border-radius: 5px;
       font-size: 14px;
-    }
-    .transform-output {
-      font-family: monospace;
-      white-space: pre;
-      margin-top: 10px;
-    }
-    .panel {
-      margin-bottom: 15px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
-    }
-    button {
-      margin-top: 5px;
-      padding: 6px 12px;
     }
   </style>
 </head>
 <body>
   <div id="stage">
-    <div class="choice" id="c1" style="top:13%; left:1%; width:20%;">
-      <img src="/images/sample_q1_1.png">
+    <div class="image-box" id="img1" style="top: 140px; left: 100px;">
+      <img src="/images/sample_q1_1.png" id="img1img">
     </div>
-    <div class="choice" id="c2" style="top:13%; left:45%; width:20%;">
-      <img src="/images/sample_q1_2.png">
+    <div class="image-box" id="img2" style="top: 140px; left: 820px;">
+      <img src="/images/sample_q1_2.png" id="img2img">
     </div>
-    <div class="choice" id="c3" style="top:55%; left:1%; width:20%;">
-      <img src="/images/sample_q1_3.png">
+    <div class="image-box" id="img3" style="top: 580px; left: 100px;">
+      <img src="/images/sample_q1_3.png" id="img3img">
     </div>
-    <div class="choice" id="c4" style="top:55%; left:45%; width:20%;">
-      <img src="/images/sample_q1_4.png">
+    <div class="image-box" id="img4" style="top: 580px; left: 820px;">
+      <img src="/images/sample_q1_4.png" id="img4img">
     </div>
   </div>
-  <div class="controls" id="controlPanel"></div>
+
+  <div class="controls">
+    <h2>ズーム位置調整</h2>
+
+    <div id="controlPanel"></div>
+    <h3>現在の transform 出力：</h3>
+    <pre id="output"></pre>
+  </div>
 
   <script>
-    const choices = ["c1", "c2", "c3", "c4"];
-    const controlPanel = document.getElementById("controlPanel");
-
-    choices.forEach(id => {
-      const choice = document.getElementById(id);
-      const img = choice.querySelector("img");
-      const panel = document.createElement("div");
-      panel.className = "panel";
-      panel.innerHTML = `
-        <strong>${id.toUpperCase()}</strong><br>
-        Width: <input type="range" min="5" max="50" value="20" step="1" oninput="resizeChoice('${id}', this.value)"> %<br>
-        Scale: <input type="range" min="1" max="6" value="3" step="0.1" oninput="updateTransform('${id}')" id="scale-${id}">
-        X: <input type="range" min="-100" max="100" value="0" step="1" oninput="updateTransform('${id}')" id="x-${id}">
-        Y: <input type="range" min="-100" max="100" value="-50" step="1" oninput="updateTransform('${id}')" id="y-${id}">
-        <button onclick="zoomOut('${id}')">ズームアウト ▶</button>
-        <div class="transform-output" id="output-${id}"></div>
-      `;
-      controlPanel.appendChild(panel);
-    });
+    const images = ['img1', 'img2', 'img3', 'img4'];
+    const transforms = {
+      img1: { scale: 3.2, tx: 0, ty: 18 },
+      img2: { scale: 3.0, tx: 0, ty: 20 },
+      img3: { scale: 2.8, tx: 0, ty: 15 },
+      img4: { scale: 2.9, tx: 0, ty: 15 }
+    };
 
     function updateTransform(id) {
-      const scale = document.getElementById(`scale-${id}`).value;
-      const x = document.getElementById(`x-${id}`).value;
-      const y = document.getElementById(`y-${id}`).value;
-      const img = document.querySelector(`#${id} img`);
-      const result = `transform: scale(${scale}) translate(${x}%, ${y}%);`;
-      img.style.transform = `scale(${scale}) translate(${x}%, ${y}%)`;
-      document.getElementById(`output-${id}`).textContent = result;
+      const { scale, tx, ty } = transforms[id];
+      const img = document.getElementById(id + 'img');
+      img.style.transform = `scale(${scale}) translate(${tx}%, ${ty}%)`;
+      updateOutput();
     }
 
-    function zoomOut(id) {
-      const img = document.querySelector(`#${id} img`);
-      img.style.transition = 'transform 2s ease';
-      img.style.transform = 'scale(1) translate(0%, 0%)';
+    function updateOutput() {
+      const output = images.map(id => {
+        const t = transforms[id];
+        return `  ${id}: "scale(${t.scale}) translate(${t.tx}%, ${t.ty}%)",`;
+      }).join('\n');
+      document.getElementById('output').textContent =
+`const sampleTransforms = {
+${output}
+};`;
     }
 
-    function resizeChoice(id, val) {
-      const choice = document.getElementById(id);
-      choice.style.width = val + '%';
+    function createControls() {
+      const panel = document.getElementById('controlPanel');
+      images.forEach(id => {
+        const t = transforms[id];
+        const group = document.createElement('div');
+        group.className = 'control-group';
+        group.innerHTML = `
+          <label>${id}</label>
+          scale: <input type="number" step="0.1" value="${t.scale}" id="${id}-scale">
+          tx: <input type="number" step="1" value="${t.tx}" id="${id}-tx">
+          ty: <input type="number" step="1" value="${t.ty}" id="${id}-ty">
+        `;
+        panel.appendChild(group);
+
+        ['scale', 'tx', 'ty'].forEach(prop => {
+          const input = group.querySelector(`#${id}-${prop}`);
+          input.addEventListener('input', () => {
+            transforms[id][prop] = parseFloat(input.value);
+            updateTransform(id);
+          });
+        });
+        updateTransform(id);
+      });
     }
 
-    // ドラッグ移動
-    choices.forEach(id => {
-      const choice = document.getElementById(id);
-      let isDragging = false, offsetX = 0, offsetY = 0;
-      choice.addEventListener('mousedown', e => {
-        isDragging = true;
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
-      });
-      window.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        const stage = document.getElementById('stage');
-        const rect = stage.getBoundingClientRect();
-        const x = ((e.clientX - rect.left - offsetX) / rect.width) * 100;
-        const y = ((e.clientY - rect.top - offsetY) / rect.height) * 100;
-        choice.style.left = `${x}%`;
-        choice.style.top = `${y}%`;
-      });
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-    });
+    window.onload = () => {
+      createControls();
+    };
   </script>
 </body>
 </html>
