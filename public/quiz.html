@@ -69,31 +69,47 @@
       z-index: 10;
     }
 
-    .label {
+    .number-circle {
       position: absolute;
-      bottom: 10px;
+      top: 10px;
       left: 10px;
-      background: rgba(0, 0, 0, 0.6);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
       color: white;
-      font-size: 40px;
       font-weight: bold;
-      padding: 4px 10px;
-      border-radius: 8px;
-      text-shadow: 1px 1px 2px black;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 2;
     }
+    .num1 { background: #2196f3; }
+    .num2 { background: #f44336; }
+    .num3 { background: #4caf50; }
+    .num4 { background: #ffeb3b; color: black; }
 
     .vote-count {
       position: absolute;
       bottom: 10px;
       right: 10px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #000;
+      background: #2196f3;
+      color: white;
       font-size: 30px;
-      padding: 4px 10px;
-      border-radius: 8px;
+      padding: 4px 12px;
+      border-radius: 10px;
       z-index: 2;
       display: none;
+    }
+
+    .vote-correct {
+      background: linear-gradient(to right, #d32f2f, #f44336);
+      color: yellow;
+      animation: blink 0.5s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
     .name-input {
@@ -106,58 +122,55 @@
       border: 2px solid #ccc;
     }
 
-    .name-label {
-      font-weight: bold;
-      color: white;
-      margin-left: 5px;
-    }
-
     .name-display {
       position: absolute;
       bottom: -40px;
-      width: 100%;
-      text-align: center;
+      left: 10px;
       font-size: 32px;
       color: white;
       font-weight: bold;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 4px 12px;
+      border-radius: 8px;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
+
   <div id="stage">
     <div class="countdown-circle" id="countdownCircle">
       <div id="countdown-number">10</div>
     </div>
 
-    <!-- 選択肢ボックス -->
+    <!-- 各選択肢ボックス -->
     <div class="image-box img1 zoomed-out">
-      <img src="/images/sample_q1_1.png" alt="1">
-      <div class="label">1</div>
+      <img src="/images/sample_q1_1.png">
+      <div class="number-circle num1">1</div>
       <div class="vote-count" id="vote1">0票</div>
       <input class="name-input" id="name1" placeholder="名前">
       <div class="name-display" id="nameDisplay1"></div>
     </div>
 
     <div class="image-box img2 zoomed-out">
-      <img src="/images/sample_q1_2.png" alt="2">
-      <div class="label">2</div>
+      <img src="/images/sample_q1_2.png">
+      <div class="number-circle num2">2</div>
       <div class="vote-count" id="vote2">0票</div>
       <input class="name-input" id="name2" placeholder="名前">
       <div class="name-display" id="nameDisplay2"></div>
     </div>
 
     <div class="image-box img3 zoomed-out">
-      <img src="/images/sample_q1_3.png" alt="3">
-      <div class="label">3</div>
+      <img src="/images/sample_q1_3.png">
+      <div class="number-circle num3">3</div>
       <div class="vote-count" id="vote3">0票</div>
       <input class="name-input" id="name3" placeholder="名前">
       <div class="name-display" id="nameDisplay3"></div>
     </div>
 
     <div class="image-box img4 zoomed-out">
-      <img src="/images/sample_q1_4.png" alt="4">
-      <div class="label">4</div>
+      <img src="/images/sample_q1_4.png">
+      <div class="number-circle num4">4</div>
       <div class="vote-count" id="vote4">0票</div>
       <input class="name-input" id="name4" placeholder="名前">
       <div class="name-display" id="nameDisplay4"></div>
@@ -174,7 +187,6 @@
 
       const interval = setInterval(() => {
         count--;
-
         countdownEl.textContent = count;
 
         if (count === 3) {
@@ -206,16 +218,24 @@
       stage.style.position = 'absolute';
     }
 
-    // 投票数を表示する関数
+    // 投票数を表示（通常モード：青背景＋白字）
     function showVotes(votes) {
       for (let i = 0; i < 4; i++) {
         const el = document.getElementById(`vote${i + 1}`);
         el.textContent = `${votes[i]}票`;
         el.style.display = 'block';
+        el.classList.remove('vote-correct');
       }
     }
 
-    // 正解発表で名前表示
+    // 正解発表：名前表示＋正解の票数を強調表示
+    function highlightCorrect(index) {
+      showNames();
+      const el = document.getElementById(`vote${index + 1}`);
+      el.classList.add('vote-correct');
+    }
+
+    // 名前表示
     function showNames() {
       for (let i = 0; i < 4; i++) {
         const name = document.getElementById(`name${i + 1}`).value;
@@ -229,11 +249,10 @@
       resizeStage();
       window.addEventListener('resize', resizeStage);
 
-      // テスト用：あとでadmin側から呼び出すようにする
-      // setTimeout(() => showVotes([12, 8, 5, 10]), 11000);
-      // setTimeout(() => showNames(), 12000);
+      // ▼テスト用（開発中だけ使用）
+      // showVotes([13, 6, 8, 12]);
+      // setTimeout(() => highlightCorrect(0), 12000);
     };
   </script>
 </body>
 </html>
-
