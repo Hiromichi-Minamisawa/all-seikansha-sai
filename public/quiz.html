@@ -244,19 +244,33 @@
       }
     }
 
-    window.onload = () => {
-      startCountdown();
-      resizeStage();
-      window.addEventListener('resize', resizeStage);
+window.onload = () => {
+  startCountdown();
+  resizeStage();
+  window.addEventListener('resize', resizeStage);
 
-      // ▼テスト用（開発中だけ使用）
-      // showVotes([13, 6, 8, 12]);
-      // setTimeout(() => highlightCorrect(0), 12000);
-    };
-  </script>
+  // 仮ユーザーIDを保持（ローカルストレージ）
+  let userId = localStorage.getItem("quizUserId");
+  if (!userId) {
+    userId = "user_" + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem("quizUserId", userId);
+  }
+
+  // 選択肢クリックで Firebase に回答を送信
+  document.querySelectorAll(".image-box").forEach((box, index) => {
+    box.addEventListener("click", () => {
+      const answerRef = ref(db, `answers/${userId}`);
+      set(answerRef, index); // index = 0〜3
+    });
+  });
+
+  // ▼テスト用（開発中だけ使用）
+  // showVotes([13, 6, 8, 12]);
+  // setTimeout(() => highlightCorrect(0), 12000);
+};
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
