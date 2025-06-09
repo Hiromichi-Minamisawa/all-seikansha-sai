@@ -1,4 +1,3 @@
-/* 背景と16:9比率の中央表示 */
 body {
   margin: 0;
   font-family: sans-serif;
@@ -6,7 +5,7 @@ body {
   overflow: hidden;
 }
 
-/* 背景画像を16:9で中央に収める */
+/* 背景画像を16:9比率で中央表示 */
 .background-wrapper {
   position: fixed;
   top: 50%;
@@ -28,10 +27,10 @@ body {
   object-fit: contain;
 }
 
-/* 選択肢のボックス */
+/* 各選択肢ボックス */
 .image-box {
   position: absolute;
-  width: 40vw;
+  width: 35%;
   height: auto;
   overflow: hidden;
   border-radius: 12px;
@@ -39,27 +38,31 @@ body {
   z-index: 1;
 }
 
-/* 選択肢の配置 */
-#img1 { top: 13%; left: 0.7%; }
-#img2 { top: 13%; left: 43.8%; }
-#img3 { top: 55%; left: 0.7%; }
-#img4 { top: 55%; left: 43.8%; }
+.img1 { top: 12.6229%; left: 5.19618%; }
+.img2 { top: 12.9551%; left: 41.7815%; }
+.img3 { top: 55.3084%; left: 5.30223%; }
+.img4 { top: 55.6406%; left: 41.7815%; }
 
-/* 初期ズーム状態 */
+/* 画像ズーム制御 */
 .image-box img {
   width: 100%;
   height: auto;
   transition: transform 2s ease-out;
   transform-origin: center;
-  transform: scale(2) translate(-25%, -25%);
 }
 
-/* ズーム解除（残り3秒で実行） */
-.image-box.zoomed img {
+/* 初期状態（頭頂部ズーム） */
+.img1.zoomed-out img { transform: scale(3.2) translate(0%, 18%); }
+.img2.zoomed-out img { transform: scale(3.0) translate(0%, 20%); }
+.img3.zoomed-out img { transform: scale(2.8) translate(0%, 15%); }
+.img4.zoomed-out img { transform: scale(2.9) translate(0%, 15%); }
+
+/* ズーム解除後（全体表示） */
+.image-box:not(.zoomed-out) img {
   transform: scale(1) translate(0%, 0%);
 }
 
-/* カウントダウン用赤丸 */
+/* カウントダウン表示 */
 .countdown-circle {
   position: absolute;
   top: 72.8%;
