@@ -2,29 +2,36 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>選択肢位置調整ツール</title>
+  <title>選択肢画像付き調整ツール</title>
   <style>
     body {
       margin: 0;
       background: #000;
       font-family: sans-serif;
     }
-   #stage {
-  position: relative;
-  width: 100%;
-  max-width: 2022px;
-  aspect-ratio: 2022 / 1291;
+    #stage {
+      position: relative;
+      width: 100%;
+      max-width: 2022px;
+      aspect-ratio: 2022 / 1291;
       background: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703') no-repeat center center;
-     background-size: contain;  /* ←重要 */
-  margin: auto;
-  overflow: hidden;
-}
+      background-size: contain;
+      margin: auto;
+      overflow: hidden;
+    }
     .choice {
       position: absolute;
       width: 20%;
       aspect-ratio: 4/3;
-      border: 2px dashed #0ff;
       cursor: move;
+      overflow: hidden;
+    }
+    .choice img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(2) translate(-25%, -25%);
+      transition: transform 2s ease;
     }
     .controls {
       background: #111;
@@ -37,14 +44,18 @@
       font-family: monospace;
       white-space: pre;
     }
+    button {
+      margin-top: 5px;
+      padding: 6px 12px;
+    }
   </style>
 </head>
 <body>
   <div id="stage">
-    <div class="choice" id="c1" style="top:13%; left:1%;"></div>
-    <div class="choice" id="c2" style="top:13%; left:45%;"></div>
-    <div class="choice" id="c3" style="top:55%; left:1%;"></div>
-    <div class="choice" id="c4" style="top:55%; left:45%;"></div>
+    <div class="choice" id="c1" style="top:13%; left:1%;"><img src="/images/sample_q1_1.png"></div>
+    <div class="choice" id="c2" style="top:13%; left:45%;"><img src="/images/sample_q1_2.png"></div>
+    <div class="choice" id="c3" style="top:55%; left:1%;"><img src="/images/sample_q1_3.png"></div>
+    <div class="choice" id="c4" style="top:55%; left:45%;"><img src="/images/sample_q1_4.png"></div>
   </div>
   <div class="controls">
     <label for="scale">ズーム (scale): </label>
@@ -53,11 +64,12 @@
     <input type="range" id="x" min="-50" max="50" step="1" value="-25" oninput="updateTransform()">
     <label for="y"> Y移動 (%): </label>
     <input type="range" id="y" min="-50" max="50" step="1" value="-25" oninput="updateTransform()">
+    <button onclick="playZoomOut()">ズームアウト再生 ▶</button>
     <div class="transform-output" id="output"></div>
   </div>
 
   <script>
-    const choices = document.querySelectorAll('.choice');
+    const choices = document.querySelectorAll('.choice img');
     const scaleInput = document.getElementById('scale');
     const xInput = document.getElementById('x');
     const yInput = document.getElementById('y');
@@ -68,35 +80,20 @@
       const y = yInput.value;
       const result = `transform: scale(${scale}) translate(${x}%, ${y}%);`;
       document.getElementById('output').textContent = result;
+
+      choices.forEach(choice => {
+        choice.style.transform = `scale(${scale}) translate(${x}%, ${y}%)`;
+      });
     }
 
-    // ドラッグ移動機能
-    choices.forEach(choice => {
-      let isDragging = false;
-      let offsetX = 0;
-      let offsetY = 0;
-
-      choice.addEventListener('mousedown', e => {
-        isDragging = true;
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
+    function playZoomOut() {
+      choices.forEach(choice => {
+        choice.style.transition = 'transform 2s ease';
+        choice.style.transform = 'scale(1) translate(0%, 0%)';
       });
-      window.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        const stage = document.getElementById('stage');
-        const rect = stage.getBoundingClientRect();
-        const x = ((e.clientX - rect.left - offsetX) / rect.width) * 100;
-        const y = ((e.clientY - rect.top - offsetY) / rect.height) * 100;
-        choice.style.left = `${x}%`;
-        choice.style.top = `${y}%`;
-      });
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-    });
+    }
 
     updateTransform();
   </script>
 </body>
 </html>
-
