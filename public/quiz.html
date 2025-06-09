@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭</title>
-  <link rel="stylesheet" href="/style.css">
   <style>
     body {
       margin: 0;
@@ -52,23 +51,77 @@
       transform: scale(1) translate(0%, 0%);
     }
 
-   .countdown-circle {
-  position: absolute;
-  top: 770px;            /* 「社長はどれ？」の下の円内に配置 */
-  left: 1665px;          /* 右の縁からほんの少しはみ出すくらい */
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 140px;       /* 赤丸いっぱいに表示されるよう拡大 */
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  z-index: 10;
-}
+    .countdown-circle {
+      position: absolute;
+      top: 770px;
+      left: 1665px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 140px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 8px;
+      text-shadow: 1px 1px 2px black;
+      z-index: 2;
+    }
+
+    .vote-count {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #000;
+      font-size: 30px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      z-index: 2;
+      display: none;
+    }
+
+    .name-input {
+      margin-top: 5px;
+      background: white;
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 20px;
+      width: 90%;
+      border: 2px solid #ccc;
+    }
+
+    .name-label {
+      font-weight: bold;
+      color: white;
+      margin-left: 5px;
+    }
+
+    .name-display {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+      font-size: 32px;
+      color: white;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.6);
+    }
   </style>
 </head>
 <body>
@@ -77,55 +130,70 @@
       <div id="countdown-number">10</div>
     </div>
 
-<div class="image-box img1 zoomed-out">
-  <img src="/images/sample_q1_1.png" alt="1">
-  <div class="label">1</div>
-</div>
-<div class="image-box img2 zoomed-out">
-  <img src="/images/sample_q1_2.png" alt="2">
-  <div class="label">2</div>
-</div>
-<div class="image-box img3 zoomed-out">
-  <img src="/images/sample_q1_3.png" alt="3">
-  <div class="label">3</div>
-</div>
-<div class="image-box img4 zoomed-out">
-  <img src="/images/sample_q1_4.png" alt="4">
-  <div class="label">4</div>
-</div>
+    <!-- 選択肢ボックス -->
+    <div class="image-box img1 zoomed-out">
+      <img src="/images/sample_q1_1.png" alt="1">
+      <div class="label">1</div>
+      <div class="vote-count" id="vote1">0票</div>
+      <input class="name-input" id="name1" placeholder="名前">
+      <div class="name-display" id="nameDisplay1"></div>
+    </div>
 
+    <div class="image-box img2 zoomed-out">
+      <img src="/images/sample_q1_2.png" alt="2">
+      <div class="label">2</div>
+      <div class="vote-count" id="vote2">0票</div>
+      <input class="name-input" id="name2" placeholder="名前">
+      <div class="name-display" id="nameDisplay2"></div>
+    </div>
+
+    <div class="image-box img3 zoomed-out">
+      <img src="/images/sample_q1_3.png" alt="3">
+      <div class="label">3</div>
+      <div class="vote-count" id="vote3">0票</div>
+      <input class="name-input" id="name3" placeholder="名前">
+      <div class="name-display" id="nameDisplay3"></div>
+    </div>
+
+    <div class="image-box img4 zoomed-out">
+      <img src="/images/sample_q1_4.png" alt="4">
+      <div class="label">4</div>
+      <div class="vote-count" id="vote4">0票</div>
+      <input class="name-input" id="name4" placeholder="名前">
+      <div class="name-display" id="nameDisplay4"></div>
+    </div>
+  </div>
 
   <script>
-function startCountdown() {
-  let count = 10;
-  const countdownEl = document.getElementById('countdown-number');
-  const circleEl = document.getElementById('countdownCircle');
+    function startCountdown() {
+      let count = 10;
+      const countdownEl = document.getElementById('countdown-number');
+      const circleEl = document.getElementById('countdownCircle');
 
-  countdownEl.textContent = count;
+      countdownEl.textContent = count;
 
-  const interval = setInterval(() => {
-    count--;
+      const interval = setInterval(() => {
+        count--;
 
-    countdownEl.textContent = count;
+        countdownEl.textContent = count;
 
-    if (count === 3) {
-      // ズームアウトをここから3秒かけてスタート
-      document.querySelectorAll('.image-box img').forEach(img => {
-        img.style.transition = "transform 3s ease-out";
-      });
-      document.querySelectorAll('.image-box').forEach(box => {
-        box.classList.remove('zoomed-out');
-      });
+        if (count === 3) {
+          document.querySelectorAll('.image-box img').forEach(img => {
+            img.style.transition = "transform 3s ease-out";
+          });
+          document.querySelectorAll('.image-box').forEach(box => {
+            box.classList.remove('zoomed-out');
+          });
+        }
+
+        if (count === 0) {
+          clearInterval(interval);
+          setTimeout(() => {
+            circleEl.style.display = 'none';
+          }, 1000);
+        }
+      }, 1000);
     }
-
-    if (count === 0) {
-      clearInterval(interval);
-      setTimeout(() => {
-        circleEl.style.display = 'none';
-      }, 1000); // 0を1秒間見せてから非表示
-    }
-  }, 1000);
-}
 
     function resizeStage() {
       const stage = document.getElementById('stage');
@@ -138,11 +206,34 @@ function startCountdown() {
       stage.style.position = 'absolute';
     }
 
+    // 投票数を表示する関数
+    function showVotes(votes) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`vote${i + 1}`);
+        el.textContent = `${votes[i]}票`;
+        el.style.display = 'block';
+      }
+    }
+
+    // 正解発表で名前表示
+    function showNames() {
+      for (let i = 0; i < 4; i++) {
+        const name = document.getElementById(`name${i + 1}`).value;
+        const display = document.getElementById(`nameDisplay${i + 1}`);
+        display.textContent = name;
+      }
+    }
+
     window.onload = () => {
       startCountdown();
       resizeStage();
       window.addEventListener('resize', resizeStage);
+
+      // テスト用：あとでadmin側から呼び出すようにする
+      // setTimeout(() => showVotes([12, 8, 5, 10]), 11000);
+      // setTimeout(() => showNames(), 12000);
     };
   </script>
 </body>
 </html>
+
