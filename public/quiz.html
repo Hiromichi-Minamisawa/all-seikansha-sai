@@ -17,13 +17,21 @@
     <div id="countdown-number">10</div>
   </div>
 
-  <!-- 選択肢画像 -->
+  <!-- 選択肢画像ボックス -->
   <div class="image-box" id="img1"><img src="/images/sample_q1_1.png" alt="選択肢1"></div>
   <div class="image-box" id="img2"><img src="/images/sample_q1_2.png" alt="選択肢2"></div>
   <div class="image-box" id="img3"><img src="/images/sample_q1_3.png" alt="選択肢3"></div>
   <div class="image-box" id="img4"><img src="/images/sample_q1_4.png" alt="選択肢4"></div>
 
   <script>
+    // 各選択肢の初期表示情報とズーム解除用のデータ構造
+    const sampleTransforms = {
+      "img1": "scale(2) translate(-25%, -25%)",
+      "img2": "scale(2) translate(-25%, -25%)",
+      "img3": "scale(2) translate(-25%, -25%)",
+      "img4": "scale(2) translate(-25%, -25%)"
+    };
+
     const questions = [
       {
         id: "sample_q1",
@@ -33,7 +41,8 @@
           "/images/sample_q1_3.png",
           "/images/sample_q1_4.png"
         ],
-        correct: "1"
+        correct: "1",
+        transforms: sampleTransforms
       }
     ];
 
@@ -42,10 +51,12 @@
     function loadQuestion(index) {
       const q = questions[index];
       const imageIds = ["img1", "img2", "img3", "img4"];
+
       imageIds.forEach((id, i) => {
         const box = document.getElementById(id);
         const img = box.querySelector("img");
         img.src = q.images[i];
+        img.style.transform = q.transforms[id];
       });
     }
 
@@ -78,4 +89,3 @@
   </script>
 </body>
 </html>
-
