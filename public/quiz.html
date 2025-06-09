@@ -90,7 +90,7 @@ function startCountdown() {
   const circleEl = document.getElementById('countdownCircle');
 
   const interval = setInterval(() => {
-    if (count === 0) {
+    if (count === 2) {
       // ズームアウトを0秒のタイミングで実行
       document.querySelectorAll('.image-box').forEach(box => {
         box.classList.remove('zoomed-out');
