@@ -1,23 +1,101 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>オールスター感謝祭風クイズ</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>オールセイー感謝祭</title>
   <style>
-    body { font-family: sans-serif; text-align: center; background: #004AAD; color: white; }
-    .question-container { margin-top: 20px; }
-    .image-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 600px; margin: auto; }
-    .image-box { position: relative; overflow: hidden; }
-    .image-box img { width: 100%; transition: transform 3s ease; transform: scale(3); }
-    .image-box.zoomed img { transform: scale(1); }
-    .timer { font-size: 2em; margin-top: 10px; }
-    .choices { margin-top: 20px; }
-    button { font-size: 1.2em; margin: 10px; padding: 10px 20px; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #004AAD;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 背景画像オーバーレイ */
+    .background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703');
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    .countdown-circle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 80px;
+      height: 80px;
+      background-color: red;
+      border-radius: 50%;
+      color: white;
+      font-size: 2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .question-container {
+      margin-top: 100px;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .image-box {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-box img {
+      width: 100%;
+      transition: transform 3s ease;
+      transform: scale(3);
+    }
+
+    .image-box.zoomed img {
+      transform: scale(1);
+    }
+
+    .timer {
+      font-size: 2em;
+      margin-top: 10px;
+    }
+
+    .choices {
+      margin-top: 20px;
+    }
+
+    button {
+      font-size: 1.2em;
+      margin: 10px;
+      padding: 10px 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>クイズ大会</h1>
+  <!-- 背景画像 -->
+  <div class="background-overlay"></div>
+
+  <!-- 赤丸カウントダウン -->
+  <div class="countdown-circle" id="countdownCircle">10</div>
+
+  <h1>オールセイー感謝祭</h1>
+
   <div class="question-container">
     <div id="question"></div>
     <div class="image-grid" id="imageGrid"></div>
@@ -27,39 +105,31 @@
   </div>
 
   <script>
-    // サンプル問題（別扱い）
+    // サンプル問題（imagePrefixで画像ファイル名を指定）
     const sampleQuestion = {
-      question: "今日は何の日？",
-      imagePrefix: "社長はどれ", // 画像ファイル名の接頭語
+      question: "社長はどれ？",
+      imagePrefix: "sample_q1", // 「/images/sample_q1_1.png」などを読み込む
       choices: ["1", "2", "3", "4"],
       correct: "1"
     };
 
-    // ▼▼▼ ここから30問分の問題データ ▼▼▼
+    // 追加の問題例（省略可）
     const quizData = [
-      // --- 1問目 ---
       {
         question: "問題1: この中で社長は誰？",
         imagePrefix: "q1_image",
         choices: ["1", "2", "3", "4"],
         correct: "2"
-      },
-      // --- 2問目 ---
-      {
-        question: "問題2: 新人社員は誰？",
-        imagePrefix: "q2_image",
-        choices: ["1", "2", "3", "4"],
-        correct: "3"
-      },
-      // --- 以下、同様に30問まで追加可能 ---
+      }
+      // 他の問題も同様に追加可能
     ];
-    // ▲▲▲ 30問ここまで ▲▲▲
 
     let currentQuestionIndex = -1;
     let isSample = true;
 
     function showQuestion(questionObj) {
       document.getElementById('question').textContent = questionObj.question;
+
       const grid = document.getElementById('imageGrid');
       grid.innerHTML = '';
 
@@ -68,7 +138,7 @@
         box.className = 'image-box';
 
         const img = document.createElement('img');
-        img.src = `/images/${questionObj.imagePrefix}_${choice}.png`;
+        img.src = `/images/${questionObj.imagePrefix}_${choice}.png`; // ←ここに画像を配置
         img.alt = `選択肢${choice}`;
         box.appendChild(img);
         grid.appendChild(box);
@@ -76,6 +146,7 @@
 
       document.getElementById('choices').innerHTML = '';
       document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('countdownCircle').style.display = 'flex';
       startZoomAnimation();
     }
 
@@ -83,13 +154,13 @@
       const boxes = document.querySelectorAll('.image-box');
       boxes.forEach(b => b.classList.remove('zoomed'));
 
-      let countdown = 5;
-      const timer = document.getElementById('timer');
-      timer.textContent = countdown;
+      let countdown = 10;
+      const circle = document.getElementById('countdownCircle');
+      circle.textContent = countdown;
 
       const interval = setInterval(() => {
         countdown--;
-        timer.textContent = countdown;
+        circle.textContent = countdown;
 
         if (countdown === 3) {
           boxes.forEach(b => b.classList.add('zoomed'));
@@ -97,6 +168,7 @@
 
         if (countdown <= 0) {
           clearInterval(interval);
+          circle.style.display = 'none';
           showChoices();
         }
       }, 1000);
@@ -117,7 +189,7 @@
     function checkAnswer(selected) {
       const correct = isSample ? sampleQuestion.correct : quizData[currentQuestionIndex].correct;
       alert(selected === correct ? '正解！' : '不正解');
-      document.getElementById('nextBtn').style.display = isSample ? 'block' : (currentQuestionIndex < quizData.length - 1 ? 'block' : 'none');
+      document.getElementById('nextBtn').style.display = isSample || currentQuestionIndex < quizData.length - 1 ? 'block' : 'none';
     }
 
     function nextQuestion() {
@@ -130,7 +202,7 @@
       showQuestion(quizData[currentQuestionIndex]);
     }
 
-    // 初期表示：サンプル問題
+    // 初期表示
     showQuestion(sampleQuestion);
   </script>
 </body>
