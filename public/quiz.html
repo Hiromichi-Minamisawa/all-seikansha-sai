@@ -4,117 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      background: #004AAD;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    .background-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703');
-      background-size: cover;
-      background-position: center;
-      z-index: -1;
-      opacity: 0.5;
-    }
-
-    .countdown-circle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 80px;
-      height: 80px;
-      background-color: red;
-      border-radius: 50%;
-      color: white;
-      font-size: 2em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    .question-container {
-      margin-top: 100px;
-    }
-
-    .image-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .image-box {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .image-box img {
-      width: 100%;
-      transition: transform 3s ease;
-      transform: scale(3);
-    }
-
-    .image-box.zoomed img {
-      transform: scale(1);
-    }
-
-    .timer {
-      font-size: 2em;
-      margin-top: 10px;
-    }
-
-    .choices {
-      margin-top: 20px;
-    }
-
-    button {
-      font-size: 1.2em;
-      margin: 10px;
-      padding: 10px 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="background-overlay"></div>
-  <div class="countdown-circle" id="countdownCircle">10</div>
+  <div class="countdown-circle" id="countdownCircle">
+    <div id="countdown-number">10</div>
+  </div>
 
-  <h1>オールセイー感謝祭</h1>
-
-  <div class="question-container">
+  <div class="quiz-container">
+    <h1>オールセイー感謝祭</h1>
     <div id="question"></div>
     <div class="image-grid" id="imageGrid"></div>
-    <div class="timer" id="timer"></div>
-    <div class="choices" id="choices"></div>
+    <div class="options" id="choices"></div>
     <button onclick="nextQuestion()" style="display:none;" id="nextBtn">次の問題へ</button>
   </div>
 
   <script>
     const questions = [
       {
-        question: "社長はどれ？", // 1問目（サンプル）
+        question: "社長はどれ？",
         imagePrefix: "q1",
         choices: ["1", "2", "3", "4"],
         correct: "1"
       },
       {
-        question: "問題2: この中で社長は誰？", // 2問目
+        question: "問題2: この中で社長は誰？",
         imagePrefix: "q2",
         choices: ["1", "2", "3", "4"],
         correct: "2"
       },
-      // 必要に応じて30問まで続けて追加可能
+      // ここに3問目以降を追加可能
     ];
 
     let currentQuestionIndex = 0;
@@ -127,10 +46,11 @@
       grid.innerHTML = '';
       q.choices.forEach(choice => {
         const box = document.createElement('div');
-        box.className = 'image-box';
+        box.className = 'zoom-container';
         const img = document.createElement('img');
         img.src = `/images/${q.imagePrefix}_${choice}.png`;
         img.alt = `選択肢${choice}`;
+        img.className = 'zoom-image';
         img.dataset.answer = choice;
         box.appendChild(img);
         grid.appendChild(box);
@@ -139,28 +59,26 @@
       document.getElementById('choices').innerHTML = '';
       document.getElementById('nextBtn').style.display = 'none';
       document.getElementById('countdownCircle').style.display = 'flex';
-      startZoomAnimation();
+      document.getElementById('countdown-number').textContent = '10';
+      startCountdown();
     }
 
-    function startZoomAnimation() {
-      const boxes = document.querySelectorAll('.image-box');
-      boxes.forEach(b => b.classList.remove('zoomed'));
-
+    function startCountdown() {
+      const images = document.querySelectorAll('.zoom-image');
       let countdown = 10;
-      const circle = document.getElementById('countdownCircle');
-      circle.textContent = countdown;
+      const countdownNumber = document.getElementById('countdown-number');
 
       const interval = setInterval(() => {
         countdown--;
-        circle.textContent = countdown;
+        countdownNumber.textContent = countdown;
 
         if (countdown === 3) {
-          boxes.forEach(b => b.classList.add('zoomed'));
+          images.forEach(img => img.classList.add('zoom-out'));
         }
 
         if (countdown <= 0) {
           clearInterval(interval);
-          circle.style.display = 'none';
+          document.getElementById('countdownCircle').style.display = 'none';
           showChoices();
         }
       }, 1000);
@@ -172,6 +90,7 @@
       q.choices.forEach(choice => {
         const btn = document.createElement('button');
         btn.textContent = choice;
+        btn.className = 'option';
         btn.onclick = () => checkAnswer(choice);
         container.appendChild(btn);
       });
