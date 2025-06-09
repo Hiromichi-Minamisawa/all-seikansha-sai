@@ -1,83 +1,72 @@
 body {
   margin: 0;
-  font-family: sans-serif;
   background: black;
   overflow: hidden;
 }
 
-/* 背景画像を16:9比率で中央表示 */
-.background-wrapper {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: -1;
+/* 1920x1080スケーリングベースのステージ */
+#stage {
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  position: relative;
 }
 
-.background-wrapper img {
+#background {
+  position: absolute;
   width: 100%;
-  height: auto;
-  max-height: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
+  height: 100%;
+  object-fit: fill;
 }
 
-/* 各選択肢ボックス */
+/* 選択肢ボックス（位置は%でなくpxで正確配置） */
 .image-box {
   position: absolute;
-  width: 35%;
-  height: auto;
+  width: 672px;
+  height: 378px;
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
 
-.img1 { top: 12.6229%; left: 5.19618%; }
-.img2 { top: 12.9551%; left: 41.7815%; }
-.img3 { top: 55.3084%; left: 5.30223%; }
-.img4 { top: 55.6406%; left: 41.7815%; }
+.img1 { top: 140px; left: 100px; }
+.img2 { top: 140px; left: 820px; }
+.img3 { top: 580px; left: 100px; }
+.img4 { top: 580px; left: 820px; }
 
-/* 画像ズーム制御 */
 .image-box img {
   width: 100%;
-  height: auto;
+  height: 100%;
   transition: transform 2s ease-out;
   transform-origin: center;
 }
 
-/* 初期状態（頭頂部ズーム） */
+/* 初期：頭頂部にズーム */
 .img1.zoomed-out img { transform: scale(3.2) translate(0%, 18%); }
 .img2.zoomed-out img { transform: scale(3.0) translate(0%, 20%); }
 .img3.zoomed-out img { transform: scale(2.8) translate(0%, 15%); }
 .img4.zoomed-out img { transform: scale(2.9) translate(0%, 15%); }
 
-/* ズーム解除後（全体表示） */
+/* ズームアウト（全体表示） */
 .image-box:not(.zoomed-out) img {
   transform: scale(1) translate(0%, 0%);
 }
 
-/* カウントダウン表示 */
+/* カウントダウン（位置指定は画像と一致） */
 .countdown-circle {
   position: absolute;
-  top: 72.8%;
-  left: 85.9%;
-  width: 13vw;
-  height: 13vw;
-  max-width: 160px;
-  max-height: 160px;
+  top: 940px;
+  left: 1738px;
+  width: 160px;
+  height: 160px;
   background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 2em;
+  font-size: 64px;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   z-index: 10;
