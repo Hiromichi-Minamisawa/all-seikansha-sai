@@ -34,11 +34,6 @@
       height: auto;
       transition: transform 2s ease-out;
       transform-origin: center;
-      transform: scale(2) translate(-25%, -25%);
-    }
-
-    .image-box.zoomed img {
-      transform: scale(1) translate(0%, 0%);
     }
 
     .countdown-circle {
@@ -62,29 +57,66 @@
 </head>
 <body>
   <h1>オールセイー感謝祭</h1>
-
   <div class="countdown-circle" id="countdownCircle">
     <div id="countdown-number">10</div>
   </div>
-
   <div class="image-box" id="img1"><img src="/images/sample_q1_1.png" alt="1"></div>
   <div class="image-box" id="img2"><img src="/images/sample_q1_2.png" alt="2"></div>
   <div class="image-box" id="img3"><img src="/images/sample_q1_3.png" alt="3"></div>
   <div class="image-box" id="img4"><img src="/images/sample_q1_4.png" alt="4"></div>
 
   <script>
+    const sampleTransforms = {
+      "img1": "scale(3.2) translate(0%, -50%)",
+      "img2": "scale(3.0) translate(0%, -45%)",
+      "img3": "scale(3.5) translate(0%, -55%)",
+      "img4": "scale(3.1) translate(0%, -48%)"
+    };
+
+    const questions = [
+      {
+        id: "sample_q1",
+        images: [
+          "/images/sample_q1_1.png",
+          "/images/sample_q1_2.png",
+          "/images/sample_q1_3.png",
+          "/images/sample_q1_4.png"
+        ],
+        correct: "1",
+        transforms: sampleTransforms
+      }
+      // 今後、30問をここに追加
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function loadQuestion(index) {
+      const q = questions[index];
+      ["img1", "img2", "img3", "img4"].forEach((id, i) => {
+        const box = document.getElementById(id);
+        const img = box.querySelector("img");
+        img.src = q.images[i];
+        img.style.transform = q.transforms[id];
+      });
+    }
+
     function startCountdown() {
       let count = 10;
       const countdown = document.getElementById('countdown-number');
       const circle = document.getElementById('countdownCircle');
-      const boxes = document.querySelectorAll('.image-box');
 
       const interval = setInterval(() => {
         count--;
         countdown.textContent = count;
+
         if (count === 3) {
-          boxes.forEach(b => b.classList.add('zoomed'));
+          ["img1", "img2", "img3", "img4"].forEach(id => {
+            const img = document.getElementById(id).querySelector("img");
+            img.style.transition = "transform 2s ease-out";
+            img.style.transform = "scale(1) translate(0%, 0%)";
+          });
         }
+
         if (count <= 0) {
           clearInterval(interval);
           circle.style.display = 'none';
@@ -92,8 +124,12 @@
       }, 1000);
     }
 
-    window.onload = startCountdown;
+    window.onload = () => {
+      loadQuestion(currentQuestionIndex);
+      startCountdown();
+    };
   </script>
 </body>
 </html>
+
 
