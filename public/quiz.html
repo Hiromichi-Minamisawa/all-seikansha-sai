@@ -7,55 +7,23 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <!-- 背景：16:9中央表示 -->
   <div class="background-wrapper">
     <img src="https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703" alt="背景">
   </div>
 
+  <!-- カウントダウン -->
   <div class="countdown-circle" id="countdownCircle">
     <div id="countdown-number">10</div>
   </div>
 
-  <div class="image-box" id="img1"><img src="/images/sample_q1_1.png" alt="選択肢1"></div>
-  <div class="image-box" id="img2"><img src="/images/sample_q1_2.png" alt="選択肢2"></div>
-  <div class="image-box" id="img3"><img src="/images/sample_q1_3.png" alt="選択肢3"></div>
-  <div class="image-box" id="img4"><img src="/images/sample_q1_4.png" alt="選択肢4"></div>
+  <!-- 選択肢 -->
+  <div class="image-box img1 zoomed-out"><img src="/images/sample_q1_1.png" alt="選択肢1"></div>
+  <div class="image-box img2 zoomed-out"><img src="/images/sample_q1_2.png" alt="選択肢2"></div>
+  <div class="image-box img3 zoomed-out"><img src="/images/sample_q1_3.png" alt="選択肢3"></div>
+  <div class="image-box img4 zoomed-out"><img src="/images/sample_q1_4.png" alt="選択肢4"></div>
 
   <script>
-    const sampleTransforms = {
-      img1: "scale(3.2) translate(0%, 18%)",
-      img2: "scale(3.0) translate(0%, 20%)",
-      img3: "scale(2.8) translate(0%, 15%)",
-      img4: "scale(2.9) translate(0%, 15%)"
-    };
-
-    const questions = [
-      {
-        id: "sample_q1",
-        images: [
-          "/images/sample_q1_1.png",
-          "/images/sample_q1_2.png",
-          "/images/sample_q1_3.png",
-          "/images/sample_q1_4.png"
-        ],
-        correct: "1",
-        transforms: sampleTransforms
-      }
-    ];
-
-    let currentQuestionIndex = 0;
-
-    function loadQuestion(index) {
-      const q = questions[index];
-      const imageIds = ["img1", "img2", "img3", "img4"];
-
-      imageIds.forEach((id, i) => {
-        const box = document.getElementById(id);
-        const img = box.querySelector("img");
-        img.src = q.images[i];
-        img.style.transform = q.transforms[id];
-      });
-    }
-
     function startCountdown() {
       let count = 10;
       const countdownEl = document.getElementById('countdown-number');
@@ -66,9 +34,9 @@
         countdownEl.textContent = count;
 
         if (count === 3) {
-          document.querySelectorAll('.image-box img').forEach(img => {
-            img.style.transition = "transform 2s ease-out";
-            img.style.transform = "scale(1) translate(0%, 0%)";
+          // 残り3秒でズームアウト（クラス削除）
+          document.querySelectorAll('.image-box').forEach(box => {
+            box.classList.remove('zoomed-out');
           });
         }
 
@@ -80,7 +48,6 @@
     }
 
     window.onload = () => {
-      loadQuestion(currentQuestionIndex);
       startCountdown();
     };
   </script>
