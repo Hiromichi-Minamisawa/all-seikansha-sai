@@ -19,8 +19,9 @@
       display: block;
       margin: 10px 0 5px;
     }
-    input[type="range"] {
+    input[type="range"], select {
       width: 100%;
+      padding: 4px;
     }
     .preview-container {
       margin-top: 20px;
@@ -41,8 +42,14 @@
   <h1>ズーム位置調整ツール</h1>
 
   <div class="controls">
-    <label>画像URL：</label>
-    <input type="text" id="imgUrl" value="/images/q1_1.png" style="width:100%; padding: 4px;" oninput="updateImage()">
+    <label>画像選択：</label>
+    <select id="imageSelector" onchange="updateImage()">
+      <option value="/images/q1_1.png">q1_1.png</option>
+      <option value="/images/q1_2.png">q1_2.png</option>
+      <option value="/images/q2_1.png">q2_1.png</option>
+      <option value="/images/q2_2.png">q2_2.png</option>
+      <!-- 必要に応じて追加可能 -->
+    </select>
 
     <label>ズーム倍率（scale）</label>
     <input type="range" id="scale" min="1" max="3" step="0.1" value="2" oninput="updateTransform()">
@@ -76,12 +83,15 @@
     }
 
     function updateImage() {
-      const url = document.getElementById('imgUrl').value;
-      document.getElementById('preview').src = url;
+      const selector = document.getElementById('imageSelector');
+      const selectedUrl = selector.value;
+      document.getElementById('preview').src = selectedUrl;
+      updateTransform();
     }
 
-    window.onload = updateTransform;
+    window.onload = () => {
+      updateImage();
+    }
   </script>
 </body>
 </html>
-
