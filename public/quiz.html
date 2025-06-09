@@ -84,27 +84,28 @@
   </div>
 
   <script>
-    function startCountdown() {
-      let count = 10;
-      const countdownEl = document.getElementById('countdown-number');
-      const circleEl = document.getElementById('countdownCircle');
+function startCountdown() {
+  let count = 10;
+  const countdownEl = document.getElementById('countdown-number');
+  const circleEl = document.getElementById('countdownCircle');
 
-      const interval = setInterval(() => {
-        count--;
-        countdownEl.textContent = count;
+  const interval = setInterval(() => {
+    countdownEl.textContent = count;
 
-        if (count === 3) {
-          document.querySelectorAll('.image-box').forEach(box => {
-            box.classList.remove('zoomed-out');
-          });
-        }
-
-        if (count <= 0) {
-          clearInterval(interval);
-          circleEl.style.display = 'none';
-        }
-      }, 1000);
+    if (count === 3) {
+      document.querySelectorAll('.image-box').forEach(box => {
+        box.classList.remove('zoomed-out');
+      });
     }
+
+    if (count === 0) {
+      clearInterval(interval);
+      circleEl.style.display = 'none';
+    }
+
+    count--;
+  }, 1000);
+}
 
     function resizeStage() {
       const stage = document.getElementById('stage');
