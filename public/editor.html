@@ -9,14 +9,16 @@
       background: #000;
       font-family: sans-serif;
     }
-    #stage {
-      position: relative;
-      width: 100vw;
-      height: 56.25vw; /* 16:9 */
-      max-height: 100vh;
-      background: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703') no-repeat center/cover;
-      overflow: hidden;
-    }
+   #stage {
+  position: relative;
+  width: 100%;
+  max-width: 2022px;
+  aspect-ratio: 2022 / 1291;
+      background: url('https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703') no-repeat center center;
+     background-size: contain;  /* ←重要 */
+  margin: auto;
+  overflow: hidden;
+}
     .choice {
       position: absolute;
       width: 20%;
