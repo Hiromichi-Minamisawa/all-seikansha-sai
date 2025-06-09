@@ -56,10 +56,10 @@ body {
 /* カウントダウン（位置指定は画像と一致） */
 .countdown-circle {
   position: absolute;
-  top: 940px;
-  left: 1738px;
-  width: 160px;
-  height: 160px;
+  top: 770px;
+  left: 1632px;
+  width: 220px;
+  height: 220px;
   background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
   border-radius: 50%;
   display: flex;
