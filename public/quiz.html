@@ -90,17 +90,21 @@ function startCountdown() {
   const circleEl = document.getElementById('countdownCircle');
 
   const interval = setInterval(() => {
-    countdownEl.textContent = count;
-
-    if (count === 3) {
+    if (count === 0) {
+      // ズームアウトを0秒のタイミングで実行
       document.querySelectorAll('.image-box').forEach(box => {
         box.classList.remove('zoomed-out');
       });
-    }
 
-    if (count === 0) {
+      countdownEl.textContent = count; // ← 0を表示
       clearInterval(interval);
-      circleEl.style.display = 'none';
+
+      // 0を1秒間表示したあと非表示
+      setTimeout(() => {
+        circleEl.style.display = 'none';
+      }, 1000);
+    } else {
+      countdownEl.textContent = count;
     }
 
     count--;
