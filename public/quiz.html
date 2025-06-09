@@ -89,25 +89,29 @@ function startCountdown() {
   const countdownEl = document.getElementById('countdown-number');
   const circleEl = document.getElementById('countdownCircle');
 
+  countdownEl.textContent = count;
+
   const interval = setInterval(() => {
-    if (count === 2) {
-      // ズームアウトを0秒のタイミングで実行
+    count--;
+
+    countdownEl.textContent = count;
+
+    if (count === 3) {
+      // ズームアウトをここから3秒かけてスタート
+      document.querySelectorAll('.image-box img').forEach(img => {
+        img.style.transition = "transform 3s ease-out";
+      });
       document.querySelectorAll('.image-box').forEach(box => {
         box.classList.remove('zoomed-out');
       });
-
-      countdownEl.textContent = count; // ← 0を表示
-      clearInterval(interval);
-
-      // 0を1秒間表示したあと非表示
-      setTimeout(() => {
-        circleEl.style.display = 'none';
-      }, 1000);
-    } else {
-      countdownEl.textContent = count;
     }
 
-    count--;
+    if (count === 0) {
+      clearInterval(interval);
+      setTimeout(() => {
+        circleEl.style.display = 'none';
+      }, 1000); // 0を1秒間見せてから非表示
+    }
   }, 1000);
 }
 
