@@ -14,7 +14,6 @@
       padding: 0;
     }
 
-    /* 背景画像オーバーレイ */
     .background-overlay {
       position: fixed;
       top: 0;
@@ -88,10 +87,7 @@
   </style>
 </head>
 <body>
-  <!-- 背景画像 -->
   <div class="background-overlay"></div>
-
-  <!-- 赤丸カウントダウン -->
   <div class="countdown-circle" id="countdownCircle">10</div>
 
   <h1>オールセイー感謝祭</h1>
@@ -105,41 +101,37 @@
   </div>
 
   <script>
-    // サンプル問題（imagePrefixで画像ファイル名を指定）
-    const sampleQuestion = {
-      question: "社長はどれ？",
-      imagePrefix: "sample_q1", // 「/images/sample_q1_1.png」などを読み込む
-      choices: ["1", "2", "3", "4"],
-      correct: "1"
-    };
-
-    // 追加の問題例（省略可）
-    const quizData = [
+    const questions = [
       {
-        question: "問題1: この中で社長は誰？",
-        imagePrefix: "q1_image",
+        question: "社長はどれ？", // 1問目（サンプル）
+        imagePrefix: "q1",
+        choices: ["1", "2", "3", "4"],
+        correct: "1"
+      },
+      {
+        question: "問題2: この中で社長は誰？", // 2問目
+        imagePrefix: "q2",
         choices: ["1", "2", "3", "4"],
         correct: "2"
-      }
-      // 他の問題も同様に追加可能
+      },
+      // 必要に応じて30問まで続けて追加可能
     ];
 
-    let currentQuestionIndex = -1;
-    let isSample = true;
+    let currentQuestionIndex = 0;
 
-    function showQuestion(questionObj) {
-      document.getElementById('question').textContent = questionObj.question;
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById('question').textContent = q.question;
 
       const grid = document.getElementById('imageGrid');
       grid.innerHTML = '';
-
-      questionObj.choices.forEach((choice, index) => {
+      q.choices.forEach(choice => {
         const box = document.createElement('div');
         box.className = 'image-box';
-
         const img = document.createElement('img');
-        img.src = `/images/${questionObj.imagePrefix}_${choice}.png`; // ←ここに画像を配置
+        img.src = `/images/${q.imagePrefix}_${choice}.png`;
         img.alt = `選択肢${choice}`;
+        img.dataset.answer = choice;
         box.appendChild(img);
         grid.appendChild(box);
       });
@@ -175,10 +167,9 @@
     }
 
     function showChoices() {
+      const q = questions[currentQuestionIndex];
       const container = document.getElementById('choices');
-      const question = isSample ? sampleQuestion : quizData[currentQuestionIndex];
-
-      question.choices.forEach(choice => {
+      q.choices.forEach(choice => {
         const btn = document.createElement('button');
         btn.textContent = choice;
         btn.onclick = () => checkAnswer(choice);
@@ -187,23 +178,20 @@
     }
 
     function checkAnswer(selected) {
-      const correct = isSample ? sampleQuestion.correct : quizData[currentQuestionIndex].correct;
-      alert(selected === correct ? '正解！' : '不正解');
-      document.getElementById('nextBtn').style.display = isSample || currentQuestionIndex < quizData.length - 1 ? 'block' : 'none';
+      const q = questions[currentQuestionIndex];
+      alert(selected === q.correct ? '正解！' : '不正解');
+      document.getElementById('nextBtn').style.display = (currentQuestionIndex < questions.length - 1) ? 'block' : 'none';
     }
 
     function nextQuestion() {
-      if (isSample) {
-        isSample = false;
-        currentQuestionIndex = 0;
-      } else {
+      if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
+        showQuestion();
       }
-      showQuestion(quizData[currentQuestionIndex]);
     }
 
     // 初期表示
-    showQuestion(sampleQuestion);
+    showQuestion();
   </script>
 </body>
 </html>
