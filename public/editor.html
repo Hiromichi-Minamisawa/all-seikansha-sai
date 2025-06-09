@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>選択肢画像付き調整ツール</title>
+  <title>選択肢画像付き調整ツール（個別編集対応）</title>
   <style>
     body {
       margin: 0;
@@ -21,16 +21,15 @@
     }
     .choice {
       position: absolute;
-      width: 20%;
       aspect-ratio: 4/3;
       cursor: move;
       overflow: hidden;
+      border: 2px dashed #0ff;
     }
     .choice img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scale(2) translate(-25%, -25%);
       transition: transform 2s ease;
     }
     .controls {
@@ -40,9 +39,14 @@
       font-size: 14px;
     }
     .transform-output {
-      margin-top: 10px;
       font-family: monospace;
       white-space: pre;
+      margin-top: 10px;
+    }
+    .panel {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
     }
     button {
       margin-top: 5px;
@@ -52,48 +56,85 @@
 </head>
 <body>
   <div id="stage">
-    <div class="choice" id="c1" style="top:13%; left:1%;"><img src="/images/sample_q1_1.png"></div>
-    <div class="choice" id="c2" style="top:13%; left:45%;"><img src="/images/sample_q1_2.png"></div>
-    <div class="choice" id="c3" style="top:55%; left:1%;"><img src="/images/sample_q1_3.png"></div>
-    <div class="choice" id="c4" style="top:55%; left:45%;"><img src="/images/sample_q1_4.png"></div>
+    <div class="choice" id="c1" style="top:13%; left:1%; width:20%;">
+      <img src="/images/sample_q1_1.png">
+    </div>
+    <div class="choice" id="c2" style="top:13%; left:45%; width:20%;">
+      <img src="/images/sample_q1_2.png">
+    </div>
+    <div class="choice" id="c3" style="top:55%; left:1%; width:20%;">
+      <img src="/images/sample_q1_3.png">
+    </div>
+    <div class="choice" id="c4" style="top:55%; left:45%; width:20%;">
+      <img src="/images/sample_q1_4.png">
+    </div>
   </div>
-  <div class="controls">
-    <label for="scale">ズーム (scale): </label>
-    <input type="range" id="scale" min="1" max="3" step="0.1" value="2" oninput="updateTransform()">
-    <label for="x"> X移動 (%): </label>
-    <input type="range" id="x" min="-50" max="50" step="1" value="-25" oninput="updateTransform()">
-    <label for="y"> Y移動 (%): </label>
-    <input type="range" id="y" min="-50" max="50" step="1" value="-25" oninput="updateTransform()">
-    <button onclick="playZoomOut()">ズームアウト再生 ▶</button>
-    <div class="transform-output" id="output"></div>
-  </div>
+  <div class="controls" id="controlPanel"></div>
 
   <script>
-    const choices = document.querySelectorAll('.choice img');
-    const scaleInput = document.getElementById('scale');
-    const xInput = document.getElementById('x');
-    const yInput = document.getElementById('y');
+    const choices = ["c1", "c2", "c3", "c4"];
+    const controlPanel = document.getElementById("controlPanel");
 
-    function updateTransform() {
-      const scale = scaleInput.value;
-      const x = xInput.value;
-      const y = yInput.value;
+    choices.forEach(id => {
+      const choice = document.getElementById(id);
+      const img = choice.querySelector("img");
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      panel.innerHTML = `
+        <strong>${id.toUpperCase()}</strong><br>
+        Width: <input type="range" min="5" max="50" value="20" step="1" oninput="resizeChoice('${id}', this.value)"> %<br>
+        Scale: <input type="range" min="1" max="3" value="2" step="0.1" oninput="updateTransform('${id}')" id="scale-${id}">
+        X: <input type="range" min="-50" max="50" value="-25" step="1" oninput="updateTransform('${id}')" id="x-${id}">
+        Y: <input type="range" min="-50" max="50" value="-25" step="1" oninput="updateTransform('${id}')" id="y-${id}">
+        <button onclick="zoomOut('${id}')">ズームアウト ▶</button>
+        <div class="transform-output" id="output-${id}"></div>
+      `;
+      controlPanel.appendChild(panel);
+    });
+
+    function updateTransform(id) {
+      const scale = document.getElementById(`scale-${id}`).value;
+      const x = document.getElementById(`x-${id}`).value;
+      const y = document.getElementById(`y-${id}`).value;
+      const img = document.querySelector(`#${id} img`);
       const result = `transform: scale(${scale}) translate(${x}%, ${y}%);`;
-      document.getElementById('output').textContent = result;
-
-      choices.forEach(choice => {
-        choice.style.transform = `scale(${scale}) translate(${x}%, ${y}%)`;
-      });
+      img.style.transform = `scale(${scale}) translate(${x}%, ${y}%)`;
+      document.getElementById(`output-${id}`).textContent = result;
     }
 
-    function playZoomOut() {
-      choices.forEach(choice => {
-        choice.style.transition = 'transform 2s ease';
-        choice.style.transform = 'scale(1) translate(0%, 0%)';
-      });
+    function zoomOut(id) {
+      const img = document.querySelector(`#${id} img`);
+      img.style.transition = 'transform 2s ease';
+      img.style.transform = 'scale(1) translate(0%, 0%)';
     }
 
-    updateTransform();
+    function resizeChoice(id, val) {
+      const choice = document.getElementById(id);
+      choice.style.width = val + '%';
+    }
+
+    // ドラッグ移動機能
+    choices.forEach(id => {
+      const choice = document.getElementById(id);
+      let isDragging = false, offsetX = 0, offsetY = 0;
+      choice.addEventListener('mousedown', e => {
+        isDragging = true;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+      });
+      window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const stage = document.getElementById('stage');
+        const rect = stage.getBoundingClientRect();
+        const x = ((e.clientX - rect.left - offsetX) / rect.width) * 100;
+        const y = ((e.clientY - rect.top - offsetY) / rect.height) * 100;
+        choice.style.left = `${x}%`;
+        choice.style.top = `${y}%`;
+      });
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    });
   </script>
 </body>
 </html>
