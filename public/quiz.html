@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭</title>
   <style>
-    body {
-      margin: 0;
-      background: black;
-      overflow: hidden;
-    }
-
+    body { margin: 0; background: black; overflow: hidden; }
     #stage {
       position: absolute;
       width: 1920px;
@@ -19,132 +14,95 @@
       background: url("https://cdn.glitch.global/3751acd7-cbc8-437f-9bf0-3b7d36621f4e/Slide%2016_9%20-%201.png?v=1749445496703") no-repeat;
       background-size: 100% 100%;
     }
-
     .image-box {
-      position: absolute;
-      width: 672px;
-      height: 378px;
-      overflow: hidden;
-      border-radius: 12px;
-      z-index: 1;
+      position: absolute; width: 672px; height: 378px; overflow: hidden; border-radius: 12px; z-index: 1;
     }
-
     .image-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform-origin: center;
-      transition: transform 2s ease-out;
+      width: 100%; height: 100%; object-fit: cover; transform-origin: center; transition: transform 2s ease-out;
     }
-
     .img1 { top: 140px; left: 100px; }
     .img2 { top: 140px; left: 820px; }
     .img3 { top: 580px; left: 100px; }
     .img4 { top: 580px; left: 820px; }
-
     .img1.zoomed-out img { transform: scale(4.5) translate(-2%, 38%); }
     .img2.zoomed-out img { transform: scale(2.7) translate(0%, 31%); }
     .img3.zoomed-out img { transform: scale(6.5) translate(4%, 42%); }
     .img4.zoomed-out img { transform: scale(6.7) translate(-1%, 42%); }
-
-    .image-box:not(.zoomed-out) img {
-      transform: scale(1) translate(0%, 0%);
-    }
-
+    .image-box:not(.zoomed-out) img { transform: scale(1) translate(0%, 0%); }
     .countdown-circle {
-      position: absolute;
-      top: 770px;
-      left: 1665px;
-      width: 220px;
-      height: 220px;
+      position: absolute; top: 770px; left: 1665px; width: 220px; height: 220px;
       background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 140px;
-      font-weight: bold;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      z-index: 10;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 140px; font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5); z-index: 10;
     }
-
     .number-circle {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      color: white;
-      font-weight: bold;
-      font-size: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
+      position: absolute; top: 10px; left: 10px; width: 50px; height: 50px;
+      border-radius: 50%; color: white; font-weight: bold; font-size: 28px;
+      display: flex; align-items: center; justify-content: center; z-index: 2;
     }
     .num1 { background: #2196f3; }
     .num2 { background: #f44336; }
     .num3 { background: #4caf50; }
     .num4 { background: #ffeb3b; color: black; }
-
     .vote-count {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: #2196f3;
-      color: white;
-      font-size: 30px;
-      padding: 4px 12px;
-      border-radius: 10px;
-      z-index: 2;
-      display: none;
+      position: absolute; bottom: 10px; right: 10px; background: #2196f3;
+      color: white; font-size: 30px; padding: 4px 12px; border-radius: 10px;
+      z-index: 2; display: none;
     }
-
     .vote-correct {
       background: linear-gradient(to right, #d32f2f, #f44336);
-      color: yellow;
-      animation: blink 0.5s steps(1) infinite;
+      color: yellow; animation: blink 0.5s steps(1) infinite;
     }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
+    @keyframes blink { 50% { opacity: 0; } }
     .name-input {
-      margin-top: 5px;
-      background: white;
-      border-radius: 10px;
-      padding: 5px 10px;
-      font-size: 20px;
-      width: 90%;
-      border: 2px solid #ccc;
+      margin-top: 5px; background: white; border-radius: 10px; padding: 5px 10px;
+      font-size: 20px; width: 90%; border: 2px solid #ccc;
     }
-
     .name-display {
-      position: absolute;
-      bottom: -40px;
-      left: 10px;
-      font-size: 32px;
-      color: white;
-      font-weight: bold;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 4px 12px;
-      border-radius: 8px;
-      z-index: 2;
+      position: absolute; bottom: -40px; left: 10px;
+      font-size: 32px; color: white; font-weight: bold;
+      background: rgba(0, 0, 0, 0.7); padding: 4px 12px; border-radius: 8px; z-index: 2;
     }
   </style>
 </head>
 <body>
   <div id="stage">
-    <!-- 各選択肢のHTMLは既存のものを保持 -->
+    <div class="countdown-circle" id="countdownCircle">
+      <div id="countdown-number">10</div>
+    </div>
+    <div class="image-box img1 zoomed-out">
+      <img src="/images/sample_q1_1.png">
+      <div class="number-circle num1">1</div>
+      <div class="vote-count" id="vote1">0票</div>
+      <input class="name-input" id="name1" placeholder="櫻井 昭彦">
+      <div class="name-display" id="nameDisplay1"></div>
+    </div>
+    <div class="image-box img2 zoomed-out">
+      <img src="/images/sample_q1_2.png">
+      <div class="number-circle num2">2</div>
+      <div class="vote-count" id="vote2">0票</div>
+      <input class="name-input" id="name2" placeholder="小峠 英二(バイきんぐ)">
+      <div class="name-display" id="nameDisplay2"></div>
+    </div>
+    <div class="image-box img3 zoomed-out">
+      <img src="/images/sample_q1_3.png">
+      <div class="number-circle num3">3</div>
+      <div class="vote-count" id="vote3">0票</div>
+      <input class="name-input" id="name3" placeholder="森本 稀哲(元野球選手)">
+      <div class="name-display" id="nameDisplay3"></div>
+    </div>
+    <div class="image-box img4 zoomed-out">
+      <img src="/images/sample_q1_4.png">
+      <div class="number-circle num4">4</div>
+      <div class="vote-count" id="vote4">0票</div>
+      <input class="name-input" id="name4" placeholder="長谷川 まさのり(錦鯉)">
+      <div class="name-display" id="nameDisplay4"></div>
+    </div>
   </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
       authDomain: "all-seikanshasai.firebaseapp.com",
@@ -154,110 +112,8 @@
       messagingSenderId: "24572064606",
       appId: "1:24572064606:web:a7f94b0561333f272055cf"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    function lockChoices(selectedIndex) {
-      document.querySelectorAll(".image-box").forEach((box, index) => {
-        box.style.pointerEvents = "none";
-        box.style.opacity = index === selectedIndex ? "1" : "0.4";
-      });
-    }
-
-    function showVotes(votes) {
-      for (let i = 0; i < 4; i++) {
-        const el = document.getElementById(`vote${i + 1}`);
-        el.textContent = `${votes[i]}票`;
-        el.style.display = 'block';
-        el.classList.remove('vote-correct');
-      }
-    }
-
-    function highlightCorrect(index) {
-      showNames();
-      const el = document.getElementById(`vote${index + 1}`);
-      el.classList.add('vote-correct');
-    }
-
-    function showNames() {
-      for (let i = 0; i < 4; i++) {
-        const name = document.getElementById(`name${i + 1}`).value;
-        const display = document.getElementById(`nameDisplay${i + 1}`);
-        display.textContent = name;
-      }
-    }
-
-    window.onload = () => {
-      startCountdown();
-      resizeStage();
-      window.addEventListener('resize', resizeStage);
-
-      let userId = localStorage.getItem("quizUserId");
-      if (!userId) {
-        userId = "user_" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem("quizUserId", userId);
-      }
-
-      const answerRef = ref(db, `answers/${userId}`);
-      get(answerRef).then(snapshot => {
-        if (snapshot.exists()) {
-          const selected = snapshot.val();
-          lockChoices(selected);
-        }
-      });
-
-      document.querySelectorAll(".image-box").forEach((box, index) => {
-        box.addEventListener("click", () => {
-          set(ref(db, `answers/${userId}`), index).then(() => {
-            lockChoices(index);
-          });
-        });
-      });
-    };
-
-    const answersRef = ref(db, "answers");
-    onValue(answersRef, (snapshot) => {
-      const answers = snapshot.val();
-      if (!answers) return;
-      const counts = [0, 0, 0, 0];
-      Object.values(answers).forEach(choice => {
-        if (choice >= 0 && choice < 4) counts[choice]++;
-      });
-      showVotes(counts);
-    });
-
-    const showCorrectRef = ref(db, "showCorrect");
-    onValue(showCorrectRef, async (snapshot) => {
-      const show = snapshot.val();
-      if (!show) return;
-      const qSnap = await get(ref(db, "currentQuestion"));
-      const question = qSnap.val();
-      if (!question || typeof question.correct !== "number") return;
-      highlightCorrect(question.correct);
-      showNames();
-    });
-
-    const currentQuestionRef = ref(db, "currentQuestion");
-    onValue(currentQuestionRef, (snapshot) => {
-      const q = snapshot.val();
-      if (!q || !Array.isArray(q.choices)) return;
-      document.querySelectorAll('.image-box').forEach(box => box.classList.add('zoomed-out'));
-      document.getElementById('countdownCircle').style.display = 'flex';
-      document.getElementById('countdown-number').textContent = '10';
-      const paths = [
-        "/images/sample_q1_1.png",
-        "/images/sample_q1_2.png",
-        "/images/sample_q1_3.png",
-        "/images/sample_q1_4.png"
-      ];
-      for (let i = 0; i < 4; i++) {
-        const img = document.querySelector(`.img${i + 1} img`);
-        if (img) img.src = paths[i];
-      }
-      startCountdown();
-    });
-
     function startCountdown() {
       let count = 10;
       const countdownEl = document.getElementById('countdown-number');
@@ -282,7 +138,6 @@
         }
       }, 1000);
     }
-
     function resizeStage() {
       const stage = document.getElementById('stage');
       const ww = window.innerWidth;
@@ -293,6 +148,91 @@
       stage.style.top = `${(wh - 1080 * scale) / 2}px`;
       stage.style.position = 'absolute';
     }
+    function showVotes(votes) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`vote${i + 1}`);
+        el.textContent = `${votes[i]}票`;
+        el.style.display = 'block';
+        el.classList.remove('vote-correct');
+      }
+    }
+    function lockChoices(selectedIndex) {
+      document.querySelectorAll(".image-box").forEach((box, index) => {
+        box.style.pointerEvents = "none";
+        box.style.opacity = index === selectedIndex ? "1" : "0.4";
+      });
+    }
+    function highlightCorrect(index) {
+      showNames();
+      const el = document.getElementById(`vote${index + 1}`);
+      el.classList.add('vote-correct');
+    }
+    function showNames() {
+      for (let i = 0; i < 4; i++) {
+        const name = document.getElementById(`name${i + 1}`).value;
+        const display = document.getElementById(`nameDisplay${i + 1}`);
+        display.textContent = name;
+      }
+    }
+    window.onload = () => {
+      startCountdown();
+      resizeStage();
+      window.addEventListener('resize', resizeStage);
+      let userId = localStorage.getItem("quizUserId");
+      if (!userId) {
+        userId = "user_" + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem("quizUserId", userId);
+      }
+      const answerRef = ref(db, `answers/${userId}`);
+      get(answerRef).then(snapshot => {
+        if (snapshot.exists()) {
+          const selected = snapshot.val();
+          lockChoices(selected);
+        }
+      });
+      document.querySelectorAll(".image-box").forEach((box, index) => {
+        box.addEventListener("click", () => {
+          set(ref(db, `answers/${userId}`), index).then(() => {
+            lockChoices(index);
+          });
+        });
+      });
+    };
+    onValue(ref(db, "answers"), (snapshot) => {
+      const answers = snapshot.val();
+      if (!answers) return;
+      const counts = [0, 0, 0, 0];
+      Object.values(answers).forEach(choice => {
+        if (choice >= 0 && choice < 4) counts[choice]++;
+      });
+      showVotes(counts);
+    });
+    onValue(ref(db, "showCorrect"), async (snapshot) => {
+      if (!snapshot.val()) return;
+      const qSnap = await get(ref(db, "currentQuestion"));
+      const question = qSnap.val();
+      if (!question || typeof question.correct !== "number") return;
+      highlightCorrect(question.correct);
+      showNames();
+    });
+    onValue(ref(db, "currentQuestion"), (snapshot) => {
+      const q = snapshot.val();
+      if (!q || !Array.isArray(q.choices)) return;
+      document.querySelectorAll('.image-box').forEach(box => box.classList.add('zoomed-out'));
+      document.getElementById('countdownCircle').style.display = 'flex';
+      document.getElementById('countdown-number').textContent = '10';
+      const paths = [
+        "/images/sample_q1_1.png",
+        "/images/sample_q1_2.png",
+        "/images/sample_q1_3.png",
+        "/images/sample_q1_4.png"
+      ];
+      for (let i = 0; i < 4; i++) {
+        const img = document.querySelector(`.img${i + 1} img`);
+        if (img) img.src = paths[i];
+      }
+      startCountdown();
+    });
   </script>
 </body>
 </html>
