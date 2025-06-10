@@ -61,10 +61,10 @@
       ref,
       onValue,
       set,
-      push,
       get
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
+    // Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
       authDomain: "all-seikanshasai.firebaseapp.com",
@@ -78,6 +78,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // DOM取得
     const choicesEl = document.getElementById("choices");
     const standbyEl = document.getElementById("standby");
     const resultEl = document.getElementById("result");
@@ -86,19 +87,31 @@
     let hasAnswered = false;
     let selectedIndex = null;
 
-    // ユーザー名（仮にランダム ID を利用）
+    // ④ 最初にユーザー名を入力
+    let userName = prompt("ニックネームを入力してください（例：たかし）");
+    if (!userName) {
+      userName = "名無し" + Math.floor(Math.random() * 1000);
+    }
+
     const userId = "user_" + Math.random().toString(36).substring(2, 10);
 
     // クイズが更新されたとき
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
-      if (!data) return;
+
+      // ③ 出題が無効な場合は初期状態に戻す
+      if (!data || !data.question || !Array.isArray(data.choices)) {
+        standbyEl.textContent = "問題を待っています...";
+        choicesEl.innerHTML = "";
+        resultEl.textContent = "";
+        return;
+      }
 
       currentQuestion = data;
       hasAnswered = false;
       selectedIndex = null;
 
-      standbyEl.textContent = data.question;
+      standbyEl.textContent = ""; // 正面スクリーンを参照するので問題文は表示しない
       choicesEl.innerHTML = "";
       resultEl.textContent = "";
 
@@ -113,9 +126,16 @@
 
           document.querySelectorAll(".choice").forEach((el, i) => {
             el.classList.toggle("selected", i === index);
+            el.style.pointerEvents = "none";  // ② クリック無効化
+            el.style.opacity = "0.5";         // ② 視覚的に無効感
           });
 
-          set(ref(db, `answers/${userId}`), index);
+          // ① タイムスタンプと名前を一緒に送信
+          set(ref(db, `answers/${userId}`), {
+            name: userName,
+            choice: index,
+            timestamp: Date.now()
+          });
         };
         choicesEl.appendChild(div);
       });
@@ -127,10 +147,10 @@
       if (show && currentQuestion && selectedIndex !== null) {
         const correct = currentQuestion.correct;
         if (selectedIndex === correct) {
-          resultEl.textContent = "正解！";
+          resultEl.textContent = "⭕ 正解！";
           resultEl.className = "result correct";
         } else {
-          resultEl.textContent = "不正解...";
+          resultEl.textContent = "❌ 不正解...";
           resultEl.className = "result incorrect";
         }
       } else {
