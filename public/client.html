@@ -147,11 +147,10 @@
       if (show && currentQuestion && selectedIndex !== null) {
         const correct = currentQuestion.correct;
         if (selectedIndex === correct) {
-          resultEl.textContent = "⭕ 正解！";
+          resultEl.textContent = "おめでとう！　正解です！🎉";
           resultEl.className = "result correct";
         } else {
-          resultEl.textContent = "❌ 不正解...";
-          resultEl.className = "result incorrect";
+          resultEl.textContent = "ざんねん！ 不正解です...😓
         }
       } else {
         resultEl.textContent = "";
