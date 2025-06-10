@@ -244,6 +244,7 @@
       if (!question || typeof question.correct !== "number") return;
       highlightCorrect(question.correct);
       showNames();
+      highlightCorrectFrame(question.correct);
     });
 
     onValue(ref(db, "currentQuestion"), (snapshot) => {
