@@ -178,7 +178,15 @@
         box.style.opacity = index === selectedIndex ? "1" : "0.4";
       });
     }
+    
+function highlightCorrectFrame(index) {
+  const frame = document.getElementById(`frame${index + 1}`);
+  if (frame) {
+    frame.style.display = "block";
+  }
+}
 
+    
     function highlightCorrect(index) {
       showNames();
       const el = document.getElementById(`vote${index + 1}`);
