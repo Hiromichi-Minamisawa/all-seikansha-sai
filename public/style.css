@@ -86,3 +86,23 @@ body {
   z-index: 2;
 }
 
+.blink-frame {
+  position: absolute;
+  width: 672px;
+  height: 378px;
+  border: 8px solid yellow;
+  border-radius: 12px;
+  pointer-events: none;
+  display: none; /* 初期状態で非表示 */
+  z-index: 5;
+  animation: blink 0.5s steps(1) infinite;
+}
+
+#frame1 { top: 140px; left: 100px; }
+#frame2 { top: 140px; left: 820px; }
+#frame3 { top: 580px; left: 100px; }
+#frame4 { top: 580px; left: 820px; }
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
