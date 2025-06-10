@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>オールセイー感謝祭</title>
+  <title>オールセイー感謝祭 - Screen Q1</title>
   <style>
     body { margin: 0; background: black; overflow: hidden; }
     #stage {
@@ -100,9 +100,11 @@
       <div class="name-display" id="nameDisplay4"></div>
     </div>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
       authDomain: "all-seikanshasai.firebaseapp.com",
@@ -112,10 +114,15 @@
       messagingSenderId: "24572064606",
       appId: "1:24572064606:web:a7f94b0561333f272055cf"
     };
+
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
+    let countdownDone = false;
+
     function startCountdown() {
       let count = 10;
+      countdownDone = false;
       const countdownEl = document.getElementById('countdown-number');
       const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
@@ -134,10 +141,12 @@
           clearInterval(interval);
           setTimeout(() => {
             circleEl.style.display = 'none';
+            countdownDone = true;
           }, 1000);
         }
       }, 1000);
     }
+
     function resizeStage() {
       const stage = document.getElementById('stage');
       const ww = window.innerWidth;
@@ -148,6 +157,7 @@
       stage.style.top = `${(wh - 1080 * scale) / 2}px`;
       stage.style.position = 'absolute';
     }
+
     function showVotes(votes) {
       for (let i = 0; i < 4; i++) {
         const el = document.getElementById(`vote${i + 1}`);
@@ -156,17 +166,20 @@
         el.classList.remove('vote-correct');
       }
     }
+
     function lockChoices(selectedIndex) {
       document.querySelectorAll(".image-box").forEach((box, index) => {
         box.style.pointerEvents = "none";
         box.style.opacity = index === selectedIndex ? "1" : "0.4";
       });
     }
+
     function highlightCorrect(index) {
       showNames();
       const el = document.getElementById(`vote${index + 1}`);
       el.classList.add('vote-correct');
     }
+
     function showNames() {
       for (let i = 0; i < 4; i++) {
         const name = document.getElementById(`name${i + 1}`).value;
@@ -174,15 +187,18 @@
         display.textContent = name;
       }
     }
+
     window.onload = () => {
       startCountdown();
       resizeStage();
       window.addEventListener('resize', resizeStage);
+
       let userId = localStorage.getItem("quizUserId");
       if (!userId) {
         userId = "user_" + Math.random().toString(36).substring(2, 10);
         localStorage.setItem("quizUserId", userId);
       }
+
       const answerRef = ref(db, `answers/${userId}`);
       get(answerRef).then(snapshot => {
         if (snapshot.exists()) {
@@ -190,6 +206,7 @@
           lockChoices(selected);
         }
       });
+
       document.querySelectorAll(".image-box").forEach((box, index) => {
         box.addEventListener("click", () => {
           set(ref(db, `answers/${userId}`), index).then(() => {
@@ -198,15 +215,23 @@
         });
       });
     };
-    onValue(ref(db, "answers"), (snapshot) => {
-      const answers = snapshot.val();
-      if (!answers) return;
-      const counts = [0, 0, 0, 0];
-      Object.values(answers).forEach(choice => {
-        if (choice >= 0 && choice < 4) counts[choice]++;
+
+    onValue(ref(db, "showVotes"), (snapshot) => {
+      if (!snapshot.val() || !countdownDone) return;
+
+      get(ref(db, "answers")).then(snap => {
+        const answers = snap.val();
+        if (!answers) return;
+
+        const counts = [0, 0, 0, 0];
+        Object.values(answers).forEach(choice => {
+          if (choice >= 0 && choice < 4) counts[choice]++;
+        });
+
+        showVotes(counts);
       });
-      showVotes(counts);
     });
+
     onValue(ref(db, "showCorrect"), async (snapshot) => {
       if (!snapshot.val()) return;
       const qSnap = await get(ref(db, "currentQuestion"));
@@ -215,12 +240,15 @@
       highlightCorrect(question.correct);
       showNames();
     });
+
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const q = snapshot.val();
       if (!q || !Array.isArray(q.choices)) return;
+
       document.querySelectorAll('.image-box').forEach(box => box.classList.add('zoomed-out'));
       document.getElementById('countdownCircle').style.display = 'flex';
       document.getElementById('countdown-number').textContent = '10';
+
       const paths = [
         "/images/sample_q1_1.png",
         "/images/sample_q1_2.png",
@@ -231,6 +259,7 @@
         const img = document.querySelector(`.img${i + 1} img`);
         if (img) img.src = paths[i];
       }
+
       startCountdown();
     });
   </script>
