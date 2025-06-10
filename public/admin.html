@@ -43,6 +43,7 @@
   <button id="sendBtn">出題する</button>
   <button id="showCorrectBtn">正解を表示</button>
   <button id="resetBtn">回答をリセット</button>
+  <button id="showVotesBtn">アンサーチェック</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -126,6 +127,10 @@
       set(ref(db, "answers"), {});
       set(ref(db, "showCorrect"), false);
     };
+    
+    document.getElementById("showVotesBtn").onclick = () => {
+ 　 set(ref(db, "showVotes"), true);
+　　};
 
     window.playSE = function(id) {
       const audio = document.getElementById(id);
