@@ -33,12 +33,29 @@
       position: absolute; top: 770px; left: 1660px; width: 220px; height: 220px;
       background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 140px; font-weight: bold;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5); z-index: 10;
+      box-shadow: inset -8px -8px 20px rgba(255, 255, 255, 0.3), inset 8px 8px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 50, 50, 0.5);
+　　　 z-index: 10;
+    }
+     #countdown-number {
+      color: white;
+      font-size: 140px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      animation: rotateIn 0.6s ease forwards;
+    }
+      @keyframes rotateIn {
+      0% {
+        opacity: 0;
+        transform: rotateX(90deg) scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: rotateX(0deg) scale(1);
+      }
     }
     .number-circle {
       position: absolute; top: 10px; left: 10px; width: 100px; height: 100px;
-      border-radius: 50%; color: white; font-weight: bold; font-size: 96px;
+      border-radius: 50%; color: white; font-size: 96px; font-family: 'Inter', sans-serif; font-weight: 900;
       display: flex; align-items: center; justify-content: center; z-index: 2;
     }
     .num1 { background: #0B17FF; }
