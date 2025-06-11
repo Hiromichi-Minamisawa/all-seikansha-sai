@@ -170,7 +170,11 @@
       updateCountdownDisplay(count);
       const interval = setInterval(() => {
         count--;
-        
+
+      if (count > 0) {
+      updateCountdownDisplay(count); 
+    }
+
         if (count === 3) {
           document.querySelectorAll('.image-box img').forEach(img => {
             img.style.transition = "transform 3s ease-out";
@@ -180,6 +184,7 @@
           });
         }
         if (count === 0) {
+          updateCountdownDisplay(count); 
           clearInterval(interval);
           setTimeout(() => {
             document.getElementById('countdownCircle').style.display = 'none';
