@@ -29,30 +29,37 @@
     .img3.zoomed-out img { transform: scale(6.5) translate(4%, 42%); }
     .img4.zoomed-out img { transform: scale(6.7) translate(-1%, 42%); }
     .image-box:not(.zoomed-out) img { transform: scale(1) translate(0%, 0%); }
+    
     .countdown-circle {
       position: absolute; top: 770px; left: 1660px; width: 220px; height: 220px;
       background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: inset -8px -8px 20px rgba(255, 255, 255, 0.3), inset 8px 8px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 50, 50, 0.5);
-　　　 z-index: 10;
+      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
+      z-index: 10; perspective: 600px;
     }
      #countdown-number {
-      color: white;
+      position: absolute;
       font-size: 140px;
-      font-family: 'Inter', sans-serif;
       font-weight: 900;
-      animation: rotateIn 0.6s ease forwards;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      backface-visibility: hidden;
     }
-      @keyframes rotateIn {
-      0% {
-        opacity: 0;
-        transform: rotateX(90deg) scale(0.5);
-      }
-      100% {
-        opacity: 1;
-        transform: rotateX(0deg) scale(1);
-      }
+    .flip-in {
+      animation: flipIn 0.6s forwards;
     }
+    .flip-out {
+      animation: flipOut 0.6s forwards;
+    }
+    @keyframes flipIn {
+      from { transform: rotateX(90deg); opacity: 0; }
+      to { transform: rotateX(0deg); opacity: 1; }
+    }
+    @keyframes flipOut {
+      from { transform: rotateX(0deg); opacity: 1; }
+      to { transform: rotateX(-90deg); opacity: 0; }
+    }
+    
     .number-circle {
       position: absolute; top: 10px; left: 10px; width: 100px; height: 100px;
       border-radius: 50%; color: white; font-size: 96px; font-family: 'Inter', sans-serif; font-weight: 900;
@@ -86,7 +93,7 @@
 <body>
   <div id="stage">
     <div class="countdown-circle" id="countdownCircle">
-      <div id="countdown-number">10</div>
+      <div id="countdown-number" class="countdown-number">10</div>
     </div>
     <div class="image-box img1 zoomed-out">
       <img src="/images/sample_q1_1.png">
@@ -141,16 +148,29 @@
     const db = getDatabase(app);
 
     let countdownDone = false;
+    let currentEl = document.getElementById("countdown-number");
+    
+    function updateCountdownDisplay(num) {
+      const newEl = document.createElement("div");
+      newEl.className = "countdown-number flip-in";
+      newEl.textContent = num;
 
+      currentEl.classList.add("flip-out");
+      document.getElementById("countdownCircle").appendChild(newEl);
+
+      setTimeout(() => {
+        currentEl.remove();
+        currentEl = newEl;
+      }, 600);
+    }
+    
     function startCountdown() {
       let count = 10;
       countdownDone = false;
-      const countdownEl = document.getElementById('countdown-number');
-      const circleEl = document.getElementById('countdownCircle');
-      countdownEl.textContent = count;
+      updateCountdownDisplay(count);
       const interval = setInterval(() => {
         count--;
-        countdownEl.textContent = count;
+        
         if (count === 3) {
           document.querySelectorAll('.image-box img').forEach(img => {
             img.style.transition = "transform 3s ease-out";
@@ -162,7 +182,7 @@
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
-            circleEl.style.display = 'none';
+            document.getElementById('countdownCircle').style.display = 'none';
             countdownDone = true;
           }, 1000);
         }
