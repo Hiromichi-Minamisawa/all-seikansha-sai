@@ -4,9 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭 - Screen Q15</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=IBM+Plex+Sans+JP:wght@700&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
     #stage {
       position: absolute;
       width: 1920px;
@@ -16,10 +21,18 @@
       background-size: 100% 100%;
     }
     .countdown-circle {
-      position: absolute; top: 850px; left: 1670px; width: 200px; height: 200px;
+      position: absolute;
+      top: 850px;
+      left: 1670px;
+      width: 200px;
+      height: 200px;
       background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3),
+                  inset 6px 6px 12px rgba(0,0,0,0.4);
       z-index: 10;
     }
     #countdown-number {
@@ -29,9 +42,14 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     .vote-count {
-      position: absolute; background: #2196f3;
-      color: white; font-size: 30px; padding: 4px 12px; border-radius: 10px;
-      z-index: 5; display: none;
+      position: absolute;
+      background: #2196f3;
+      color: white;
+      font-size: 30px;
+      padding: 4px 12px;
+      border-radius: 10px;
+      z-index: 5;
+      display: none;
     }
     #vote1 { top: 470px; left: 690px; }
     #vote2 { top: 470px; left: 1310px; }
@@ -40,17 +58,35 @@
 
     .answer-frame {
       position: absolute;
-      width: 745px; height: 398px;
+      width: 745px;
+      height: 398px;
       border: 9px solid rgba(0, 128, 255, 0.9);
       border-radius: 12px;
       pointer-events: none;
       z-index: 2;
-      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6),
+                  inset 0 0 10px rgba(0, 200, 255, 0.5);
     }
-    #frame1 { top: 129px; left: 118px; }   /* 左上 → 選択肢1 */
-    #frame2 { top: 129px; left: 880px; }   /* 右上 → 選択肢2 */
-    #frame3 { top: 563px; left: 118px; }   /* 左下 → 選択肢3 */
-    #frame4 { top: 563px; left: 880px; }   /* 右下 → 選択肢4 */
+    #frame1 { top: 129px; left: 118px; }
+    #frame2 { top: 129px; left: 880px; }
+    #frame3 { top: 563px; left: 118px; }
+    #frame4 { top: 563px; left: 880px; }
+
+    /* 🔽 ヒント用スタイル */
+    .hint {
+      position: absolute;
+      font-family: 'IBM Plex Sans JP', sans-serif;
+      font-weight: 700;
+      font-size: 100px;
+      color: yellow;
+      display: none;
+      z-index: 20;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    }
+    #hint1 { top: 300px; left: 400px; }
+    #hint2 { top: 300px; left: 1150px; }
+    #hint3 { top: 750px; left: 400px; }
+    #hint4 { top: 750px; left: 1150px; }
   </style>
 </head>
 <body>
@@ -67,11 +103,17 @@
     <div class="answer-frame" id="frame2"></div>
     <div class="answer-frame" id="frame3"></div>
     <div class="answer-frame" id="frame4"></div>
+
+    <!-- 🔽 ヒント表示エリア -->
+    <div class="hint" id="hint1">ヒント</div>
+    <div class="hint" id="hint2">ヒント</div>
+    <div class="hint" id="hint3">ヒント</div>
+    <div class="hint" id="hint4">ヒント</div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
@@ -94,9 +136,18 @@
       const countdownEl = document.getElementById('countdown-number');
       const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
+
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
+
+        if (count === 3) {
+          // 🔽 ヒント表示
+          for (let i = 1; i <= 4; i++) {
+            document.getElementById(`hint${i}`).style.display = 'block';
+          }
+        }
+
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
