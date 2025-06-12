@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>オールセイー感謝祭 - Screen Q9</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
+    #stage {
+      position: absolute;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      background: url("/images/screen_q9.png") no-repeat;
+      background-size: 100% 100%;
+    }
+    .countdown-circle {
+      position: absolute; top: 850px; left: 1670px; width: 200px; height: 200px;
+      background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    #countdown-number {
+      font-size: 120px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .vote-count {
+      position: absolute; background: #2196f3;
+      color: white; font-size: 30px; padding: 4px 12px; border-radius: 10px;
+      z-index: 5; display: none;
+    }
+    #vote1 { top: 470px; left: 690px; }
+    #vote2 { top: 470px; left: 1310px; }
+    #vote3 { top: 920px; left: 690px; }
+    #vote4 { top: 920px; left: 1310px; }
+
+    .answer-frame {
+      position: absolute;
+      width: 724px; height: 135px;
+      border: 9px solid rgba(0, 128, 255, 0.9);
+      border-radius: 39px;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+    #frame1 { top: 685px; left: 59px; }   /* 左上 → 選択肢1 */
+    #frame2 { top: 685px; left: 805px; }   /* 右上 → 選択肢2 */
+    #frame3 { top: 846px; left: 57px; }   /* 左下 → 選択肢3 */
+    #frame4 { top: 847px; left: 805px; }   /* 右下 → 選択肢4 */
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="countdown-circle" id="countdownCircle">
+      <div id="countdown-number">10</div>
+    </div>
+    <div class="vote-count" id="vote1">0票</div>
+    <div class="vote-count" id="vote2">0票</div>
+    <div class="vote-count" id="vote3">0票</div>
+    <div class="vote-count" id="vote4">0票</div>
+
+    <div class="answer-frame" id="frame1"></div>
+    <div class="answer-frame" id="frame2"></div>
+    <div class="answer-frame" id="frame3"></div>
+    <div class="answer-frame" id="frame4"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let countdownDone = false;
+
+    function startCountdown() {
+      let count = 10;
+      countdownDone = false;
+      const countdownEl = document.getElementById('countdown-number');
+      const circleEl = document.getElementById('countdownCircle');
+      countdownEl.textContent = count;
+      const interval = setInterval(() => {
+        count--;
+        countdownEl.textContent = count;
+        if (count === 0) {
+          clearInterval(interval);
+          setTimeout(() => {
+            circleEl.style.display = 'none';
+            countdownDone = true;
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    function showVotes(votes) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`vote${i + 1}`);
+        el.textContent = `${votes[i]}票`;
+        el.style.display = 'block';
+        el.classList.remove('vote-correct');
+      }
+    }
+
+    window.onload = () => {
+      startCountdown();
+      resizeStage();
+      window.addEventListener('resize', resizeStage);
+    };
+
+    function resizeStage() {
+      const stage = document.getElementById('stage');
+      const ww = window.innerWidth;
+      const wh = window.innerHeight;
+      const scale = Math.min(ww / 1920, wh / 1080);
+      stage.style.transform = `scale(${scale})`;
+      stage.style.left = `${(ww - 1920 * scale) / 2}px`;
+      stage.style.top = `${(wh - 1080 * scale) / 2}px`;
+      stage.style.position = 'absolute';
+    }
+
+    onValue(ref(db, "showVotes"), (snapshot) => {
+      if (!snapshot.val() || !countdownDone) return;
+
+      get(ref(db, "answers")).then(snap => {
+        const answers = snap.val();
+        if (!answers) return;
+
+        const counts = [0, 0, 0, 0];
+        Object.values(answers).forEach(choice => {
+          if (choice >= 0 && choice < 4) counts[choice]++;
+        });
+
+        showVotes(counts);
+      });
+    });
+  </script>
+</body>
+</html>
