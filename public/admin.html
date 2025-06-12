@@ -10,19 +10,24 @@
       color: white;
       padding: 2rem;
     }
-    .question-list {
+    .lists {
+      display: flex;
+      gap: 2rem;
+    }
+    .question-list, .explanation-list {
+      flex: 1;
       max-height: 300px;
       overflow-y: auto;
       margin-bottom: 1rem;
     }
-    .question-box {
+    .question-box, .explanation-box {
       background: #333;
       padding: 1rem;
       margin-bottom: 0.5rem;
       cursor: pointer;
       border-left: 5px solid transparent;
     }
-    .question-box.selected {
+    .question-box.selected, .explanation-box.selected {
       border-left-color: gold;
     }
     .question-box.asked {
@@ -41,13 +46,23 @@
 </head>
 <body>
   <h1>クイズ出題管理</h1>
-
-  <div class="question-list" id="questionList"></div>
+  <div class="lists">
+    <div>
+      <h3>問題リスト</h3>
+      <div class="question-list" id="questionList"></div>
+    </div>
+    <div>
+      <h3>解説リスト</h3>
+      <div class="explanation-list" id="explanationList"></div>
+    </div>
+  </div>
 
   <button id="sendBtn">出題する</button>
   <button id="showCorrectBtn">正解を表示</button>
   <button id="resetBtn">回答をリセット</button>
   <button id="showVotesBtn">アンサーチェック</button>
+  <button id="sendExplanationBtn">解説を送信</button>
+  <button id="hideExplanationBtn">解説を非表示</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -109,7 +124,9 @@
     ];
 
     const listEl = document.getElementById("questionList");
+    const explEl = document.getElementById("explanationList");
     let selectedIndex = null;
+    let selectedExplanationIndex = null;
     const askedQuestions = new Set();
 
     questionList.forEach((q, index) => {
@@ -122,6 +139,16 @@
         selectedIndex = index;
       };
       listEl.appendChild(div);
+
+      const expl = document.createElement("div");
+      expl.className = "explanation-box";
+      expl.innerText = `${index + 1}. ${q.title}`;
+      expl.onclick = () => {
+        document.querySelectorAll(".explanation-box").forEach(el => el.classList.remove("selected"));
+        expl.classList.add("selected");
+        selectedExplanationIndex = index;
+      };
+      explEl.appendChild(expl);
     });
 
     function updateAskedVisuals() {
@@ -142,6 +169,7 @@
       await set(ref(db, "showCorrect"), false);
       await set(ref(db, "showVotes"), false);
       await set(ref(db, "answers"), {});
+      await set(ref(db, "showExplanation"), false);
 
       askedQuestions.add(selectedIndex);
       updateAskedVisuals();
@@ -158,6 +186,22 @@
 
     document.getElementById("showVotesBtn").onclick = () => {
       set(ref(db, "showVotes"), true);
+    };
+
+    document.getElementById("sendExplanationBtn").onclick = () => {
+      if (selectedExplanationIndex === null) {
+        alert("解説を選んでください");
+        return;
+      }
+      const q = questionList[selectedExplanationIndex];
+      const answerImage = q.file.replace(".html", "_answer.png");
+      set(ref(db, "currentScreen"), answerImage);
+      set(ref(db, "showExplanation"), true);
+    };
+
+    document.getElementById("hideExplanationBtn").onclick = () => {
+      set(ref(db, "showExplanation"), false);
+      set(ref(db, "currentScreen"), "screen_stand-by.png");
     };
 
     window.playSE = function(id) {
