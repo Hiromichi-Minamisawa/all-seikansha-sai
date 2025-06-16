@@ -57,12 +57,13 @@
     </div>
   </div>
 
-  <button id="sendBtn">出題する</button>
+ <button id="sendBtn">出題する</button>
   <button id="showCorrectBtn">正解を表示</button>
   <button id="resetBtn">回答をリセット</button>
   <button id="showVotesBtn">アンサーチェック</button>
   <button id="sendExplanationBtn">解説を送信</button>
   <button id="hideExplanationBtn">解説を非表示</button>
+  <button id="resetQuestionBtn">問題をリセット（待機画面へ）</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -104,9 +105,9 @@
       { file: "screen_q12.html", title: "Q12　西華産業の設立はいつ？" },
       { file: "screen_q13.html", title: "Q13　視線がぶつかるのはどれ？" },
       { file: "screen_q14.html", title: "Q14　西華産業野球部のサードは誰？" },
-      { file: "screen_q15.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q16.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q17.html", title: "ここに問題名を入れてください" },
+      { file: "screen_q15.html", title: "Q15　野球はどれ？" },
+      { file: "screen_q16.html", title: "Q16　仲間外れは誰？" },
+      { file: "screen_q17.html", title: "Q17　今、令和何年？" },
       { file: "screen_q18.html", title: "ここに問題名を入れてください" },
       { file: "screen_q19.html", title: "ここに問題名を入れてください" },
       { file: "screen_q20.html", title: "ここに問題名を入れてください" },
@@ -120,7 +121,7 @@
       { file: "screen_q28.html", title: "ここに問題名を入れてください" },
       { file: "screen_q29.html", title: "ここに問題名を入れてください" },
       { file: "screen_q30.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q31.html", title: "ここに問題名を入れてください" }
+      { file: "screen_q31.html", title: "Q31　練習問題　今、令和何年？" }
     ];
 
     const listEl = document.getElementById("questionList");
@@ -202,6 +203,15 @@
     document.getElementById("hideExplanationBtn").onclick = () => {
       set(ref(db, "showExplanation"), false);
       set(ref(db, "currentScreen"), "screen_stand-by.png");
+    };
+     document.getElementById("resetQuestionBtn").onclick = async () => {
+      await set(ref(db, "currentQuestion"), null);
+      await set(ref(db, "currentScreen"), "screen_stand-by.png");
+      await set(ref(db, "showCorrect"), false);
+      await set(ref(db, "showVotes"), false);
+      await set(ref(db, "answers"), {});
+      await set(ref(db, "showExplanation"), false);
+      alert("問題をリセットし、待機画面に戻しました");
     };
 
     window.playSE = function(id) {
