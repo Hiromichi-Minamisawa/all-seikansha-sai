@@ -85,6 +85,13 @@
   <audio id="se1" src="pinpon.mp3"></audio>
   <audio id="se2" src="boo.mp3"></audio>
 
+<div style="margin-top: 2rem;">
+  <h3>表示モード切り替え</h3>
+  <button onclick="setMode('logo')">ロゴ表示</button>
+  <button onclick="setMode('quiz')">クイズ表示</button>
+  <button onclick="setMode('ranking')">ランキング表示</button>
+</div>
+  
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
@@ -320,6 +327,12 @@
     });
   });
 }
+
+window.setMode = async function(mode) {
+  await set(ref(db, "currentQuestion/mode"), mode);
+  alert("表示モードを「" + mode + "」に変更しました");
+}
+  
   </script>
 </body>
 </html>
