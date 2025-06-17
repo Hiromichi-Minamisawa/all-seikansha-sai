@@ -206,6 +206,7 @@
       await set(ref(db, "showVotes"), false);
       await set(ref(db, "answers"), {});
       await set(ref(db, "showExplanation"), false);
+      await set(ref(db, "mode"), "quiz");  
     　await set(ref(db, "currentQuestion"), {
       screen: q.file,
       correct: await getCorrectAnswer(q.file)
@@ -273,7 +274,7 @@
     };
      document.getElementById("resetQuestionBtn").onclick = async () => {
       await set(ref(db, "currentQuestion"), null);
-      await set(ref(db, "currentScreen"), "screen_stand-by.png");
+      await set(ref(db, "currentScreen"), "stand-by.png");
       await set(ref(db, "showCorrect"), false);
       await set(ref(db, "showVotes"), false);
       await set(ref(db, "answers"), {});
