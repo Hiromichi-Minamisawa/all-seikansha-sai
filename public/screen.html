@@ -1,57 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>スクリーン表示</title>
+  <meta charset="UTF-8" />
+  <title>オールセイー感謝祭 - スクリーン</title>
   <style>
-    body {
-      margin: 0;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: black; color: white; overflow: hidden; font-family: sans-serif; }
+    #container { position: relative; width: 100%; height: 100%; }
+    #logo, #quizFrame, #ranking { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #logo img { display: block; margin: auto; max-width: 80%; max-height: 80%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+    #quizFrame iframe { width: 100%; height: 100%; border: none; background: black; }
+    #ranking { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #ranking ol { list-style: none; padding: 0; margin: 0; width: 60%; }
+    #ranking li { background: #222; margin: 0.5rem 0; padding: 1rem; font-size: 1.2rem; opacity: 0; transition: opacity 0.5s ease-in; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <img id="screenImage" src="images/top.png" alt="スクリーン画像" />
+  <div id="container">
+    <div id="logo"><img src="/images/top.png" alt="ロゴ表示"></div>
+    <div id="quizFrame" style="display:none;"><!-- ここに quiz HTML を load --><iframe id="qframe"></iframe></div>
+    <div id="ranking" style="display:none;"><ol id="rankingList"></ol></div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import {
-      getDatabase,
-      ref,
-      onValue
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
-      authDomain: "all-seikanshasai.firebaseapp.com",
-      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
-      projectId: "all-seikanshasai",
-      storageBucket: "all-seikanshasai.appspot.com",
-      messagingSenderId: "24572064606",
-      appId: "1:24572064606:web:a7f94b0561333f272055cf"
-    };
-
-    const app = initializeApp(firebaseConfig);
+    import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    const app = initializeApp({
+      apiKey: "...", authDomain: "...", databaseURL: "...firebaseio.com", projectId: "...",
+    });
     const db = getDatabase(app);
 
-    const imgEl = document.getElementById("screenImage");
+    const logo = document.getElementById("logo");
+    const quizFrame = document.getElementById("quizFrame");
+    const iframe = document.getElementById("qframe");
+    const rankingDiv = document.getElementById("ranking");
+    const rankingList = document.getElementById("rankingList");
 
-    // currentScreen を監視して画像が指定されたら表示
-    onValue(ref(db, "currentScreen"), (snapshot) => {
-      const value = snapshot.val();
-      if (typeof value === "string" && value.endsWith(".png")) {
-        imgEl.src = `images/${value}`;
+    // Firebase の screen モード監視
+    onValue(ref(db, "mode"), snapshot => {
+      const mode = snapshot.val() || "logo";
+      logo.style.display = mode === "logo" ? "block" : "none";
+      if(mode === "quiz"){
+        quizFrame.style.display = "block";
+        rankingDiv.style.display = "none";
+      } else if(mode === "ranking"){
+        rankingDiv.style.display = "flex";
+        quizFrame.style.display = "none";
+        loadRanking();
+      } else {
+        quizFrame.style.display = "none";
+        rankingDiv.style.display = "none";
       }
     });
+
+    // currentScreen の切替
+    onValue(ref(db, "currentScreen"), snap => {
+      const val = snap.val();
+      if(val?.endsWith(".html")){
+        iframe.src = val;
+        iframe.onload = ()=> {
+          // 中のアンサーチェック / 正解発表は各 HTML 内で制御される想定
+        };
+        window.switchMode("quiz");
+      } else {
+        window.switchMode("logo");
+      }
+    });
+
+    // ランキング読み込みと動的表示
+    async function loadRanking(){
+      const snap = await get(ref(db, "scores"));
+      const scores = snap.val() || {};
+      const arr = Object.values(scores).sort((a,b)=> b.score - a.score || a.time - b.time).slice(0,20);
+      rankingList.innerHTML = "";
+      for(let i=0;i<arr.length;i++){
+        const item = document.createElement("li");
+        item.textContent = `#${i+1} ${arr[i].name} – ${arr[i].score}問 正解 / 合計 ${Math.floor(arr[i].time / 1000)}秒`;
+        rankingList.appendChild(item);
+        setTimeout(()=> item.style.opacity = 1, 500 * i);
+      }
+    }
+
+    // モード変更の補助
+    window.switchMode = mode => {
+      // 管理画面から mode=logo/quiz/ranking を切り替える想定
+      // 省略：ここでは受信オンリーローム
+    };
   </script>
 </body>
 </html>
