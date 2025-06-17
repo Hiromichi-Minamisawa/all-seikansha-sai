@@ -60,11 +60,28 @@
         iframe.onload = ()=> {
           // 中のアンサーチェック / 正解発表は各 HTML 内で制御される想定
         };
-        window.switchMode("quiz");
-      } else {
-        window.switchMode("logo");
-      }
-    });
+    window.switchMode("quiz"); // モードを明示的に quiz に
+  } else if(val?.endsWith(".png")){
+    iframe.src = "";
+    logo.innerHTML = `<img src="/images/${val}" alt="待機画面">`;
+    window.switchMode("logo");
+  }
+});
+  　window.switchMode = (mode) => {
+  if (mode === "quiz") {
+    quizFrame.style.display = "block";
+    logo.style.display = "none";
+    rankingDiv.style.display = "none";
+  } else if (mode === "logo") {
+    quizFrame.style.display = "none";
+    logo.style.display = "block";
+    rankingDiv.style.display = "none";
+  } else if (mode === "ranking") {
+    quizFrame.style.display = "none";
+    logo.style.display = "none";
+    rankingDiv.style.display = "flex";
+  }
+};
 
     // ランキング読み込みと動的表示
     async function loadRanking(){
