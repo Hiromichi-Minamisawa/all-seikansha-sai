@@ -25,8 +25,14 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
     const app = initializeApp({
-      apiKey: "...", authDomain: "...", databaseURL: "...firebaseio.com", projectId: "...",
-    });
+    apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+    authDomain: "all-seikanshasai.firebaseapp.com",
+    databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+    projectId: "all-seikanshasai",
+    storageBucket: "all-seikanshasai.appspot.com",
+    messagingSenderId: "24572064606",
+    appId: "1:24572064606:web:a7f94b0561333f272055cf"
+  });
     const db = getDatabase(app);
 
     const logo = document.getElementById("logo");
