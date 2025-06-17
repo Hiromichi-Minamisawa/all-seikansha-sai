@@ -48,12 +48,16 @@
   <h1>クイズ出題管理</h1>
   <div class="lists">
     <div>
-      <h3>問題リスト</h3>
+      <h2>問題リスト</h2>
       <div class="question-list" id="questionList"></div>
     </div>
     <div>
       <h3>解説リスト</h3>
       <div class="explanation-list" id="explanationList"></div>
+    </div>
+    </div>
+      <h4>参加者一覧</h4>
+      <ul id="participantList"></ul>
     </div>
   </div>
 
@@ -64,6 +68,7 @@
   <button id="sendExplanationBtn">解説を送信</button>
   <button id="hideExplanationBtn">解説を非表示</button>
   <button id="resetQuestionBtn">問題をリセット（待機画面へ）</button>
+  <button id="scoreBtn">スコア集計</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -73,22 +78,38 @@
   <audio id="se1" src="pinpon.mp3"></audio>
   <audio id="se2" src="boo.mp3"></audio>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    set,
+    get,
+    onValue,
+    onChildAdded
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
-      authDomain: "all-seikanshasai.firebaseapp.com",
-      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
-      projectId: "all-seikanshasai",
-      storageBucket: "all-seikanshasai.appspot.com",
-      messagingSenderId: "24572064606",
-      appId: "1:24572064606:web:a7f94b0561333f272055cf"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+    authDomain: "all-seikanshasai.firebaseapp.com",
+    databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+    projectId: "all-seikanshasai",
+    storageBucket: "all-seikanshasai.appspot.com",
+    messagingSenderId: "24572064606",
+    appId: "1:24572064606:web:a7f94b0561333f272055cf"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // 参加者表示
+  const participantList = document.getElementById("participantList");
+  onChildAdded(ref(db, "participants"), (snapshot) => {
+    const data = snapshot.val();
+    const li = document.createElement("li");
+    li.textContent = data.name;
+    participantList.appendChild(li);
+  });
 
     const questionList = [
       { file: "screen_q1.html", title: "Q1　次の内、社長はどれ？" },
@@ -171,14 +192,45 @@
       await set(ref(db, "showVotes"), false);
       await set(ref(db, "answers"), {});
       await set(ref(db, "showExplanation"), false);
-
+    　await set(ref(db, "currentQuestion"), {
+      screen: q.file,
+      correct: await getCorrectAnswer(q.file)
+    });
+      
       askedQuestions.add(selectedIndex);
       updateAskedVisuals();
     };
 
     document.getElementById("showCorrectBtn").onclick = () => {
-      set(ref(db, "showCorrect"), true);
-    };
+    await set(ref(db, "showCorrect"), true);
+
+    const currentSnap = await get(ref(db, "currentQuestion"));
+    const current = currentSnap.val();
+    const correct = current?.correct;
+    if (correct == null) {
+      alert("正解が設定されていません");
+      return;
+    }
+      
+    const answersSnap = await get(ref(db, "answers"));
+    const answers = answersSnap.val() || {};
+
+    const scoresRef = ref(db, "scores");
+    const scoresSnap = await get(scoresRef);
+    const scores = scoresSnap.val() || {};
+
+    for (const [userId, answer] of Object.entries(answers)) {
+      const isCorrect = answer.choice === correct;
+      const prev = scores[userId] || { name: answer.name, score: 0, time: 0 };
+      scores[userId] = {
+        name: answer.name,
+        score: prev.score + (isCorrect ? 1 : 0),
+        time: prev.time + (answer.timestamp || 0)
+      };
+    }
+
+    await set(scoresRef, scores);
+  };    
 
     document.getElementById("resetBtn").onclick = () => {
       set(ref(db, "answers"), {});
@@ -219,6 +271,13 @@
       audio.currentTime = 0;
       audio.play();
     };
+
+  async function getCorrectAnswer(screenFile) {
+    const key = screenFile; // 例: "screen_q1.html"
+    const snapshot = await get(ref(db, `correctAnswers/${key}`));
+    const index = snapshot.val();
+    return typeof index === "number" ? index - 1 : null; // 1〜4 → 0〜3 に変換
+  }
   </script>
 </body>
 </html>
