@@ -60,8 +60,7 @@
       getDatabase,
       ref,
       onValue,
-      set,
-      get
+      set
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     // Firebase 設定
@@ -78,7 +77,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // DOM取得
     const choicesEl = document.getElementById("choices");
     const standbyEl = document.getElementById("standby");
     const resultEl = document.getElementById("result");
@@ -87,55 +85,52 @@
     let hasAnswered = false;
     let selectedIndex = null;
 
-    // ④ 最初にユーザー名を入力
-    let userName = prompt("名前を入力してください");
-    if (!userName) {
-      userName = "名無し" + Math.floor(Math.random() * 1000);
-    }
-
+    // ユーザー名と ID を登録
+    let userName = prompt("名前を入力してください") || "名無し" + Math.floor(Math.random() * 1000);
     const userId = "user_" + Math.random().toString(36).substring(2, 10);
 
     set(ref(db, `participants/${userId}`), {
-  　name: userName,
-  　timestamp: Date.now()
-　　});
+      name: userName,
+      timestamp: Date.now()
+    });
 
-    // クイズが更新されたとき
+    // currentQuestion を監視
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
 
-      // ③ 出題が無効な場合は初期状態に戻す
-      if (!data || !data.question || !Array.isArray(data.choices)) {
+      if (!data || !data.correct || !data.screen) {
         standbyEl.textContent = "問題を待っています...";
         choicesEl.innerHTML = "";
         resultEl.textContent = "";
+        currentQuestion = null;
+        hasAnswered = false;
         return;
       }
 
       currentQuestion = data;
       hasAnswered = false;
       selectedIndex = null;
-
-      standbyEl.textContent = ""; // 正面スクリーンを参照するので問題文は表示しない
-      choicesEl.innerHTML = "";
+      standbyEl.textContent = "";
       resultEl.textContent = "";
+      choicesEl.innerHTML = "";
 
-      data.choices.forEach((choice, index) => {
+      // 固定の選択肢（1〜4）を表示
+      ["1", "2", "3", "4"].forEach((label, index) => {
         const div = document.createElement("div");
         div.className = "choice";
-        div.textContent = choice;
+        div.textContent = label;
         div.onclick = () => {
           if (hasAnswered) return;
-          selectedIndex = index;
           hasAnswered = true;
+          selectedIndex = index;
 
           document.querySelectorAll(".choice").forEach((el, i) => {
             el.classList.toggle("selected", i === index);
-            el.style.pointerEvents = "none";  // ② クリック無効化
-            el.style.opacity = "0.5";         // ② 視覚的に無効感
+            el.style.pointerEvents = "none";
+            el.style.opacity = "0.5";
           });
 
-          // ① タイムスタンプと名前を一緒に送信
+          // 回答を送信
           set(ref(db, `answers/${userId}`), {
             name: userName,
             choice: index,
@@ -146,7 +141,7 @@
       });
     });
 
-    // 正解発表モードがONのとき
+    // showCorrect を監視
     onValue(ref(db, "showCorrect"), (snapshot) => {
       const show = snapshot.val();
       if (show && currentQuestion && selectedIndex !== null) {
@@ -156,6 +151,7 @@
           resultEl.className = "result correct";
         } else {
           resultEl.textContent = "ざんねん！ 不正解です...😓";
+          resultEl.className = "result incorrect";
         }
       } else {
         resultEl.textContent = "";
