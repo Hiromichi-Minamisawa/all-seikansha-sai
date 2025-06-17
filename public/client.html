@@ -88,12 +88,17 @@
     let selectedIndex = null;
 
     // ④ 最初にユーザー名を入力
-    let userName = prompt("ニックネームを入力してください（例：たかし）");
+    let userName = prompt("名前を入力してください");
     if (!userName) {
       userName = "名無し" + Math.floor(Math.random() * 1000);
     }
 
     const userId = "user_" + Math.random().toString(36).substring(2, 10);
+
+    set(ref(db, `participants/${userId}`), {
+  　name: userName,
+  　timestamp: Date.now()
+　　});
 
     // クイズが更新されたとき
     onValue(ref(db, "currentQuestion"), (snapshot) => {
