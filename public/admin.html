@@ -201,7 +201,7 @@
       updateAskedVisuals();
     };
 
-    document.getElementById("showCorrectBtn").onclick = () => {
+    document.getElementById("showCorrectBtn").onclick = async () => {
     await set(ref(db, "showCorrect"), true);
 
     const currentSnap = await get(ref(db, "currentQuestion"));
@@ -273,7 +273,7 @@
     };
 
   async function getCorrectAnswer(screenFile) {
-    const key = screenFile; // 例: "screen_q1.html"
+    const key = screenFile.replace(/\./g, "_"); // ドットをアンダースコアに変換
     const snapshot = await get(ref(db, `correctAnswers/${key}`));
     const index = snapshot.val();
     return typeof index === "number" ? index - 1 : null; // 1〜4 → 0〜3 に変換
