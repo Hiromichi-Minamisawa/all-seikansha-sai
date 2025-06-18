@@ -152,13 +152,6 @@
       }
     }
 
-    function highlightCorrectFrame(index) {
-      const frame = document.getElementById(`frame${index + 1}`);
-      if (frame) {
-        frame.style.display = "block";
-      }
-    }
-
     window.onload = () => {
       startCountdown();
       resizeStage();
@@ -210,8 +203,8 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
     function highlightCorrectFrame(index) {
       const frame = document.getElementById(`frame${index + 1}`);
       if (frame) {
-    frame.style.display = "block";
-    frame.classList.add("blink");
+        frame.style.display = "block";
+        frame.classList.add("blink");
   }
 }
   </script>
