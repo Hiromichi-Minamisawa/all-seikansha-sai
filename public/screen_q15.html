@@ -42,36 +42,71 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     .vote-count {
-      position: absolute;
-      background: #2196f3;
-      color: white;
-      font-size: 30px;
-      padding: 4px 12px;
-      border-radius: 10px;
-      z-index: 5;
-      display: none;
+      position: absolute; background: #008CFF;
+      color: #DFFB0A; font-size: 80px; padding: 20px 40px; 
+      border-radius: 40px 0 40px 0;
+      font-family: 'IBM Plex Sans JP', sans-serif; 
+      z-index: 2; display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
     }
-    #vote1 { top: 470px; left: 690px; }
-    #vote2 { top: 470px; left: 1310px; }
-    #vote3 { top: 920px; left: 690px; }
-    #vote4 { top: 920px; left: 1310px; }
-
+    #vote1 { bottom: 150px; left: 200px; }
+    #vote2 { bottom: 150px; left: 950px; }
+    #vote3 { bottom: 50px;  left: 200px; }
+    #vote4 { bottom: 50px;  left: 950px; }
+    
     .answer-frame {
       position: absolute;
-      width: 745px;
-      height: 398px;
+      width: 745px; height: 398px;
       border: 9px solid rgba(0, 128, 255, 0.9);
       border-radius: 12px;
       pointer-events: none;
       z-index: 2;
-      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6),
-                  inset 0 0 10px rgba(0, 200, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+    #frame1 { top: 129px; left: 118px; }   /* 左上 → 選択肢1 */
+    #frame2 { top: 129px; left: 880px; }   /* 右上 → 選択肢2 */
+    #frame3 { top: 563px; left: 118px; }   /* 左下 → 選択肢3 */
+    #frame4 { top: 563px; left: 880px; }   /* 右下 → 選択肢4 */
+
+     .vote-correct {
+      background: linear-gradient(to right, #d32f2f, #f44336);
+      color: red; animation: blink 0.5s steps(1) infinite;
+    }
+
+    .blink-frame {
+      position: absolute; width: 745px; height: 398px;
+      border: 9px solid rgba(255, 255, 0, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+      display: none; z-index: 3;
     }
     #frame1 { top: 129px; left: 118px; }
     #frame2 { top: 129px; left: 880px; }
     #frame3 { top: 563px; left: 118px; }
     #frame4 { top: 563px; left: 880px; }
 
+    @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.1; }
+    100% { opacity: 1; }
+  }
+      .blink-frame {
+      position: absolute; width: 745px; height: 398px;
+      border: 9px solid rgba(255, 255, 0, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+      display: none; z-index: 3;
+    }
+    #frame1 { top: 129px; left: 118px; }
+    #frame2 { top: 129px; left: 880px; }
+    #frame3 { top: 563px; left: 118px; }
+    #frame4 { top: 563px; left: 880px; }
+
+  .blink {
+    animation: blink 1s infinite;
+  }
+    
     /* 🔽 ヒント用スタイル */
     .hint {
       position: absolute;
