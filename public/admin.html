@@ -340,6 +340,16 @@
 
 window.setMode = async function(mode) {
   await set(ref(db, "mode"), mode);
+
+  if (mode === "logo") {
+    await set(ref(db, "currentScreen"), "top.png");
+  } else if (mode === "quiz") {
+    // クイズモード＝待機用画像（stand-by）を表示
+    await set(ref(db, "currentScreen"), "screen_stand-by.png");
+  } else if (mode === "ranking") {
+    await set(ref(db, "currentScreen"), "ranking");
+  }
+
   alert("表示モードを「" + mode + "」に変更しました");
 };
   
