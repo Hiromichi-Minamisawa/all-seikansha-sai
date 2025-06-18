@@ -207,7 +207,8 @@
           set(ref(db, `answers/${userId}`), {
             name: userName,
             choice: index,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            timeTaken: Date.now() - currentQuestion.startTime // ← これが解答時間（ms）
           });
         };
         choicesEl.appendChild(div);
