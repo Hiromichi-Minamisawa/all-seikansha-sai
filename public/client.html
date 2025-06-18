@@ -88,6 +88,7 @@
     let currentQuestion = null;
     let hasAnswered = false;
     let selectedIndex = null;
+    let hasStarted = false; // 1問目が出題されたかどうかを記録
 
     // ユーザー名と ID を登録
     let userName = prompt("名前を入力してください") || "名無し" + Math.floor(Math.random() * 1000);
@@ -106,7 +107,9 @@
         choicesEl.style.display = "block";
       } else {
         standbyEl.style.display = "block";
-        standbyEl.textContent = "クイズが始まるまでお待ちください";
+        standbyEl.textContent = hasStarted
+          ? "ようこそ！　クイズが始まるまでお待ちください！"
+          : "問題出題までお待ちください";
         choicesEl.style.display = "none";
         choicesEl.innerHTML = "";
         resultEl.textContent = "";
@@ -122,6 +125,8 @@
       if (!data || typeof data.correct !== "number" || !data.screen) {
         return;
       }
+
+      hasStarted = true; // 1問目が出題されたと記録
 
       currentQuestion = data;
       hasAnswered = false;
