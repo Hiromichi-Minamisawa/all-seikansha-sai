@@ -216,7 +216,7 @@
 
       // ⏱ 自動締切処理（制限時間後に選択肢を無効化）
       const startTime = data.startTime || Date.now();
-      const duration = data.duration || 10000;
+      const duration = data.duration || 10800;
       const remaining = startTime + duration - Date.now();
 
       setTimeout(() => {
