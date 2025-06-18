@@ -142,8 +142,9 @@
     function showVotes(votes) {
       for (let i = 0; i < 4; i++) {
         const el = document.getElementById(`vote${i + 1}`);
-        el.textContent = `${votes[i]};
+        el.textContent = `${votes[i]}`;
         el.style.display = 'block';
+        el.style.opacity = 1;
         el.classList.remove('vote-correct');
       }
     }
