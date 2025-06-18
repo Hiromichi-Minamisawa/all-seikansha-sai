@@ -181,13 +181,6 @@
       }
     }
 
-    function highlightCorrectFrame(index) {
-      const frame = document.getElementById(`frame${index + 1}`);
-      if (frame) {
-        frame.style.display = "block";
-      }
-    }
-
     window.onload = () => {
       startCountdown();
       resizeStage();
@@ -254,9 +247,10 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
   if (el) el.classList.add('vote-correct');
 });
     function highlightCorrectFrame(index) {
-  const frame = document.getElementById(`frame${index + 1}`);
-  if (frame) {
-    frame.classList.add("blink");
+      const frame = document.getElementById(`frame${index + 1}`);
+      if (frame) {
+        frame.style.display = "block";
+        frame.classList.add("blink");
   }
 }
     
