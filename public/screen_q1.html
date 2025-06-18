@@ -46,13 +46,12 @@
 
     .vote-count {
       position: absolute; background: #008CFF;
-      color: #DFFB0A; font-size: 80px; padding: 20px 40px; border-radius: 30px 0 0 30px;
-      border-top-left-radius: 40px;   /* 左上 */
- 　　 border-top-right-radius: 0;
- 　　 border-bottom-right-radius: 40px; /* 右下 */
- 　　 border-bottom-left-radius: 0;
+      color: #DFFB0A; font-size: 80px; padding: 20px 40px; 
+      border-radius: 40px 0 40px 0;
       font-family: 'IBM Plex Sans JP', sans-serif; 
       z-index: 2; display: none;
+      opacity: 0;
+　　　transition: opacity 0.5s ease;
     }
     #vote1 { bottom: 150px; left: 200px; }
     #vote2 { bottom: 150px; left: 950px; }
@@ -175,8 +174,9 @@
     function showVotes(votes) {
       for (let i = 0; i < 4; i++) {
         const el = document.getElementById(`vote${i + 1}`);
-        el.textContent = `${votes[i]};
+        el.textContent = `${votes[i]}`;
         el.style.display = 'block';
+        el.style.opacity = 1;
         el.classList.remove('vote-correct');
       }
     }
