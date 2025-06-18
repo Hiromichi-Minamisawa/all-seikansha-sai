@@ -98,7 +98,7 @@
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
 
-      if (!data || !data.correct || !data.screen) {
+      if (!data || typeof data.correct !== "number" || !data.screen) {
         standbyEl.textContent = "問題を待っています...";
         choicesEl.innerHTML = "";
         resultEl.textContent = "";
