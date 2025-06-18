@@ -212,7 +212,8 @@
     　await set(ref(db, "currentQuestion"), {
       screen: q.file,
       correct: await getCorrectAnswer(q.file),
-       startTime: Date.now()
+       startTime: Date.now(),
+       duration: 10000 
     });
       
       askedQuestions.add(selectedIndex);
@@ -245,7 +246,7 @@
       scores[userId] = {
         name: answer.name,
         score: prev.score + (isCorrect ? 1 : 0),
-        time: prev.time + (answer.timestamp || 0)
+        time: prev.time + (answer.timeTaken || 0)
       };
     }
 
