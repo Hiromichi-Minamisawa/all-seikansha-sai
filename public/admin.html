@@ -248,9 +248,8 @@ for (const [userId, answer] of Object.entries(answers)) {
     };
   }
 
-  if (isCorrect) {
-    newScores[userId].score += 1;
-  }
+if (isCorrect) {
+  newScores[userId].score += 1;
   newScores[userId].time += answer.timeTaken || 0;
 }
 
