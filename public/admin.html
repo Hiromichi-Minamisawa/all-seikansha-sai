@@ -236,21 +236,25 @@
     const answersSnap = await get(ref(db, "answers"));
     const answers = answersSnap.val() || {};
 
-    const scoresRef = ref(db, "scores");
-    const scoresSnap = await get(scoresRef);
-    const scores = scoresSnap.val() || {};
+    const newScores = {};
 
-    for (const [userId, answer] of Object.entries(answers)) {
-      const isCorrect = answer.choice === correct;
-      const prev = scores[userId] || { name: answer.name, score: 0, time: 0 };
-      scores[userId] = {
-        name: answer.name,
-        score: prev.score + (isCorrect ? 1 : 0),
-        time: prev.time + (answer.timeTaken || 0)
-      };
-    }
+for (const [userId, answer] of Object.entries(answers)) {
+  const isCorrect = Number(answer.choice) === correct;
+  if (!(userId in newScores)) {
+    newScores[userId] = {
+      name: answer.name,
+      score: 0,
+      time: 0
+    };
+  }
 
-    await set(scoresRef, scores);
+  if (isCorrect) {
+    newScores[userId].score += 1;
+  }
+  newScores[userId].time += answer.timeTaken || 0;
+}
+
+    await set(ref(db, "scores"), newScores);
   };    
 
     document.getElementById("resetBtn").onclick = () => {
