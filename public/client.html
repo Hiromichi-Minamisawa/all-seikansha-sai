@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <title>クイズ解答画面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #f4f4f4;
-      font-family: sans-serif;
+      font-family: 'Inter', sans-serif;
       text-align: center;
       padding: 2rem;
     }
@@ -43,20 +44,33 @@
       margin-top: 3rem;
     }
 
+    #choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+
     .choice {
-      background-color: #0074D9;
+      padding: 4rem;
+      font-size: 2rem;
+      font-weight: bold;
+      border-radius: 20px;
       color: white;
-      padding: 1rem;
-      margin: 1rem auto;
-      width: 80%;
-      border-radius: 10px;
-      font-size: 1.5rem;
       cursor: pointer;
     }
 
     .choice.selected {
-      background-color: #FF851B;
+      border: 4px solid #333;
     }
+
+    .choice:nth-child(1) { background-color: #0B17FF; }
+    .choice:nth-child(2) { background-color: #FF060A; }
+    .choice:nth-child(3) { background-color: #028F0B; }
+    .choice:nth-child(4) { background-color: #E4DD1D; color: black; }
 
     .result {
       font-size: 2rem;
@@ -70,10 +84,6 @@
 
     .incorrect {
       color: red;
-    }
-
-    #choices {
-      display: none;
     }
   </style>
 </head>
@@ -140,31 +150,26 @@
 
       userName = name;
 
-      // Firebaseに登録
       set(ref(db, `participants/${userId}`), {
         name: userName,
         timestamp: Date.now()
       });
 
-      // ログイン画面を隠し、クイズ画面を表示
       loginScreen.classList.add("hidden");
       questionArea.classList.remove("hidden");
-
-      // 初回は「クイズが始まるまで〜」
-      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください！";
+      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
     };
 
-    // mode 監視
     onValue(ref(db, "mode"), (snapshot) => {
       const mode = snapshot.val();
       if (mode === "quiz") {
         standbyEl.style.display = "none";
-        choicesEl.style.display = "block";
+        choicesEl.style.display = "grid";
       } else {
         standbyEl.style.display = "block";
         standbyEl.textContent = hasStarted
-          ? "ようこそ！  クイズが始まるまでお待ちください！"
-          : "問題出題までお待ちください";
+          ? "問題出題までお待ちください"
+          : "クイズが始まるまでお待ちください";
         choicesEl.style.display = "none";
         choicesEl.innerHTML = "";
         resultEl.textContent = "";
@@ -173,7 +178,6 @@
       }
     });
 
-    // currentQuestion 監視
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
       if (!data || typeof data.correct !== "number" || !data.screen) return;
@@ -208,9 +212,22 @@
         };
         choicesEl.appendChild(div);
       });
+
+      // ⏱ 自動締切処理（制限時間後に選択肢を無効化）
+      const startTime = data.startTime || Date.now();
+      const duration = data.duration || 10000;
+      const remaining = startTime + duration - Date.now();
+
+      setTimeout(() => {
+        if (!hasAnswered) {
+          document.querySelectorAll(".choice").forEach((el) => {
+            el.style.pointerEvents = "none";
+            el.style.opacity = "0.5";
+          });
+        }
+      }, remaining > 0 ? remaining : 0);
     });
 
-    // showCorrect 監視
     onValue(ref(db, "showCorrect"), (snapshot) => {
       const show = snapshot.val();
       if (show && currentQuestion && selectedIndex !== null) {
