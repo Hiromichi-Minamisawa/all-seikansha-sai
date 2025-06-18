@@ -276,6 +276,7 @@
     };
      document.getElementById("resetQuestionBtn").onclick = async () => {
       await set(ref(db, "currentQuestion"), null);
+      await set(ref(db, "mode"), "logo");
       await set(ref(db, "currentScreen"), "screen_stand-by.png");
       await set(ref(db, "showCorrect"), false);
       await set(ref(db, "showVotes"), false);
