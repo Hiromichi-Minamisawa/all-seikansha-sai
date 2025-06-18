@@ -12,6 +12,32 @@
       padding: 2rem;
     }
 
+    .hidden {
+      display: none;
+    }
+
+    #loginScreen {
+      margin-top: 100px;
+    }
+
+    #nameInput {
+      padding: 1rem;
+      font-size: 1.5rem;
+      width: 80%;
+      max-width: 400px;
+      margin-bottom: 1rem;
+    }
+
+    #loginButton {
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     #standby {
       font-size: 2rem;
       margin-top: 3rem;
@@ -52,10 +78,20 @@
   </style>
 </head>
 <body>
-  <div id="questionArea">
-    <div id="standby">クイズが始まるまでお待ちください</div>
+
+  <!-- ログイン画面 -->
+  <div id="loginScreen">
+    <input id="nameInput" type="text" placeholder="名前を入力してください" />
+    <br />
+    <button id="loginButton">ログイン</button>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="questionArea" class="hidden">
+    <div id="standby"></div>
     <div id="choices"></div>
   </div>
+
   <div class="result" id="result"></div>
 
   <script type="module">
@@ -67,7 +103,6 @@
       set
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
       authDomain: "all-seikanshasai.firebaseapp.com",
@@ -81,25 +116,45 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const choicesEl = document.getElementById("choices");
+    const loginScreen = document.getElementById("loginScreen");
+    const nameInput = document.getElementById("nameInput");
+    const loginButton = document.getElementById("loginButton");
+    const questionArea = document.getElementById("questionArea");
     const standbyEl = document.getElementById("standby");
+    const choicesEl = document.getElementById("choices");
     const resultEl = document.getElementById("result");
 
+    let userName = "";
+    const userId = "user_" + Math.random().toString(36).substring(2, 10);
     let currentQuestion = null;
     let hasAnswered = false;
     let selectedIndex = null;
-    let hasStarted = false; // 1問目が出題されたかどうかを記録
+    let hasStarted = false;
 
-    // ユーザー名と ID を登録
-    let userName = prompt("名前を入力してください") || "名無し" + Math.floor(Math.random() * 1000);
-    const userId = "user_" + Math.random().toString(36).substring(2, 10);
+    loginButton.onclick = () => {
+      const name = nameInput.value.trim();
+      if (!name) {
+        alert("名前を入力してください");
+        return;
+      }
 
-    set(ref(db, `participants/${userId}`), {
-      name: userName,
-      timestamp: Date.now()
-    });
+      userName = name;
 
-    // Firebase /mode を監視して、表示切替
+      // Firebaseに登録
+      set(ref(db, `participants/${userId}`), {
+        name: userName,
+        timestamp: Date.now()
+      });
+
+      // ログイン画面を隠し、クイズ画面を表示
+      loginScreen.classList.add("hidden");
+      questionArea.classList.remove("hidden");
+
+      // 初回は「クイズが始まるまで〜」
+      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください！";
+    };
+
+    // mode 監視
     onValue(ref(db, "mode"), (snapshot) => {
       const mode = snapshot.val();
       if (mode === "quiz") {
@@ -108,7 +163,7 @@
       } else {
         standbyEl.style.display = "block";
         standbyEl.textContent = hasStarted
-          ? "ようこそ！　クイズが始まるまでお待ちください！"
+          ? "ようこそ！  クイズが始まるまでお待ちください！"
           : "問題出題までお待ちください";
         choicesEl.style.display = "none";
         choicesEl.innerHTML = "";
@@ -118,23 +173,18 @@
       }
     });
 
-    // currentQuestion を監視
+    // currentQuestion 監視
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
+      if (!data || typeof data.correct !== "number" || !data.screen) return;
 
-      if (!data || typeof data.correct !== "number" || !data.screen) {
-        return;
-      }
-
-      hasStarted = true; // 1問目が出題されたと記録
-
+      hasStarted = true;
       currentQuestion = data;
       hasAnswered = false;
       selectedIndex = null;
       resultEl.textContent = "";
       choicesEl.innerHTML = "";
 
-      // 選択肢（1〜4）を表示
       ["1", "2", "3", "4"].forEach((label, index) => {
         const div = document.createElement("div");
         div.className = "choice";
@@ -150,7 +200,6 @@
             el.style.opacity = "0.5";
           });
 
-          // 回答を送信
           set(ref(db, `answers/${userId}`), {
             name: userName,
             choice: index,
@@ -161,7 +210,7 @@
       });
     });
 
-    // showCorrect を監視
+    // showCorrect 監視
     onValue(ref(db, "showCorrect"), (snapshot) => {
       const show = snapshot.val();
       if (show && currentQuestion && selectedIndex !== null) {
