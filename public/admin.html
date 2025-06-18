@@ -339,7 +339,7 @@ resetBtn.onclick = () => {
 };
 
 window.setMode = async function(mode) {
-  await set(ref(db, "currentQuestion/mode"), mode);
+  await set(ref(db, "mode"), mode);
   alert("表示モードを「" + mode + "」に変更しました");
 }
   
