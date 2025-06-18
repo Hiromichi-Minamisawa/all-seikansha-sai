@@ -74,13 +74,6 @@
     50% { opacity: 0.1; }
     100% { opacity: 1; }
   }
-      .blink-frame {
-      position: absolute; width: 745px; height: 200px;
-      border: 9px solid rgba(255, 255, 0, 0.9);
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-      display: none; z-index: 3;
-    }
 
     .blink {
     animation: blink 1s infinite;
@@ -149,13 +142,6 @@
         el.style.display = 'block';
         el.style.opacity = 1;
         el.classList.remove('vote-correct');
-      }
-    }
-
-    function highlightCorrectFrame(index) {
-      const frame = document.getElementById(`frame${index + 1}`);
-      if (frame) {
-        frame.style.display = "block";
       }
     }
 
