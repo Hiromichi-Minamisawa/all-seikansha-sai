@@ -45,11 +45,15 @@
     .incorrect {
       color: red;
     }
+
+    #choices {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div id="questionArea">
-    <div id="standby">問題を待っています...</div>
+    <div id="standby">クイズが始まるまでお待ちください</div>
     <div id="choices"></div>
   </div>
   <div class="result" id="result"></div>
@@ -94,27 +98,38 @@
       timestamp: Date.now()
     });
 
+    // Firebase /mode を監視して、表示切替
+    onValue(ref(db, "mode"), (snapshot) => {
+      const mode = snapshot.val();
+      if (mode === "quiz") {
+        standbyEl.style.display = "none";
+        choicesEl.style.display = "block";
+      } else {
+        standbyEl.style.display = "block";
+        standbyEl.textContent = "クイズが始まるまでお待ちください";
+        choicesEl.style.display = "none";
+        choicesEl.innerHTML = "";
+        resultEl.textContent = "";
+        currentQuestion = null;
+        hasAnswered = false;
+      }
+    });
+
     // currentQuestion を監視
     onValue(ref(db, "currentQuestion"), (snapshot) => {
       const data = snapshot.val();
 
       if (!data || typeof data.correct !== "number" || !data.screen) {
-        standbyEl.textContent = "問題を待っています...";
-        choicesEl.innerHTML = "";
-        resultEl.textContent = "";
-        currentQuestion = null;
-        hasAnswered = false;
         return;
       }
 
       currentQuestion = data;
       hasAnswered = false;
       selectedIndex = null;
-      standbyEl.textContent = "";
       resultEl.textContent = "";
       choicesEl.innerHTML = "";
 
-      // 固定の選択肢（1〜4）を表示
+      // 選択肢（1〜4）を表示
       ["1", "2", "3", "4"].forEach((label, index) => {
         const div = document.createElement("div");
         div.className = "choice";
