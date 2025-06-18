@@ -45,17 +45,27 @@
     }
 
     .vote-count {
-      position: absolute; bottom: 10px; right: 10px; background: #2196f3;
-      color: white; font-size: 30px; padding: 4px 12px; border-radius: 10px;
+      position: absolute; background: #008CFF;
+      color: #DFFB0A; font-size: 80px; padding: 20px 40px; border-radius: 30px 0 0 30px;
+      border-top-left-radius: 40px;   /* 左上 */
+ 　　 border-top-right-radius: 0;
+ 　　 border-bottom-right-radius: 40px; /* 右下 */
+ 　　 border-bottom-left-radius: 0;
+      font-family: 'IBM Plex Sans JP', sans-serif; 
       z-index: 2; display: none;
     }
+    #vote1 { bottom: 150px; left: 200px; }
+    #vote2 { bottom: 150px; left: 950px; }
+    #vote3 { bottom: 50px;  left: 200px; }
+    #vote4 { bottom: 50px;  left: 950px; }
+    
     .vote-correct {
       background: linear-gradient(to right, #d32f2f, #f44336);
-      color: yellow; animation: blink 0.5s steps(1) infinite;
+      color: red; animation: blink 0.5s steps(1) infinite;
     }
     @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 672px; height: 378px;
+      position: absolute; width: 655px; height: 363px;
       border: 10px solid rgba(255, 255, 0, 0.9);
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
@@ -65,6 +75,17 @@
     #frame2 { top: 129px; left: 880px; }
     #frame3 { top: 563px; left: 118px; }
     #frame4 { top: 563px; left: 880px; }
+
+      @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.1; }
+    100% { opacity: 1; }
+  }
+
+  .blink {
+    animation: blink 1s infinite;
+  }
+    
   </style>
 </head>
 <body>
@@ -154,7 +175,7 @@
     function showVotes(votes) {
       for (let i = 0; i < 4; i++) {
         const el = document.getElementById(`vote${i + 1}`);
-        el.textContent = `${votes[i]}票`;
+        el.textContent = `${votes[i]};
         el.style.display = 'block';
         el.classList.remove('vote-correct');
       }
@@ -207,22 +228,38 @@
         const answers = snap.val();
         if (!answers) return;
         const counts = [0, 0, 0, 0];
-        Object.values(answers).forEach(choice => {
-          if (choice >= 0 && choice < 4) counts[choice]++;
-        });
-        showVotes(counts);
-      });
+    　　Object.values(answers).forEach(entry => {
+        const idx = entry.choice;
+        if (typeof idx === "number" && idx >= 0 && idx < 4) {
+        counts[idx]++;
+      }
     });
 
-    onValue(ref(db, "showCorrect"), async (snapshot) => {
-      if (!snapshot.val()) return;
-      const qSnap = await get(ref(db, "currentQuestion"));
-      const question = qSnap.val();
-      if (!question || typeof question.correct !== "number") return;
-      highlightCorrectFrame(question.correct);
-      const el = document.getElementById(`vote${question.correct + 1}`);
-      if (el) el.classList.add('vote-correct');
+    showVotes(counts);
+  });
     });
+
+onValue(ref(db, "showCorrect"), async (snapshot) => {
+  if (!snapshot.val()) return;
+
+  const qSnap = await get(ref(db, "currentQuestion"));
+  const question = qSnap.val();
+  if (!question || typeof question.correct !== "number") return;
+
+  // 正解の選択肢に枠を点滅させる
+  highlightCorrectFrame(question.correct);
+
+  // 該当の票数表示エリアにも装飾を追加（任意）
+  const el = document.getElementById(`vote${question.correct + 1}`);
+  if (el) el.classList.add('vote-correct');
+});
+    function highlightCorrectFrame(index) {
+  const frame = document.getElementById(`frame${index + 1}`);
+  if (frame) {
+    frame.classList.add("blink");
+  }
+}
+    
   </script>
 </body>
 </html>
