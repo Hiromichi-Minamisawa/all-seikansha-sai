@@ -76,6 +76,7 @@
   <button id="hideExplanationBtn">解説を非表示</button>
   <button id="resetQuestionBtn">問題をリセット（待機画面へ）</button>
   <button id="scoreBtn">スコア集計</button>
+  <button id="resetParticipantsBtn">参加者リセット</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -100,7 +101,8 @@
     set,
     get,
     onValue,
-    onChildAdded
+    onChildAdded,
+    remove
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -328,6 +330,13 @@
     });
   });
 }
+  
+const resetBtn = document.getElementById("resetParticipantsBtn");
+resetBtn.onclick = () => {
+  remove(ref(db, "participants")).then(() => {
+    alert("参加者一覧をリセットしました");
+  });
+};
 
 window.setMode = async function(mode) {
   await set(ref(db, "currentQuestion/mode"), mode);
