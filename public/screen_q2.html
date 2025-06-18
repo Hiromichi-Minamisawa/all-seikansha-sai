@@ -190,14 +190,14 @@
         const answers = snap.val();
         if (!answers) return;
         const counts = [0, 0, 0, 0];
-    　　Object.values(answers).forEach(entry => {
-        const idx = entry;
-        if (typeof idx === "number" && idx >= 0 && idx < 4) {
-        counts[idx]++;
+        Object.values(answers).forEach(entry => {
+          const idx = entry;
+          if (typeof idx === "number" && idx >= 0 && idx < 4) {
+            counts[idx]++;
       }
     });
 
-    showVotes(counts);
+        showVotes(counts);
   });
     });
 
@@ -216,8 +216,8 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
   if (el) el.classList.add('vote-correct');
 });
     function highlightCorrectFrame(index) {
-  const frame = document.getElementById(`frame${index + 1}`);
-  if (frame) {
+      const frame = document.getElementById(`frame${index + 1}`);
+      if (frame) {
     frame.style.display = "block";
     frame.classList.add("blink");
   }
