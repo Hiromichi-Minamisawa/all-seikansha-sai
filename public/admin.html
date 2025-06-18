@@ -211,7 +211,8 @@
       await set(ref(db, "mode"), "quiz");  
     　await set(ref(db, "currentQuestion"), {
       screen: q.file,
-      correct: await getCorrectAnswer(q.file)
+      correct: await getCorrectAnswer(q.file),
+       startTime: Date.now()
     });
       
       askedQuestions.add(selectedIndex);
@@ -225,6 +226,7 @@
     const currentSnap = await get(ref(db, "currentQuestion"));
     const current = currentSnap.val();
     const correct = current?.correct;
+    const startTime = current?.startTime || 0;
     if (correct == null) {
       alert("正解が設定されていません");
       return;
@@ -285,18 +287,15 @@
       alert("問題をリセットし、待機画面に戻しました");
     };
 
-    window.playSE = function(id) {
-      const audio = document.getElementById(id);
-      audio.currentTime = 0;
-      audio.play();
-    };
-
-  async function getCorrectAnswer(screenFile) {
-    const key = screenFile.replace(/\./g, "_"); // ドットをアンダースコアに変換
-    const snapshot = await get(ref(db, `correctAnswers/${key}`));
-    const index = snapshot.val();
-    return typeof index === "number" ? index - 1 : null; // 1〜4 → 0〜3 に変換
-  }
+  const resetBtn = document.getElementById("resetParticipantsBtn");
+  resetBtn.onclick = () => {
+    Promise.all([
+      remove(ref(db, "participants")),
+      remove(ref(db, "scores"))
+      ]).then(() => {
+      alert("参加者とスコアをリセットしました");
+  });
+};
 
   function displayRanking() {
   const tableBody = document.querySelector("#rankingTable tbody");
@@ -332,17 +331,23 @@
   });
 }
   
-const resetBtn = document.getElementById("resetParticipantsBtn");
-resetBtn.onclick = () => {
-  remove(ref(db, "participants")).then(() => {
-    alert("参加者一覧をリセットしました");
-  });
-};
+    window.playSE = function(id) {
+      const audio = document.getElementById(id);
+      audio.currentTime = 0;
+      audio.play();
+    };
 
 window.setMode = async function(mode) {
   await set(ref(db, "mode"), mode);
   alert("表示モードを「" + mode + "」に変更しました");
-}
+};
+  
+    async function getCorrectAnswer(screenFile) {
+    const key = screenFile.replace(/\./g, "_"); // ドットをアンダースコアに変換
+    const snapshot = await get(ref(db, `correctAnswers/${key}`));
+    const index = snapshot.val();
+    return typeof index === "number" ? index - 1 : null; // 1〜4 → 0〜3 に変換
+  }
   
   </script>
 </body>
