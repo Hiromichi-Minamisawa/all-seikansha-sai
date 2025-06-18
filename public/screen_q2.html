@@ -60,7 +60,7 @@
       background: linear-gradient(to right, #d32f2f, #f44336);
       color: red; animation: blink 0.5s steps(1) infinite;
     }
-    @keyframes blink { 50% { opacity: 0; } }
+
     .blink-frame {
       position: absolute; width: 745px; height: 398px;
       border: 9px solid rgba(255, 255, 0, 0.9);
@@ -73,11 +73,22 @@
     #frame3 { top: 563px; left: 118px; }
     #frame4 { top: 563px; left: 880px; }
 
-      @keyframes blink {
+    @keyframes blink {
     0% { opacity: 1; }
     50% { opacity: 0.1; }
     100% { opacity: 1; }
   }
+      .blink-frame {
+      position: absolute; width: 745px; height: 398px;
+      border: 9px solid rgba(255, 255, 0, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+      display: none; z-index: 3;
+    }
+    #frame1 { top: 129px; left: 118px; }
+    #frame2 { top: 129px; left: 880px; }
+    #frame3 { top: 563px; left: 118px; }
+    #frame4 { top: 563px; left: 880px; }
 
   .blink {
     animation: blink 1s infinite;
@@ -207,6 +218,7 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
     function highlightCorrectFrame(index) {
   const frame = document.getElementById(`frame${index + 1}`);
   if (frame) {
+    frame.style.display = "block";
     frame.classList.add("blink");
   }
 }
