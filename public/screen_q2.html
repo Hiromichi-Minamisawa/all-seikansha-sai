@@ -173,12 +173,6 @@
       stage.style.position = 'absolute';
     }
 
-      let userId = localStorage.getItem("quizUserId");
-      if (!userId) {
-        userId = "user_" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem("quizUserId", userId);
-      }
-
       const answerRef = ref(db, `answers/${userId}`);
       get(answerRef).then(snapshot => {
         if (snapshot.exists()) {
