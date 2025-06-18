@@ -173,29 +173,6 @@
       stage.style.position = 'absolute';
     }
 
-      const answerRef = ref(db, `answers/${userId}`);
-      get(answerRef).then(snapshot => {
-        if (snapshot.exists()) {
-          const selected = snapshot.val();
-          document.querySelectorAll(".image-box").forEach((box, index) => {
-            box.style.pointerEvents = "none";
-            box.style.opacity = index === selected ? "1" : "0.4";
-          });
-        }
-      });
-
-      document.querySelectorAll(".image-box").forEach((box, index) => {
-        box.addEventListener("click", () => {
-          set(ref(db, `answers/${userId}`), index).then(() => {
-            document.querySelectorAll(".image-box").forEach((b, i) => {
-              b.style.pointerEvents = "none";
-              b.style.opacity = i === index ? "1" : "0.4";
-            });
-          });
-        });
-      });
-    };
-
     onValue(ref(db, "showVotes"), (snapshot) => {
       if (!snapshot.val() || !countdownDone) return;
       get(ref(db, "answers")).then(snap => {
