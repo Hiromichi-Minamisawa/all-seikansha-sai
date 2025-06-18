@@ -61,12 +61,10 @@
     // currentScreen の切替
     onValue(ref(db, "currentScreen"), snap => {
       const val = snap.val();
+      if (!val) return;
       if(val?.endsWith(".html")){
         iframe.src = val;
-        iframe.onload = ()=> {
-          // 中のアンサーチェック / 正解発表は各 HTML 内で制御される想定
-        };
-    window.switchMode("quiz"); // モードを明示的に quiz に
+        window.switchMode("quiz"); // モードを明示的に quiz に
   } else if(val?.endsWith(".png")){
     iframe.src = "";
     logo.innerHTML = `<img src="/images/${val}" alt="待機画面">`;
