@@ -77,6 +77,7 @@
   <button id="resetQuestionBtn">問題をリセット（待機画面へ）</button>
   <button id="scoreBtn">スコア集計</button>
   <button id="resetParticipantsBtn">参加者リセット</button>
+  <button id="resetScoresBtn">スコアリセット</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -292,11 +293,15 @@
 
     const resetBtn = document.getElementById("resetParticipantsBtn");
     resetBtn.onclick = () => {
-      Promise.all([
-        remove(ref(db, "participants")),
-        remove(ref(db, "scores"))
-      ]).then(() => {
-        alert("参加者とスコアをリセットしました");
+      remove(ref(db, "participants")).then(() => {
+        alert("参加者をリセットしました");
+      });
+    };
+    
+    const resetScoresBtn = document.getElementById("resetScoresBtn");
+    resetScoresBtn.onclick = () => {
+      remove(ref(db, "scores")).then(() => {
+        alert("スコアをリセットしました");
       });
     };
 
