@@ -59,6 +59,7 @@
 
   <h4>参加者一覧</h4>
   <ul id="participantList"></ul>
+
   <h4>ランキング</h4>
   <table id="rankingTable" border="1" cellpadding="5" style="background: white; color: black;">
     <thead>
@@ -85,80 +86,53 @@
   <audio id="se1" src="pinpon.mp3"></audio>
   <audio id="se2" src="boo.mp3"></audio>
 
-<div style="margin-top: 2rem;">
-  <h3>表示モード切り替え</h3>
-  <button onclick="setMode('logo')">ロゴ表示</button>
-  <button onclick="setMode('quiz')">クイズ表示</button>
-  <button onclick="setMode('ranking')">ランキング表示</button>
-</div>
-  
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getDatabase,
-    ref,
-    set,
-    get,
-    onValue,
-    onChildAdded,
-    remove
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  <div style="margin-top: 2rem;">
+    <h3>表示モード切り替え</h3>
+    <button onclick="setMode('logo')">ロゴ表示</button>
+    <button onclick="setMode('quiz')">クイズ表示</button>
+    <button onclick="setMode('ranking')">ランキング表示</button>
+  </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
-    authDomain: "all-seikanshasai.firebaseapp.com",
-    databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
-    projectId: "all-seikanshasai",
-    storageBucket: "all-seikanshasai.appspot.com",
-    messagingSenderId: "24572064606",
-    appId: "1:24572064606:web:a7f94b0561333f272055cf"
-  };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      set,
+      get,
+      onValue,
+      onChildAdded,
+      remove
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
 
-  // 参加者表示
-  const participantList = document.getElementById("participantList");
-  onChildAdded(ref(db, "participants"), (snapshot) => {
-    const data = snapshot.val();
-    const li = document.createElement("li");
-    li.textContent = data.name;
-    participantList.appendChild(li);
-  });
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    const questionList = [
-      { file: "screen_q1.html", title: "Q1　次の内、社長はどれ？" },
-      { file: "screen_q2.html", title: "Q2　次の内、西華産業の本社はどれ？" },
-      { file: "screen_q3.html", title: "Q3　次の内、西華産業の支店が無いのはどこ？" },
-      { file: "screen_q4.html", title: "Q4　次の内、西華産業の支店があるのはどこ？" },
-      { file: "screen_q5.html", title: "Q5　次の内、西華産業の支店があるのはどこ？" },
-      { file: "screen_q6.html", title: "Q6　次の内、実際にある学校給食のメニューはどれ？" },
-      { file: "screen_q7.html", title: "Q7　今日は何の日？" },
-      { file: "screen_q8.html", title: "Q8　次の内、1947年10月の出来事はどれ？" },
-      { file: "screen_q9.html", title: "Q9　新東京ビルのエレベーターの数は？" },
-      { file: "screen_q10.html", title: "Q10　新東京ビルの階数は？" },
-      { file: "screen_q11.html", title: "Q11　「してん」があるのはどこ？" },
-      { file: "screen_q12.html", title: "Q12　西華産業の設立はいつ？" },
-      { file: "screen_q13.html", title: "Q13　視線がぶつかるのはどれ？" },
-      { file: "screen_q14.html", title: "Q14　西華産業野球部のサードは誰？" },
-      { file: "screen_q15.html", title: "Q15　野球はどれ？" },
-      { file: "screen_q16.html", title: "Q16　仲間外れは誰？" },
-      { file: "screen_q17.html", title: "Q17　今、令和何年？" },
-      { file: "screen_q18.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q19.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q20.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q21.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q22.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q23.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q24.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q25.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q26.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q27.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q28.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q29.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q30.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q31.html", title: "Q31　練習問題　今、令和何年？" }
-    ];
+    const participantList = document.getElementById("participantList");
+    onChildAdded(ref(db, "participants"), (snapshot) => {
+      const data = snapshot.val();
+      const li = document.createElement("li");
+      li.textContent = data.name;
+      participantList.appendChild(li);
+    });
+
+    const questionList = [...Array(31).keys()].map(i => {
+      const num = i + 1;
+      return {
+        file: `screen_q${num}.html`,
+        title: num <= 17 ? `Q${num}　問題タイトルを入力` : `ここに問題名を入れてください`
+      };
+    });
 
     const listEl = document.getElementById("questionList");
     const explEl = document.getElementById("explanationList");
@@ -211,49 +185,49 @@
       await set(ref(db, "currentQuestion"), {
         screen: q.file,
         correct: await getCorrectAnswer(q.file),
-        startTime: Date.now(),
-        duration: 10000 
+        startTime: Date.now() // 回答時間の基準になる
       });
-      
+
       askedQuestions.add(selectedIndex);
       updateAskedVisuals();
     };
 
     document.getElementById("showCorrectBtn").onclick = async () => {
       await set(ref(db, "showCorrect"), true);
-    displayRanking();
+      displayRanking();
 
-    const currentSnap = await get(ref(db, "currentQuestion"));
-    const current = currentSnap.val();
-    const correct = current?.correct;
-    const startTime = current?.startTime || 0;
-    if (correct == null) {
-      alert("正解が設定されていません");
-      return;
-    }
-      
-    const answersSnap = await get(ref(db, "answers"));
-    const answers = answersSnap.val() || {};
+      const currentSnap = await get(ref(db, "currentQuestion"));
+      const current = currentSnap.val();
+      const correct = current?.correct;
+      const startTime = current?.startTime || 0;
 
-    const newScores = {};
+      if (correct == null) {
+        alert("正解が設定されていません");
+        return;
+      }
 
-for (const [userId, answer] of Object.entries(answers)) {
-  const isCorrect = Number(answer.choice) === correct;
-  if (!(userId in newScores)) {
-    newScores[userId] = {
-      name: answer.name,
-      score: 0,
-      time: 0
+      const answersSnap = await get(ref(db, "answers"));
+      const answers = answersSnap.val() || {};
+
+      const scoresRef = ref(db, "scores");
+      const scoresSnap = await get(scoresRef);
+      const scores = scoresSnap.val() || {};
+
+      for (const [userId, answer] of Object.entries(answers)) {
+        const isCorrect = answer.choice === correct;
+        const prev = scores[userId] || { name: answer.name, score: 0, time: 0 };
+        const answerTime = (answer.timestamp || 0) - startTime;
+
+        scores[userId] = {
+          name: answer.name,
+          score: prev.score + (isCorrect ? 1 : 0),
+          time: prev.time + (answerTime > 0 ? answerTime : 0)
+        };
+      }
+
+      await set(scoresRef, scores);
     };
-  }
 
-if (isCorrect) {
-  newScores[userId].score += 1;
-  newScores[userId].time += answer.timeTaken || 0;
-}};
-
-      await set(ref(db, "scores"), newScores);
-      
     document.getElementById("resetBtn").onclick = () => {
       set(ref(db, "answers"), {});
       set(ref(db, "showCorrect"), false);
@@ -278,89 +252,78 @@ if (isCorrect) {
       set(ref(db, "showExplanation"), false);
       set(ref(db, "currentScreen"), "screen_stand-by.png");
     };
-     document.getElementById("resetQuestionBtn").onclick = async () => {
-       await set(ref(db, "currentQuestion"), null);
-       await set(ref(db, "mode"), "logo");
-       await set(ref(db, "currentScreen"), "screen_stand-by.png");
-       await set(ref(db, "showCorrect"), false);
-       await set(ref(db, "showVotes"), false);
-       await set(ref(db, "answers"), {});
-       await set(ref(db, "showExplanation"), false);
-       alert("問題をリセットし、待機画面に戻しました");
+
+    document.getElementById("resetQuestionBtn").onclick = async () => {
+      await set(ref(db, "currentQuestion"), null);
+      await set(ref(db, "mode"), "logo");
+      await set(ref(db, "currentScreen"), "screen_stand-by.png");
+      await set(ref(db, "showCorrect"), false);
+      await set(ref(db, "showVotes"), false);
+      await set(ref(db, "answers"), {});
+      await set(ref(db, "showExplanation"), false);
+      alert("問題をリセットし、待機画面に戻しました");
     };
 
-  const resetBtn = document.getElementById("resetParticipantsBtn");
-  resetBtn.onclick = () => {
-    Promise.all([
-      remove(ref(db, "participants")),
-      remove(ref(db, "scores"))
+    const resetBtn = document.getElementById("resetParticipantsBtn");
+    resetBtn.onclick = () => {
+      Promise.all([
+        remove(ref(db, "participants")),
+        remove(ref(db, "scores"))
       ]).then(() => {
-      alert("参加者とスコアをリセットしました");
-  });
-};
-
-  function displayRanking() {
-  const tableBody = document.querySelector("#rankingTable tbody");
-  tableBody.innerHTML = ""; // 既存の行をクリア
-
-  const scoresRef = ref(db, "scores");
-  get(scoresRef).then(snapshot => {
-    const scores = snapshot.val();
-    if (!scores) return;
-
-    const sorted = Object.entries(scores)
-      .map(([id, data]) => ({
-        name: data.name,
-        score: data.score || 0,
-        time: data.time || 0
-      }))
-      .sort((a, b) => {
-        // 得点が高い順 → 同点なら時間が短い順
-        if (b.score !== a.score) return b.score - a.score;
-        return a.time - b.time;
+        alert("参加者とスコアをリセットしました");
       });
+    };
 
-    sorted.forEach((entry, index) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${entry.name}</td>
-        <td>${entry.score}</td>
-        <td>${(entry.time / 1000).toFixed(2)}</td>
-      `;
-      tableBody.appendChild(tr);
-    });
-  });
-}
-  
+    function displayRanking() {
+      const tableBody = document.querySelector("#rankingTable tbody");
+      tableBody.innerHTML = "";
+
+      const scoresRef = ref(db, "scores");
+      get(scoresRef).then(snapshot => {
+        const scores = snapshot.val();
+        if (!scores) return;
+
+        const sorted = Object.entries(scores)
+          .map(([id, data]) => ({
+            name: data.name,
+            score: data.score || 0,
+            time: data.time || 0
+          }))
+          .sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.time - b.time;
+          });
+
+        sorted.forEach((entry, index) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.name}</td>
+            <td>${entry.score}</td>
+            <td>${(entry.time / 1000).toFixed(2)}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      });
+    }
+
     window.playSE = function(id) {
       const audio = document.getElementById(id);
       audio.currentTime = 0;
       audio.play();
     };
 
-window.setMode = async function(mode) {
-  await set(ref(db, "mode"), mode);
+    window.setMode = async function(mode) {
+      await set(ref(db, "mode"), mode);
+      alert("表示モードを「" + mode + "」に変更しました");
+    };
 
-  if (mode === "logo") {
-    await set(ref(db, "currentScreen"), "top.png");
-  } else if (mode === "quiz") {
-    // クイズモード＝待機用画像（stand-by）を表示
-    await set(ref(db, "currentScreen"), "screen_stand-by.png");
-  } else if (mode === "ranking") {
-    await set(ref(db, "currentScreen"), "ranking");
-  }
-  
-  alert("表示モードを「" + mode + "」に変更しました");
-};
-  
     async function getCorrectAnswer(screenFile) {
-    const key = screenFile.replace(/\./g, "_"); // ドットをアンダースコアに変換
-    const snapshot = await get(ref(db, `correctAnswers/${key}`));
-    const index = snapshot.val();
-    return typeof index === "number" ? index - 1 : null; // 1〜4 → 0〜3 に変換
-  }
-  
+      const key = screenFile.replace(/\./g, "_");
+      const snapshot = await get(ref(db, `correctAnswers/${key}`));
+      const index = snapshot.val();
+      return typeof index === "number" ? index - 1 : null;
+    }
   </script>
 </body>
 </html>
