@@ -207,13 +207,13 @@
       await set(ref(db, "showVotes"), false);
       await set(ref(db, "answers"), {});
       await set(ref(db, "showExplanation"), false);
-      await set(ref(db, "mode"), "quiz");  
-    　await set(ref(db, "currentQuestion"), {
-      screen: q.file,
-      correct: await getCorrectAnswer(q.file),
-       startTime: Date.now(),
-       duration: 10000 
-    });
+      await set(ref(db, "mode"), "quiz");
+      await set(ref(db, "currentQuestion"), {
+        screen: q.file,
+        correct: await getCorrectAnswer(q.file),
+        startTime: Date.now(),
+        duration: 10000 
+      });
       
       askedQuestions.add(selectedIndex);
       updateAskedVisuals();
@@ -254,7 +254,6 @@ if (isCorrect) {
 
       await set(ref(db, "scores"), newScores);
       
-
     document.getElementById("resetBtn").onclick = () => {
       set(ref(db, "answers"), {});
       set(ref(db, "showCorrect"), false);
