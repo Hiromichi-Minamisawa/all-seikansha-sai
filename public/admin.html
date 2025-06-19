@@ -55,20 +55,19 @@
       <h3>解説リスト</h3>
       <div class="explanation-list" id="explanationList"></div>
     </div>
-    </div>
-      <h4>参加者一覧</h4>
-      <ul id="participantList"></ul>
-  　　<h4>ランキング</h4>
-　　　<table id="rankingTable" border="1" cellpadding="5" style="background: white; color: black;">
-　　  <thead>
-     <tr><th>順位</th><th>名前</th><th>得点</th><th>合計タイム（秒）</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
-    </div>
   </div>
 
- <button id="sendBtn">出題する</button>
+  <h4>参加者一覧</h4>
+  <ul id="participantList"></ul>
+  <h4>ランキング</h4>
+  <table id="rankingTable" border="1" cellpadding="5" style="background: white; color: black;">
+    <thead>
+      <tr><th>順位</th><th>名前</th><th>得点</th><th>合計タイム（秒）</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button id="sendBtn">出題する</button>
   <button id="showCorrectBtn">正解を表示</button>
   <button id="resetBtn">回答をリセット</button>
   <button id="showVotesBtn">アンサーチェック</button>
@@ -221,7 +220,7 @@
     };
 
     document.getElementById("showCorrectBtn").onclick = async () => {
-    await set(ref(db, "showCorrect"), true);
+      await set(ref(db, "showCorrect"), true);
     displayRanking();
 
     const currentSnap = await get(ref(db, "currentQuestion"));
@@ -251,10 +250,10 @@ for (const [userId, answer] of Object.entries(answers)) {
 if (isCorrect) {
   newScores[userId].score += 1;
   newScores[userId].time += answer.timeTaken || 0;
-}
+}};
 
-    await set(ref(db, "scores"), newScores);
-  };    
+      await set(ref(db, "scores"), newScores);
+      
 
     document.getElementById("resetBtn").onclick = () => {
       set(ref(db, "answers"), {});
@@ -281,14 +280,14 @@ if (isCorrect) {
       set(ref(db, "currentScreen"), "screen_stand-by.png");
     };
      document.getElementById("resetQuestionBtn").onclick = async () => {
-      await set(ref(db, "currentQuestion"), null);
-      await set(ref(db, "mode"), "logo");
-      await set(ref(db, "currentScreen"), "screen_stand-by.png");
-      await set(ref(db, "showCorrect"), false);
-      await set(ref(db, "showVotes"), false);
-      await set(ref(db, "answers"), {});
-      await set(ref(db, "showExplanation"), false);
-      alert("問題をリセットし、待機画面に戻しました");
+       await set(ref(db, "currentQuestion"), null);
+       await set(ref(db, "mode"), "logo");
+       await set(ref(db, "currentScreen"), "screen_stand-by.png");
+       await set(ref(db, "showCorrect"), false);
+       await set(ref(db, "showVotes"), false);
+       await set(ref(db, "answers"), {});
+       await set(ref(db, "showExplanation"), false);
+       alert("問題をリセットし、待機画面に戻しました");
     };
 
   const resetBtn = document.getElementById("resetParticipantsBtn");
