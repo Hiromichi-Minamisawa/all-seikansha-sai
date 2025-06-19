@@ -251,8 +251,8 @@
         
         if (isCorrect) {
           newScores[userId].score += 1;
+          newScores[userId].time += answer.timeTaken || 0;
         }
-        newScores[userId].time += answer.timestamp || 0 - startTime;
       }
 
       await set(ref(db, "scores"), newScores);
@@ -349,6 +349,15 @@
 
     window.setMode = async function(mode) {
       await set(ref(db, "mode"), mode);
+
+      if (mode === "logo") {
+        await set(ref(db, "currentScreen"), "top.png");
+      } else if (mode === "quiz") {
+        await set(ref(db, "currentScreen"), "screen_stand-by.png");
+      } else if (mode === "ranking") {
+        await set(ref(db, "currentScreen"), "ranking");
+      }
+      
       alert("表示モードを「" + mode + "」に変更しました");
     };
 
