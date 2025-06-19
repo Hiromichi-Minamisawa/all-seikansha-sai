@@ -350,7 +350,7 @@ window.setMode = async function(mode) {
   } else if (mode === "ranking") {
     await set(ref(db, "currentScreen"), "ranking");
   }
-
+  
   alert("表示モードを「" + mode + "」に変更しました");
 };
   
