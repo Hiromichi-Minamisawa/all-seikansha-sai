@@ -222,51 +222,16 @@
 
     document.getElementById("showCorrectBtn").onclick = async () => {
       await set(ref(db, "showCorrect"), true);
-      displayRanking();
-
-      const currentSnap = await get(ref(db, "currentQuestion"));
-      const current = currentSnap.val();
-      const correct = current?.correct;
-      const startTime = current?.startTime || 0;
-
-      if (correct == null) {
-        alert("正解が設定されていません");
-        return;
-      }
-
-      const answersSnap = await get(ref(db, "answers"));
-      const answers = answersSnap.val() || {};
-
-      const newScores = {};
-
-      for (const [userId, answer] of Object.entries(answers)) {
-        const isCorrect = Number(answer.choice) === correct;
-        if (!(userId in newScores)) {
-          newScores[userId] = {
-            name: answer.name,
-            score: 0,
-            time: 0
-          };
-        }
-        
-        if (isCorrect) {
-          newScores[userId].score += 1;
-          newScores[userId].time += answer.timeTaken || 0;
-        }
-      }
-
-      await set(ref(db, "scores"), newScores);
     };
-
+    
     document.getElementById("resetBtn").onclick = () => {
       set(ref(db, "answers"), {});
       set(ref(db, "showCorrect"), false);
     };
-
+    
     document.getElementById("showVotesBtn").onclick = () => {
       set(ref(db, "showVotes"), true);
     };
-
     document.getElementById("sendExplanationBtn").onclick = () => {
       if (selectedExplanationIndex === null) {
         alert("解説を選んでください");
@@ -307,6 +272,10 @@
         alert("スコアをリセットしました");
       });
     };
+    
+    document.getElementById("scoreBtn").onclick = () => {
+      displayRanking();
+    };
 
     function displayRanking() {
       const tableBody = document.querySelector("#rankingTable tbody");
@@ -340,6 +309,10 @@
         });
       });
     }
+    
+    onValue(ref(db, "scores"), () => {
+      displayRanking();
+    });
 
     window.playSE = function(id) {
       const audio = document.getElementById(id);
