@@ -222,6 +222,33 @@
 
     document.getElementById("showCorrectBtn").onclick = async () => {
       await set(ref(db, "showCorrect"), true);
+      const currentSnap = await get(ref(db, "currentQuestion"));
+      const current = currentSnap.val();
+      const correct = current?.correct;
+      const startTime = current?.startTime || 0;
+
+      if (correct == null) {
+        alert("正解が設定されていません");
+        return;
+      }
+      
+      const answersSnap = await get(ref(db, "answers"));
+      const answers = answersSnap.val() || {};
+      const scoresRef = ref(db, "scores");
+      const scoresSnap = await get(scoresRef);
+      const scores = scoresSnap.val() || {};
+      
+      for (const [userId, answer] of Object.entries(answers)) {
+        const isCorrect = Number(answer.choice) === correct;
+        const prev = scores[userId] || { name: answer.name, score: 0, time: 0 };
+        const answerTime = (answer.timestamp || 0) - startTime;
+        if (isCorrect) {
+          prev.score += 1;
+          prev.time += answer.timeTaken || answerTime;
+        }
+        scores[userId] = prev;
+      }
+      await set(scoresRef, scores);      
     };
     
     document.getElementById("resetBtn").onclick = () => {
