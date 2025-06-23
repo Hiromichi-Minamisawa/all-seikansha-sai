@@ -110,7 +110,8 @@
       getDatabase,
       ref,
       onValue,
-      set
+      set,
+      get
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -141,16 +142,26 @@
     let selectedIndex = null;
     let hasStarted = false;
 
-    loginButton.onclick = () => {
+    loginButton.onclick = async  () => {
       const name = nameInput.value.trim();
       if (!name) {
         alert("名前を入力してください");
         return;
       }
+      
+      const participantsRef = ref(db, "participants");
+      const snap = await get(participantsRef);
+      const participants = snap.val() || {};
+      const nameExists = Object.values(participants).some(p => p.name === name);
+
+      if (nameExists) {
+        alert("この名前はすでに使われています。別の名前を入力してください。");
+        return;
+      }
+      
 
       userName = name;
-
-      set(ref(db, `participants/${userId}`), {
+      await set(ref(db, `participants/${userId}`), {
         name: userName,
         timestamp: Date.now()
       });
