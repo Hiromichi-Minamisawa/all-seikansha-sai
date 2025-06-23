@@ -4,14 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭 - Screen Q15</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=IBM+Plex+Sans+JP:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background: black;
-      overflow: hidden;
-      font-family: 'Inter', sans-serif;
-    }
+    body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
     #stage {
       position: absolute;
       width: 1920px;
@@ -21,18 +16,10 @@
       background-size: 100% 100%;
     }
     .countdown-circle {
-      position: absolute;
-      top: 850px;
-      left: 1670px;
-      width: 200px;
-      height: 200px;
+      position: absolute; top: 850px; left: 1670px; width: 200px; height: 200px;
       background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3),
-                  inset 6px 6px 12px rgba(0,0,0,0.4);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
       z-index: 10;
     }
     #countdown-number {
@@ -41,7 +28,7 @@
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
-    .vote-count {
+ .vote-count {
       position: absolute; background: #008CFF;
       color: #DFFB0A; font-size: 80px; padding: 20px 40px; 
       border-radius: 40px 0 40px 0;
@@ -50,10 +37,10 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #vote1 { bottom: 300px; left: 400px; }
-    #vote2 { bottom: 300px; left: 1250px; }
-    #vote3 { bottom: 600px;  left: 400px; }
-    #vote4 { bottom: 600px;  left: 1250px; }
+    #vote1 { top: 355px; left: 700px; }
+    #vote2 { top: 355px; left: 1470px; }
+    #vote3 { top: 750px;  left: 700px; }
+    #vote4 { top: 750px;  left: 1470px; }
     
     .answer-frame {
       position: absolute;
@@ -92,21 +79,15 @@
     animation: blink 1s infinite;
   }
     
-    /* 🔽 ヒント用スタイル */
-    .hint {
+    .dimmed {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
       position: absolute;
-      font-family: 'IBM Plex Sans JP', sans-serif;
-      font-weight: 700;
-      font-size: 100px;
-      color: black;
-      display: none;
-      z-index: 20;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+      width: 755px;
+      height: 410px;
+      z-index: 2;
     }
-    #hint1 { top: 420px; left: 295px; }
-    #hint2 { top: 420px; left: 1085px; }
-    #hint3 { top: 835px; left: 397px; }
-    #hint4 { top: 835px; left: 1140px; }
+    
   </style>
 </head>
 <body>
@@ -123,17 +104,16 @@
     <div class="answer-frame" id="frame2"></div>
     <div class="answer-frame" id="frame3"></div>
     <div class="answer-frame" id="frame4"></div>
-
-    <!-- 🔽 ヒント表示エリア -->
-    <div class="hint" id="hint1">nong-gu</div>
-    <div class="hint" id="hint2">chuggu</div>
-    <div class="hint" id="hint3">yagu</div>
-    <div class="hint" id="hint4">taggu</div>
+    <div class="dimmed" id="dim1" style="display:none; top:129px; left:118px;"></div>
+    <div class="dimmed" id="dim2" style="display:none; top:129px; left:880px;"></div>
+    <div class="dimmed" id="dim3" style="display:none; top:563px; left:118px;"></div>
+    <div class="dimmed" id="dim4" style="display:none; top:563px; left:880px;"></div>
+  
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
@@ -156,18 +136,9 @@
       const countdownEl = document.getElementById('countdown-number');
       const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
-
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
-
-        if (count === 5) {
-          // 🔽 ヒント表示
-          for (let i = 1; i <= 4; i++) {
-            document.getElementById(`hint${i}`).style.display = 'block';
-          }
-        }
-
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
@@ -211,14 +182,14 @@
         const answers = snap.val();
         if (!answers) return;
         const counts = [0, 0, 0, 0];
-    　　Object.values(answers).forEach(entry => {
-        const idx = Number(entry.choice);
-        if (!isNaN(idx) && idx >= 0 && idx < 4) {
-        counts[idx]++;
+        Object.values(answers).forEach(entry => {
+          const idx = Number(entry.choice);
+          if (!isNaN(idx) && idx >= 0 && idx < 4) {
+            counts[idx]++;
       }
     });
 
-    showVotes(counts);
+        showVotes(counts);
   });
     });
 
@@ -231,16 +202,23 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
 
   // 正解の選択肢に枠を点滅させる
   highlightCorrectFrame(question.correct);
-
+  
   // 該当の票数表示エリアにも装飾を追加（任意）
   const el = document.getElementById(`vote${question.correct + 1}`);
   if (el) el.classList.add('vote-correct');
+
+  for (let i = 0; i < 4; i++) {
+    const dim = document.getElementById(`dim${i + 1}`);
+    if (i !== question.correct && dim) {
+      dim.style.display = "block";
+    }
+  }
 });
     function highlightCorrectFrame(index) {
-  const frame = document.getElementById(`frame${index + 1}`);
-  if (frame) {
-    frame.style.display = "block";
-    frame.classList.add("blink");
+      const frame = document.getElementById(`frame${index + 1}`);
+      if (frame) {
+        frame.style.display = "block";
+        frame.classList.add("blink");
   }
 }
   </script>
