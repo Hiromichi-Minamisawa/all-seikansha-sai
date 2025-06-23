@@ -169,8 +169,8 @@
         if (!answers) return;
         const counts = [0, 0, 0, 0];
         Object.values(answers).forEach(entry => {
-          const idx = entry;
-          if (typeof idx === "number" && idx >= 0 && idx < 4) {
+          const idx = Number(entry.choice);
+          if (!isNaN(idx) && idx >= 0 && idx < 4) {
             counts[idx]++;
       }
     });
