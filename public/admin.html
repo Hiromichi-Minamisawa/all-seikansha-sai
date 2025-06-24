@@ -221,7 +221,6 @@
     };
 
     document.getElementById("showCorrectBtn").onclick = async () => {
-      await set(ref(db, "showCorrect"), true);
       const currentSnap = await get(ref(db, "currentQuestion"));
       const current = currentSnap.val();
       const startTime = current?.startTime || 0;
@@ -241,6 +240,8 @@
       }
 
       const correctIndex = Number(correct) - 1;
+
+      await set(ref(db, "showCorrect"), true);
       
       const answersSnap = await get(ref(db, "answers"));
       const answers = answersSnap.val() || {};
