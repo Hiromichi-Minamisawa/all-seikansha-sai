@@ -226,11 +226,22 @@
       const current = currentSnap.val();
       const correct = current?.correct;
       const startTime = current?.startTime || 0;
+      const screen = current?.screen;
+
+      if (!screen) {
+        alert("現在の問題情報が取得できません");
+        return;
+      }
+      const key = screen.replace(/\./g, "_");
+      const correctSnap = await get(ref(db, `correctAnswers/${key}`));
+      const correct = correctSnap.val();
 
       if (correct == null) {
         alert("正解が設定されていません");
         return;
       }
+
+      const correctIndex = Number(correct) - 1;
       
       const answersSnap = await get(ref(db, "answers"));
       const answers = answersSnap.val() || {};
@@ -239,7 +250,7 @@
       const scores = scoresSnap.val() || {};
       
       for (const [userId, answer] of Object.entries(answers)) {
-        const isCorrect = Number(answer.choice) === correct;
+        const isCorrect = Number(answer.choice) === correctIndex;
         const prev = scores[userId] || { name: answer.name, score: 0, time: 0 };
         const answerTime = (answer.timestamp || 0) - startTime;
         if (isCorrect) {
