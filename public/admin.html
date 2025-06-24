@@ -235,7 +235,7 @@
       const correctSnap = await get(ref(db, `correctAnswers/${key}`));
       const correct = correctSnap.val();
 
-      if (correctFromFirebase == null) {
+      if (correct == null) {
         alert("正解が設定されていません");
         return;
       }
