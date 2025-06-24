@@ -66,6 +66,21 @@
     .num3 { background-color: #028F0B; }
     .num4 { background-color: #E4DD1D; color: black; }
 
+    .answer-frame {
+      position: absolute;
+      width: 745px;
+      height: 398px;
+      border: 9px solid rgba(0, 128, 255, 0.9);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+    #frame1 { top: 140px; left: 130px; }
+    #frame2 { top: 140px; left: 870px; }
+    #frame3 { top: 563px; left: 130px; }
+    #frame4 { top: 563px; left: 870px; }
+
     .vote-count {
       position: absolute; background: #008CFF;
       color: #DFFB0A; font-size: 80px; padding: 20px 40px;
@@ -142,6 +157,10 @@
       <div class="choice-number num4">4</div>
       <img src="/images/sample_q1_4.png">
     </div>
+    <div class="answer-frame" id="frame1"></div>
+    <div class="answer-frame" id="frame2"></div>
+    <div class="answer-frame" id="frame3"></div>
+    <div class="answer-frame" id="frame4"></div>
     <div class="vote-count" id="vote4">0票</div>
     <div class="blink-frame" id="frame1"></div>
     <div class="blink-frame" id="frame2"></div>
