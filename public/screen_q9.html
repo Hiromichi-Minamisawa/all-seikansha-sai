@@ -61,13 +61,18 @@
       color: red; animation: blink 0.5s steps(1) infinite;
     }
 
+    @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 720px; height: 125px;
+      position: absolute; width: 745px; height: 398px;
       border: 9px solid rgba(255, 255, 0, 0.9);
-      border-radius: 40px;
+      border-radius: 12px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
       display: none; z-index: 3;
     }
+    #frame1 { top: 129px; left: 118px; } 
+    #frame2 { top: 129px; left: 880px; } 
+    #frame3 { top: 563px; left: 118px; } 
+    #frame4 { top: 563px; left: 880px; }
 
     @keyframes blink {
     0% { opacity: 1; }
