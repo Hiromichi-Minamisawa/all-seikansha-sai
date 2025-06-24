@@ -29,18 +29,18 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
  .vote-count {
-      position: absolute; background: #008CFF;
+      position: absolute; background: #53B4ED;
       color: #DFFB0A; font-size: 80px; padding: 20px 40px; 
-      border-radius: 40px 0 40px 0;
+      border-radius: 40px 0 20px 0;
       font-family: 'IBM Plex Sans JP', sans-serif; 
       z-index: 2; display: none;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #vote1 { top: 385px; left: 740px; }
-    #vote2 { top: 385px; left: 1510px; }
-    #vote3 { top: 850px;  left: 740px; }
-    #vote4 { top: 850px;  left: 1510px; }
+    #vote1 { top: 383px; left: 742px; }
+    #vote2 { top: 383px; left: 1510px; }
+    #vote3 { top: 810px;  left: 742px; }
+    #vote4 { top: 810px;  left: 1510px; }
     
     .answer-frame {
       position: absolute;
@@ -57,8 +57,6 @@
     #frame4 { top: 563px; left: 880px; }   /* 右下 → 選択肢4 */
 
      .vote-correct {
-      background: linear-gradient(to right, #d32f2f, #f44336);
-      color: red; animation: blink 0.5s steps(1) infinite;
     }
 
     @keyframes blink { 50% { opacity: 0; } }
