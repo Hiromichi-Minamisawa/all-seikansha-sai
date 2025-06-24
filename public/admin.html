@@ -224,7 +224,6 @@
       await set(ref(db, "showCorrect"), true);
       const currentSnap = await get(ref(db, "currentQuestion"));
       const current = currentSnap.val();
-      const correct = current?.correct;
       const startTime = current?.startTime || 0;
       const screen = current?.screen;
 
@@ -236,7 +235,7 @@
       const correctSnap = await get(ref(db, `correctAnswers/${key}`));
       const correct = correctSnap.val();
 
-      if (correct == null) {
+      if (correctFromFirebase == null) {
         alert("正解が設定されていません");
         return;
       }
