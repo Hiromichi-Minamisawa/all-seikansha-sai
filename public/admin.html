@@ -311,7 +311,13 @@
       const scoresRef = ref(db, "scores");
       get(scoresRef).then(snapshot => {
         const scores = snapshot.val();
-        if (!scores) return;
+        
+        if (!scores || Object.keys(scores).length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4">データがありません</td>`;
+          tableBody.appendChild(tr);
+          return;
+        }
 
         const sorted = Object.entries(scores)
           .map(([id, data]) => ({
