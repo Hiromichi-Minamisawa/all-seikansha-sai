@@ -93,6 +93,8 @@
   <div id="loginScreen">
     <input id="nameInput" type="text" placeholder="名前を入力してください" />
     <br />
+    <input id="idInput" type="text" placeholder="社員番号を入力してください" />
+    <br />
     <button id="loginButton">ログイン</button>
   </div>
 
@@ -145,16 +147,25 @@
     const resultEl = document.getElementById("result");
 
     let userName = "";
-    const userId = "user_" + Math.random().toString(36).substring(2, 10);
+    let userId = "";
     let currentQuestion = null;
     let hasAnswered = false;
     let selectedIndex = null;
     let hasStarted = false;
 
     loginButton.onclick = async  () => {
+      const id = document.getElementById("idInput").value.trim();
       const name = nameInput.value.trim();
-      if (!name) {
-        alert("名前を入力してください");
+      if (!id || !name) {
+        alert("5桁の社員番号と名前を入力してください");
+        return;
+      }
+      
+      const allowedSnap = await get(ref(db, `allowedUsers/${id}`));
+      const allowedName = allowedSnap.val();
+      
+      if (!allowedName || allowedName !== name) {
+        alert("社員番号または名前が正しくありません");
         return;
       }
       
@@ -168,8 +179,10 @@
         return;
       }
       
+      userId = id;
       userName = name;
       localStorage.setItem("quizUserName", userName);
+      localStorage.setItem("quizUserId", userId);
       await set(ref(db, `participants/${userId}`), {
         name: userName,
         timestamp: Date.now()
