@@ -126,6 +126,15 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    
+    // ローカルストレージに保存された名前があれば復元
+    const savedName = localStorage.getItem("quizUserName");
+    if (savedName) {
+      userName = savedName;
+      loginScreen.classList.add("hidden");
+      questionArea.classList.remove("hidden");
+      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
+    }
 
     const loginScreen = document.getElementById("loginScreen");
     const nameInput = document.getElementById("nameInput");
@@ -159,8 +168,8 @@
         return;
       }
       
-
       userName = name;
+      localStorage.setItem("quizUserName", userName);
       await set(ref(db, `participants/${userId}`), {
         name: userName,
         timestamp: Date.now()
