@@ -240,11 +240,17 @@
       }, remaining > 0 ? remaining : 0);
     });
 
-    onValue(ref(db, "showCorrect"), (snapshot) => {
+    onValue(ref(db, "showCorrect"), async (snapshot) => {
       const show = snapshot.val();
       if (show && currentQuestion && selectedIndex !== null) {
-        const correct = currentQuestion.correct;
-        if (selectedIndex === correct) {
+        const screen = currentQuestion.screen;
+        if (!screen) return;
+
+        const key = screen.replace(/\./g, "_");
+        const correctSnap = await get(ref(db, `correctAnswers/${key}`));
+        const correctIndex = Number(correctSnap.val()) - 1;
+        
+        if (selectedIndex === correctIndex) {
           resultEl.textContent = "おめでとう！　正解です！🎉";
           resultEl.className = "result correct";
         } else {
