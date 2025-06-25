@@ -229,15 +229,22 @@
   });
     });
 
-onValue(ref(db, "showCorrect"), async (snapshot) => {
-  if (!snapshot.val()) return;
-
-  const qSnap = await get(ref(db, "currentQuestion"));
-  const question = qSnap.val();
-  if (!question || typeof question.correct !== "number") return;
-
-  // 正解の選択肢に枠を点滅させる
-  highlightCorrectFrame(question.correct);
+    onValue(ref(db, "showCorrect"), async (snapshot) => {
+      if (!snapshot.val()) return;
+      const qSnap = await get(ref(db, "currentQuestion"));
+      const question = qSnap.val();
+      if (!question || !question.screen) return;
+      
+      // 正解番号を correctAnswers から取得
+      const key = question.screen.replace(/\./g, "_");
+      const correctSnap = await get(ref(db, `correctAnswers/${key}`));
+      const correct = correctSnap.val();
+      
+      if (typeof correct !== "number") return;
+      const index = correct - 1;
+      
+      // 正解選択肢の枠を点滅させる
+      highlightCorrectFrame(index);
   
   // 該当の票数表示エリアにも装飾を追加（任意）
   const el = document.getElementById(`vote${question.correct + 1}`);
