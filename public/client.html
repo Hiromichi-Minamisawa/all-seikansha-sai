@@ -173,7 +173,7 @@
 
     onValue(ref(db, "mode"), (snapshot) => {
       const mode = snapshot.val();
-      if (mode === "quiz") {
+      if (mode === "quiz" && currentQuestion) {
         standbyEl.style.display = "none";
         choicesEl.style.display = "grid";
       } else {
