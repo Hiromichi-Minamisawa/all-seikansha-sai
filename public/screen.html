@@ -86,22 +86,23 @@
         setTimeout(()=> item.style.opacity = 1, 500 * i);
       }
     }
-
+    
     window.switchMode = (mode) => {
-  if (mode === "quiz") {
-    quizFrame.style.display = "block";
-    logo.style.display = "none";
-    rankingDiv.style.display = "none";
-  } else if (mode === "logo") {
-    quizFrame.style.display = "none";
-    logo.style.display = "block";
-    rankingDiv.style.display = "none";
-  } else if (mode === "ranking") {
-    quizFrame.style.display = "none";
-    logo.style.display = "none";
-    rankingDiv.style.display = "flex";
-  }
-};
+      console.log("モード切替:", mode);
+      if (mode === "quiz") {
+        quizFrame.style.display = "block";
+        logo.style.display = "none";
+        rankingDiv.style.display = "none";
+      } else if (mode === "logo") {
+        quizFrame.style.display = "none";
+        logo.style.display = "block";
+        rankingDiv.style.display = "none";
+      } else if (mode === "ranking") {
+        quizFrame.style.display = "none";
+        logo.style.display = "none";
+        rankingDiv.style.display = "flex";
+      }
+    };
   </script>
 </body>
 </html>
