@@ -221,6 +221,16 @@
       selectedIndex = null;
       resultEl.textContent = "";
       choicesEl.innerHTML = "";
+      
+      const key = data.screen.replace(/\./g, "_");
+      const noVoteSnap = await get(ref(db, `noVoteUsers/${key}`));
+      const noVoteList = noVoteSnap.val() || {};
+      const isBanned = !!noVoteList[userId];
+      if (isBanned) {
+        standbyEl.textContent = "この問題はあなたは投票できません。";
+        choicesEl.style.display = "none";
+        return;
+      }
 
       ["1", "2", "3", "4"].forEach((label, index) => {
         const div = document.createElement("div");
