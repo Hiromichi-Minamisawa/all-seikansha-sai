@@ -164,10 +164,6 @@
     <div class="blink-frame" id="frame2"></div>
     <div class="blink-frame" id="frame3"></div>
     <div class="blink-frame" id="frame4"></div>
-    <div class="number num1">1</div>
-    <div class="number num2">2</div>
-    <div class="number num3">3</div>
-    <div class="number num4">4</div>
   </div>
 
   <script type="module">
@@ -305,6 +301,12 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
 
   // 正解選択肢の枠を点滅させる
   highlightCorrectFrame(index);
+  
+  document.querySelectorAll(".image-box").forEach((box, i) => {
+    if (i !== index) {
+      const dim = document.createElement("div");
+      dim.className = "dimmed";
+      box.appendChild(dim);
 
   // 該当の票数表示エリアにも装飾を追加（任意）
   const el = document.getElementById(`vote${correct}`);
