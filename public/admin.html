@@ -78,6 +78,7 @@
   <button id="scoreBtn">スコア集計</button>
   <button id="resetParticipantsBtn">参加者リセット</button>
   <button id="resetScoresBtn">スコアリセット</button>
+  <button id="setManualWinnerBtn">勝者を手動で設定</button>
 
   <div style="margin-top: 1rem;">
     <button onclick="playSE('se1')">🎵 ピンポン</button>
@@ -259,6 +260,20 @@
         }
         scores[userId] = prev;
       }
+      const participantsSnap = await get(ref(db, "participants"));
+      const participants = participantsSnap.val() || {};
+      
+      const manualSnap = await get(ref(db, `manualWinners/${key}`));
+      const manualUserId = manualSnap.val();
+      
+      if (manualUserId && participants[manualUserId]) {
+        const manualUser = participants[manualUserId];
+        const prev = scores[manualUserId] || { name: manualUser.name, score: 0, time: 0 };
+        prev.score += 1;
+        prev.time += 0;
+        scores[manualUserId] = prev;
+      }
+      
       await set(scoresRef, scores);      
     };
     
@@ -285,6 +300,34 @@
       set(ref(db, "showExplanation"), false);
       set(ref(db, "currentScreen"), "screen_stand-by.png");
     };
+    
+    document.getElementById("setManualWinnerBtn").onclick = async () => {
+      const currentSnap = await get(ref(db, "currentQuestion"));
+      const current = currentSnap.val();
+      if (!current || !current.screen) {
+        alert("現在の問題が取得できません");
+        return;
+      }
+      
+      const screenKey = current.screen.replace(/\./g, "_");
+      
+      const winnerName = prompt("勝者の名前を入力してください（ログイン時の名前と一致させてください）");
+      
+      if (!winnerName) return;
+
+  // 参加者一覧から userId を特定
+  const participantsSnap = await get(ref(db, "participants"));
+  const participants = participantsSnap.val() || {};
+  const userEntry = Object.entries(participants).find(([uid, info]) => info.name === winnerName);
+  if (!userEntry) {
+    alert("該当する名前の参加者が見つかりません");
+    return;
+  }
+
+  const [userId, info] = userEntry;
+  await set(ref(db, `manualWinners/${screenKey}`), userId);
+  alert(`${winnerName}（${userId}）を正解者として登録しました`);
+};
 
     document.getElementById("resetQuestionBtn").onclick = async () => {
       await set(ref(db, "currentQuestion"), null);
