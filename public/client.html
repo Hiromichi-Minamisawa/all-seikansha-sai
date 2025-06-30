@@ -206,43 +206,32 @@
 
     onValue(ref(db, "mode"), async (snapshot) => {
       const mode = snapshot.val();
-      if (mode === "quiz" && currentQuestion) {
-        standbyEl.style.display = "none";
-        choicesEl.style.display = "grid";
-      } else {
-        standbyEl.style.display = "block";
-        standbyEl.textContent = hasStarted
-          ? "問題出題までお待ちください"
-          : "クイズが始まるまでお待ちください";
-        choicesEl.style.display = "none";
-        choicesEl.innerHTML = "";
-        resultEl.textContent = "";
-        currentQuestion = null;
-        hasAnswered = false;
-      }
-    });
-
-    onValue(ref(db, "currentQuestion"),async (snapshot) => {
-      const data = snapshot.val();
-      if (!data || typeof data.correct !== "number" || !data.screen) return;
-
-      hasStarted = true;
-      currentQuestion = data;
-      hasAnswered = false;
-      selectedIndex = null;
-      resultEl.textContent = "";
-      choicesEl.innerHTML = "";
-      
-      const key = data.screen.replace(/\./g, "_");
-      const noVoteSnap = await get(ref(db, `noVoteUsers/${key}`));
-      const noVoteList = noVoteSnap.val() || {};
-      const isBanned = !!noVoteList[userId];
-      if (isBanned) {
-        standbyEl.textContent = "この問題はあなたは投票できません。";
-        choicesEl.style.display = "none";
-        return;
-      }
-
+      if (mode === "quiz") {
+        const currentSnap = await get(ref(db, "currentQuestion"));
+        const current = currentSnap.val();
+        
+        if (current && typeof current.correct === "number" && current.screen) {          
+          currentQuestion = current;
+          hasStarted = true;
+          hasAnswered = false;
+          selectedIndex = null;
+          resultEl.textContent = "";
+          choicesEl.innerHTML = "";
+          
+          standbyEl.style.display = "none";
+          choicesEl.style.display = "grid";
+          
+          const key = current.screen.replace(/\./g, "_");
+          const noVoteSnap = await get(ref(db, `noVoteUsers/${key}`));
+          const noVoteList = noVoteSnap.val() || {};
+          const isBanned = !!noVoteList[userId];
+          if (isBanned) {
+            standbyEl.style.display = "block";
+            standbyEl.textContent = "この問題はあなたは投票できません。";
+            choicesEl.style.display = "none";
+            return;
+          }
+          
       ["1", "2", "3", "4"].forEach((label, index) => {
         const div = document.createElement("div");
         div.className = "choice";
@@ -281,6 +270,18 @@
           });
         }
       }, remaining > 0 ? remaining : 0);
+        }
+      } else {
+        standbyEl.style.display = "block";
+        standbyEl.textContent = hasStarted
+          ? "問題出題までお待ちください"
+          : "クイズが始まるまでお待ちください";
+        choicesEl.style.display = "none";
+        choicesEl.innerHTML = "";
+        resultEl.textContent = "";
+        currentQuestion = null;
+        hasAnswered = false;
+      }
     });
 
     onValue(ref(db, "showCorrect"), async (snapshot) => {
