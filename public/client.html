@@ -153,18 +153,10 @@
     const choicesEl = document.getElementById("choices");
     const resultEl = document.getElementById("result");
     
-    // ローカルストレージに保存された名前があれば復元
-    const savedName = localStorage.getItem("quizUserName");
-    if (savedName) {
-      userName = savedName;
-      loginScreen.classList.add("hidden");
-      questionArea.classList.remove("hidden");
-      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
-    }
-
     loginButton.onclick = async  () => {
       const id = document.getElementById("idInput").value.trim();
       const name = nameInput.value.trim();
+      console.log("ログイン試行：", id, name);
       if (!id || !name) {
         alert("5桁の社員番号と名前を入力してください");
         return;
@@ -172,6 +164,7 @@
       
       const allowedSnap = await get(ref(db, `allowedUsers/${id}`));
       const allowedName = allowedSnap.val();
+      console.log("allowedName:", allowedName);
       
       if (!allowedName || allowedName !== name) {
         alert("社員番号または名前が正しくありません");
@@ -201,6 +194,15 @@
       questionArea.classList.remove("hidden");
       standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
     };
+    
+    // ローカルストレージに保存された名前があれば復元
+    const savedName = localStorage.getItem("quizUserName");
+    if (savedName) {
+      userName = savedName;
+      loginScreen.classList.add("hidden");
+      questionArea.classList.remove("hidden");
+      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
+    }
 
     onValue(ref(db, "mode"), (snapshot) => {
       const mode = snapshot.val();
