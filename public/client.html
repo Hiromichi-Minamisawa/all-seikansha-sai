@@ -153,7 +153,7 @@
     const choicesEl = document.getElementById("choices");
     const resultEl = document.getElementById("result");
     
-    loginButton.onclick = async  () => {
+    loginButton.onclick = async () => {
       const id = document.getElementById("idInput").value.trim();
       const name = nameInput.value.trim();
       console.log("ログイン試行：", id, name);
@@ -222,7 +222,7 @@
       }
     });
 
-    onValue(ref(db, "currentQuestion"),async  (snapshot) => {
+    onValue(ref(db, "currentQuestion"),async (snapshot) => {
       const data = snapshot.val();
       if (!data || typeof data.correct !== "number" || !data.screen) return;
 
