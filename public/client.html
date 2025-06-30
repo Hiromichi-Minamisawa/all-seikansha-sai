@@ -204,7 +204,7 @@
       standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
     }
 
-    onValue(ref(db, "mode"), (snapshot) => {
+    onValue(ref(db, "mode"), async (snapshot) => {
       const mode = snapshot.val();
       if (mode === "quiz" && currentQuestion) {
         standbyEl.style.display = "none";
