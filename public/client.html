@@ -181,7 +181,7 @@
         return;
       }
       
-      userId = id;
+      userId = String(id);
       userName = name;
       localStorage.setItem("quizUserName", userName);
       localStorage.setItem("quizUserId", userId);
@@ -203,7 +203,7 @@
       get(participantRef).then((snapshot) => {
         if (snapshot.exists()) {
           userName = savedName;
-          userId = savedId
+          userId = String(savedId);
           loginScreen.classList.add("hidden");
           questionArea.classList.remove("hidden");
           standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
