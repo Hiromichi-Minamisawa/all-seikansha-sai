@@ -237,6 +237,10 @@
     onValue(ref(db, "currentQuestion"), async (snapshot) => {
       const data = snapshot.val();
       if (!data || typeof data.correct !== "number" || !data.screen) return;
+      
+      const modeSnap = await get(ref(db, "mode"));
+      if (modeSnap.val() !== "quiz") return;
+      
       hasStarted = true;
       currentQuestion = data;
       hasAnswered = false;
