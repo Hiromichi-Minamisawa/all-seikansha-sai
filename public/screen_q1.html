@@ -216,10 +216,12 @@
       const stage = document.getElementById('stage');
       const ww = window.innerWidth;
       const wh = window.innerHeight;
-      const scale = Math.min(ww / 1920, wh / 1080);
+      const sw = 1920;
+      const sh = 1080;
+      const scale = Math.min(ww / sw, wh / sh);
       stage.style.transform = `scale(${scale})`;
-      stage.style.left = `${(ww - 1920 * scale) / 2}px`;
-      stage.style.top = `${(wh - 1080 * scale) / 2}px`;
+      stage.style.left = `${(ww - sw * scale) / 2}px`;
+      stage.style.top = `${(wh - sh * scale) / 2}px`;
       stage.style.position = 'absolute';
     }
 
