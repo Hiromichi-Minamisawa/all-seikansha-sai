@@ -220,9 +220,9 @@
       const mode = snapshot.val();
       if (mode === "quiz") {
         const currentSnap = await get(ref(db, "currentQuestion"));
-        const data = currentSnap.val();
+        const current = currentSnap.val();
         
-        if (data && typeof current.correct === "number" && current.screen) {          
+        if (current && typeof current.correct === "number" && current.screen) {          
           currentQuestion = current;
           hasStarted = true;
           hasAnswered = false;
@@ -270,8 +270,8 @@
       });
 
       // ⏱ 自動締切処理（制限時間後に選択肢を無効化）
-      const startTime = data.startTime || Date.now();
-      const duration = data.duration || 15000;
+      const startTime = current.startTime || Date.now();
+      const duration = current.duration || 15000;
       const remaining = startTime + duration - Date.now();
 
       setTimeout(() => {
