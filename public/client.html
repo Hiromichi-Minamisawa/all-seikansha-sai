@@ -222,7 +222,7 @@
       }
     });
 
-    onValue(ref(db, "currentQuestion"), (snapshot) => {
+    onValue(ref(db, "currentQuestion"),async  (snapshot) => {
       const data = snapshot.val();
       if (!data || typeof data.correct !== "number" || !data.screen) return;
 
