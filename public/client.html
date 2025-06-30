@@ -197,20 +197,32 @@
     
     // ローカルストレージに保存された名前があれば復元
     const savedName = localStorage.getItem("quizUserName");
-    if (savedName) {
-      userName = savedName;
-      loginScreen.classList.add("hidden");
-      questionArea.classList.remove("hidden");
-      standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
+    const savedId = localStorage.getItem("quizUserId");
+    if (savedName && savedId) {
+      const participantRef = ref(db, `participants/${savedId}`);
+      get(participantRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          userName = savedName;
+          userId = savedId
+          loginScreen.classList.add("hidden");
+          questionArea.classList.remove("hidden");
+          standbyEl.textContent = "ようこそ！  クイズが始まるまでお待ちください";
+        } else {
+          localStorage.removeItem("quizUserName");
+          localStorage.removeItem("quizUserId");
+          loginScreen.classList.remove("hidden");
+          questionArea.classList.add("hidden");
+        }
+      });
     }
 
     onValue(ref(db, "mode"), async (snapshot) => {
       const mode = snapshot.val();
       if (mode === "quiz") {
         const currentSnap = await get(ref(db, "currentQuestion"));
-        const current = currentSnap.val();
+        const data = currentSnap.val();
         
-        if (current && typeof current.correct === "number" && current.screen) {          
+        if (data && typeof current.correct === "number" && current.screen) {          
           currentQuestion = current;
           hasStarted = true;
           hasAnswered = false;
