@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭 - Screen Q1</title>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    
     body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
     #stage {
       position: absolute;
@@ -309,11 +317,13 @@ onValue(ref(db, "showCorrect"), async (snapshot) => {
       const dim = document.createElement("div");
       dim.className = "dimmed";
       box.appendChild(dim);
+    }
+  });
 
   // 該当の票数表示エリアにも装飾を追加（任意）
   const el = document.getElementById(`vote${correct}`);
   if (el) el.classList.add('vote-correct');
-});
+
     function highlightCorrectFrame(index) {
       const frame = document.getElementById(`frame${index + 1}`);
       if (frame) {
