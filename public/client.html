@@ -248,7 +248,7 @@
           const key = data.screen.replace(/\./g, "_");
           const noVoteSnap = await get(ref(db, `noVoteUsers/${key}`));
           const noVoteList = noVoteSnap.val() || {};
-          const isBanned = !!noVoteList[userId];
+          const isBanned = Object.prototype.hasOwnProperty.call(noVoteList, String(userId));
           if (isBanned) {
             standbyEl.style.display = "block";
             standbyEl.textContent = "この問題はあなたは投票できません。";
