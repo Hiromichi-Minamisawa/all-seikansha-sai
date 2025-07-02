@@ -258,6 +258,8 @@
         if (isCorrect) {
           prev.score += 1;
           prev.time += answer.timeTaken || answerTime;
+          if (!prev.awarded) prev.awarded = {};
+          prev.awarded[key] = true;
         }
         scores[userId] = prev;
       }
