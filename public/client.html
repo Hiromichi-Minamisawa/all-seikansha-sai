@@ -249,7 +249,13 @@
           const noVoteSnap = await get(ref(db, `noVoteUsers/${key}`));
           const noVoteList = noVoteSnap.val() || {};
           const isBanned = Object.prototype.hasOwnProperty.call(noVoteList, String(userId));
-          if (isBanned) {
+      
+      console.log("【デバッグ】現在の問題キー:", key);
+      console.log("【デバッグ】ログイン中の userId:", userId);
+      console.log("【デバッグ】noVoteList:", noVoteList);
+      console.log("【デバッグ】isBanned:", isBanned);
+      
+      if (isBanned) {
             standbyEl.style.display = "block";
             standbyEl.textContent = "この問題はあなたは投票できません。";
             choicesEl.style.display = "none";
