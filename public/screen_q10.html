@@ -27,9 +27,6 @@
       font-weight: 900;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-      position: absolute;
-      top: 815px;
-      left: 1655px;
     }
  .vote-count {
       position: absolute; background: #53B4ED;
@@ -124,7 +121,6 @@
       let count = 10;
       countdownDone = false;
       const countdownEl = document.getElementById('countdown-number');
-      const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
       const interval = setInterval(() => {
         count--;
@@ -132,7 +128,6 @@
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
-            circleEl.style.display = 'none';
             countdownDone = true;
           }, 1000);
         }
