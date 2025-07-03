@@ -40,7 +40,7 @@
     
     .answer-frame {
       position: absolute;
-      width: 680px; height: 110px;
+      width: 660px; height: 130px;
       border: 9px solid rgba(255, 0, 0, 0.9);
       border-radius: 40px;
       pointer-events: none;
@@ -52,16 +52,12 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 680px; height: 110px;
+      position: absolute; width: 660px; height: 130px;
       border: 9px solid rgba(255, 255, 0, 0.9);
       border-radius: 40px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
       display: none; z-index: 3;
     }
-    #frame1 { top: 685px; left: 59px; }
-    #frame2 { top: 685px; left: 805px; }
-    #frame3 { top: 846px; left: 57px; }
-    #frame4 { top: 847px; left: 805px; }
 
     @keyframes blink {
     0% { opacity: 1; }
@@ -92,15 +88,6 @@
     <div class="vote-count" id="vote2">0票</div>
     <div class="vote-count" id="vote3">0票</div>
     <div class="vote-count" id="vote4">0票</div>
-
-    <div class="answer-frame" id="frame1"></div>
-    <div class="answer-frame" id="frame2"></div>
-    <div class="answer-frame" id="frame3"></div>
-    <div class="answer-frame" id="frame4"></div>
-    <div class="blink-frame" id="frame1"></div>
-    <div class="blink-frame" id="frame2"></div>
-    <div class="blink-frame" id="frame3"></div>
-    <div class="blink-frame" id="frame4"></div>
     <div class="dimmed" id="dim1" style="display:none; top:685px; left:59px;"></div>
     <div class="dimmed" id="dim2" style="display:none; top:685px; left:805px;"></div>
     <div class="dimmed" id="dim3" style="display:none; top:846px; left:57px;"></div>
