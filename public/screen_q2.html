@@ -37,14 +37,14 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #vote1 { top: 455px; left: 678px; background-color: #1085E7; }
-    #vote2 { top: 455px; left: 1354px; background-color: #F24949; }
-    #vote3 { top: 906px; left: 678px; background-color: #06A912; }
-    #vote4 { top: 905px; left: 1354px; background-color: #F9BD12; }
+    #vote1 { top: 430px; left: 678px; background-color: #1085E7; }
+    #vote2 { top: 430px; left: 1354px; background-color: #F24949; }
+    #vote3 { top: 891px; left: 678px; background-color: #06A912; }
+    #vote4 { top: 890px; left: 1354px; background-color: #F9BD12; }
     
     .answer-frame {
       position: absolute;
-      width: 647px; height: 370px;
+      width: 647px; height: 420px;
       border: 9px solid rgba(255, 0, 0, 0.9);
       border-radius: 40px;
       pointer-events: none;
@@ -56,7 +56,7 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 660px; height: 374px;
+      position: absolute; width: 665px; height: 454px;
       border: 9px solid rgba(255, 255, 0, 0.9);
       border-radius: 40px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
@@ -92,10 +92,10 @@
     <div class="vote-count" id="vote2">0票</div>
     <div class="vote-count" id="vote3">0票</div>
     <div class="vote-count" id="vote4">0票</div>
-    <div class="dimmed" id="dim1" style="display:none; top:200px; left:115px;"></div>
-    <div class="dimmed" id="dim2" style="display:none; top:200px; left:840px;"></div>
-    <div class="dimmed" id="dim3" style="display:none; top:585px; left:113px;"></div>
-    <div class="dimmed" id="dim4" style="display:none; top:586px; left:840px;"></div>
+    <div class="dimmed" id="dim1" style="display:none; top:90px; left:135px;"></div>
+    <div class="dimmed" id="dim2" style="display:none; top:90px; left:850px;"></div>
+    <div class="dimmed" id="dim3" style="display:none; top:685px; left:133px;"></div>
+    <div class="dimmed" id="dim4" style="display:none; top:686px; left:850px;"></div>
   </div>
 
   <script type="module">
@@ -196,9 +196,9 @@
       const index = correct - 1;
       
       const framePositions = [
-        { top: "273px", left: "235px" }, // 選択肢1
-        { top: "273px", left: "901px" }, // 選択肢2
-        { top: "430px", left: "235px" }, // 選択肢3
+        { top: "183px", left: "243px" }, // 選択肢1
+        { top: "183px", left: "901px" }, // 選択肢2
+        { top: "430px", left: "245px" }, // 選択肢3
         { top: "430px", left: "899px" }  // 選択肢4
         ];
       
