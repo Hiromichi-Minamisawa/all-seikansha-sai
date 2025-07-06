@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>オールセイー感謝祭 - Screen Q18</title>
+  <title>オールセイー感謝祭 - Screen Q10</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
   <style>
     body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
@@ -12,65 +12,56 @@
       width: 1920px;
       height: 1080px;
       transform-origin: top left;
-      background: url("/images/screen_q18.png") no-repeat;
+      background: url("/images/screen_q10.png") no-repeat;
       background-size: 100% 100%;
     }
-    .countdown-circle {
-      position: absolute; top: 850px; left: 1670px; width: 200px; height: 200px;
-      background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
-      z-index: 10;
+    #countdownWrapper {
+      position: absolute;
+      top: 824px;
+      left: 1611px; /* 数字が中央に来るように微調整 */
+      width: 220px;  /* 表示幅を固定 */
+      text-align: center;
     }
     #countdown-number {
-      font-size: 120px;
+      font-size: 170px;
       font-weight: 900;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
  .vote-count {
-      position: absolute; background: #53B4ED;
-      color: #DFFB0A; font-size: 80px; padding: 20px 40px; 
-      border-radius: 40px 0 20px 0;
-      font-family: 'IBM Plex Sans JP', sans-serif; 
+      position: absolute;
+      color: #ffffff; font-size: 80px; padding: 7px 80px; 
+      border-radius: 20px 20px 20px 20px;
+      font-family: 'Inter', 'sans-serif';
       z-index: 2; display: none;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #vote1 { top: 383px; left: 742px; }
-    #vote2 { top: 383px; left: 1510px; }
-    #vote3 { top: 810px;  left: 742px; }
-    #vote4 { top: 810px;  left: 1510px; }
+    #vote1 { top: 780px; left: 670px; background-color: #1085E7; }
+    #vote2 { top: 780px; left: 1350px; background-color: #F24949; }
+    #vote3 { top: 940px; left: 670px; background-color: #06A912; }
+    #vote4 { top: 940px; left: 1350px; background-color: #F9BD12; }
     
     .answer-frame {
       position: absolute;
-      width: 745px; height: 398px;
-      border: 9px solid rgba(0, 128, 255, 0.9);
-      border-radius: 12px;
+      width: 647px; height: 129px;
+      border: 9px solid rgba(255, 0, 0, 0.9);
+      border-radius: 40px;
       pointer-events: none;
       z-index: 2;
       box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
     }
-    #frame1 { top: 129px; left: 118px; }   /* 左上 → 選択肢1 */
-    #frame2 { top: 129px; left: 880px; }   /* 右上 → 選択肢2 */
-    #frame3 { top: 563px; left: 118px; }   /* 左下 → 選択肢3 */
-    #frame4 { top: 563px; left: 880px; }   /* 右下 → 選択肢4 */
 
      .vote-correct {
     }
-
-     @keyframes blink { 50% { opacity: 0; } }
+    @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 745px; height: 398px;
+      position: absolute; width: 660px; height: 130px;
       border: 9px solid rgba(255, 255, 0, 0.9);
-      border-radius: 12px;
+      border-radius: 40px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
       display: none; z-index: 3;
     }
-    #frame1 { top: 129px; left: 118px; } 
-    #frame2 { top: 129px; left: 880px; } 
-    #frame3 { top: 563px; left: 118px; } 
-    #frame4 { top: 563px; left: 880px; }
 
     @keyframes blink {
     0% { opacity: 1; }
@@ -81,13 +72,12 @@
     .blink {
     animation: blink 1s infinite;
   }
-    
     .dimmed {
       background-color: rgba(0, 0, 0, 0.4);
-      border-radius: 12px;
+      border-radius: 40px;
       position: absolute;
-      width: 755px;
-      height: 410px;
+      width: 655px;
+      height: 140px;
       z-index: 2;
     }
     
@@ -95,27 +85,17 @@
 </head>
 <body>
   <div id="stage">
-    <div class="countdown-circle" id="countdownCircle">
+      <div id="countdownWrapper">
       <div id="countdown-number">10</div>
     </div>
     <div class="vote-count" id="vote1">0票</div>
     <div class="vote-count" id="vote2">0票</div>
     <div class="vote-count" id="vote3">0票</div>
     <div class="vote-count" id="vote4">0票</div>
-
-    <div class="answer-frame" id="frame1"></div>
-    <div class="answer-frame" id="frame2"></div>
-    <div class="answer-frame" id="frame3"></div>
-    <div class="answer-frame" id="frame4"></div>
-    <div class="blink-frame" id="frame1"></div>
-    <div class="blink-frame" id="frame2"></div>
-    <div class="blink-frame" id="frame3"></div>
-    <div class="blink-frame" id="frame4"></div>
-    <div class="dimmed" id="dim1" style="display:none; top:129px; left:118px;"></div>
-    <div class="dimmed" id="dim2" style="display:none; top:129px; left:880px;"></div>
-    <div class="dimmed" id="dim3" style="display:none; top:563px; left:118px;"></div>
-    <div class="dimmed" id="dim4" style="display:none; top:563px; left:880px;"></div>
-  
+    <div class="dimmed" id="dim1" style="display:none; top:685px; left:59px;"></div>
+    <div class="dimmed" id="dim2" style="display:none; top:685px; left:805px;"></div>
+    <div class="dimmed" id="dim3" style="display:none; top:846px; left:57px;"></div>
+    <div class="dimmed" id="dim4" style="display:none; top:847px; left:805px;"></div>
   </div>
 
   <script type="module">
@@ -141,7 +121,6 @@
       let count = 10;
       countdownDone = false;
       const countdownEl = document.getElementById('countdown-number');
-      const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
       const interval = setInterval(() => {
         count--;
@@ -149,7 +128,6 @@
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
-            circleEl.style.display = 'none';
             countdownDone = true;
           }, 1000);
         }
@@ -189,19 +167,22 @@
         const answers = snap.val();
         if (!answers) return;
         const counts = [0, 0, 0, 0];
-        Object.values(answers).forEach(entry => {
-          const idx = Number(entry.choice);
-          if (!isNaN(idx) && idx >= 0 && idx < 4) {
-            counts[idx]++;
+    　　Object.values(answers).forEach(entry => {
+        const idx = Number(entry.choice);
+        if (!isNaN(idx) && idx >= 0 && idx < 4) {
+        counts[idx]++;
       }
     });
 
-        showVotes(counts);
+    showVotes(counts);
   });
     });
-
+    
     onValue(ref(db, "showCorrect"), async (snapshot) => {
       if (!snapshot.val()) return;
+      document.querySelectorAll(".answer-frame").forEach(el => el.remove());
+      document.querySelectorAll(".dimmed").forEach(el => el.remove());
+      
       const qSnap = await get(ref(db, "currentQuestion"));
       const question = qSnap.val();
       if (!question || !question.screen) return;
@@ -214,34 +195,35 @@
       if (typeof correct !== "number") return;
       const index = correct - 1;
       
-      // 正解選択肢の枠を点滅させる
-      highlightCorrectFrame(index);
+      const framePositions = [
+        { top: "773px", left: "215px" }, // 選択肢1
+        { top: "773px", left: "891px" }, // 選択肢2
+        { top: "930px", left: "215px" }, // 選択肢3
+        { top: "930px", left: "889px" }  // 選択肢4
+        ];
+      
+      const stage = document.getElementById("stage");
+      
+      const frame = document.createElement("div");
+      frame.className = "answer-frame blink";
+      frame.style.top = framePositions[index].top;
+      frame.style.left = framePositions[index].left;
+      stage.appendChild(frame);
       
       for (let i = 0; i < 4; i++) {
-        const dim = document.getElementById(`dim${i + 1}`);
-        if (dim) dim.style.display = "none";
+        if (i === index) continue;
+        const dim = document.createElement("div");
+        dim.className = "dimmed";
+        dim.style.top = framePositions[i].top;
+        dim.style.left = framePositions[i].left;
+        stage.appendChild(dim);
       }
       
-      for (let i = 0; i < 4; i++) {
-        if (i !== index) {
-          const dim = document.getElementById(`dim${i + 1}`);
-          if (dim) dim.style.display = "block";
-        }
-      }
-  
-  // 該当の票数表示エリアにも装飾を追加（任意）
-  const el = document.getElementById(`vote${question.correct + 1}`);
-  if (el) el.classList.add('vote-correct');
-    
+      // 任意：票数表示エリアにも装飾
+      const el = document.getElementById(`vote${correct}`);
+      if (el) el.classList.add("vote-correct");
     });
-    
-    function highlightCorrectFrame(index) {
-      const frame = document.getElementById(`frame${index + 1}`);
-      if (frame) {
-        frame.style.display = "block";
-        frame.classList.add("blink");
-  }
-}
+
   </script>
 </body>
 </html>
