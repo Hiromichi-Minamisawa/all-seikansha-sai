@@ -81,12 +81,12 @@
   <button id="setManualWinnerBtn">勝者を手動で設定</button>
 
   <div style="margin-top: 1rem;">
-    <button onclick="playSE('se1')">🎵 ピンポン</button>
-    <button onclick="playSE('se2')">💥 ブー</button>
+    <button onclick="playAudio('q25audio')">🔊 Q25音声</button>
+    <button onclick="playAudio('q26audio')">🔊 Q26音声</button>
   </div>
 
-  <audio id="se1" src="pinpon.mp3"></audio>
-  <audio id="se2" src="boo.mp3"></audio>
+  <audio id="q25audio" src="q24.mp3"></audio>
+  <audio id="q26audio" src="q25.mp3"></audio>
 
   <div style="margin-top: 2rem;">
     <h3>表示モード切り替え</h3>
@@ -150,9 +150,9 @@
       { file: "screen_q19.html", title: "Q19　レクの出欠確認　回答が一番早かったのは？" },
       { file: "screen_q20.html", title: "Q20　田中隆之助、正しい名前はどれ？" },
       { file: "screen_q21.html", title: "Q21　正しいお店の名前はどれ？" },
-      { file: "screen_q22.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q23.html", title: "ここに問題名を入れてください" },
-      { file: "screen_q24.html", title: "ここに問題名を入れてください" },
+      { file: "screen_q22.html", title: "Q22　ひらがなで一番文字数が少ないのは？" },
+      { file: "screen_q23.html", title: "Q23　画像の中で一番たくさんあるアルファベットは？" },
+      { file: "screen_q24.html", title: "Q24　画像の中で一番多いのは？コップ問題" },
       { file: "screen_q25.html", title: "ここに問題名を入れてください" },
       { file: "screen_q26.html", title: "ここに問題名を入れてください" },
       { file: "screen_q27.html", title: "ここに問題名を入れてください" },
@@ -434,6 +434,15 @@
       const index = snapshot.val();
       return typeof index === "number" ? index - 1 : null;
     }
+    
+    window.playAudio = function(id) {
+      const audio = document.getElementById(id);
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+      }
+    };
+    
   </script>
 </body>
 </html>
