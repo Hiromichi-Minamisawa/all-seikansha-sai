@@ -204,7 +204,7 @@
         return;
       }
       const q = questionList[selectedIndex];
-      const specialDurationList = ["screen_q23.html", "screen_q24.html"];
+      const specialDurationList = ["screen_q22.html","screen_q23.html", "screen_q24.html"];
       const duration = specialDurationList.includes(q.file) ? 15000 : 10000;
       
       await set(ref(db, "currentScreen"), q.file);
