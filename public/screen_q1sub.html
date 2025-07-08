@@ -125,6 +125,14 @@
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
+        if (count === 3) {
+          document.querySelectorAll('.image-box img').forEach(img => {
+            img.style.transition = "transform 3s ease-out";
+          });
+          document.querySelectorAll('.image-box').forEach(box => {
+            box.classList.remove('zoomed-out');
+          });
+        }
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
