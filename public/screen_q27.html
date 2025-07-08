@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>オールセイー感謝祭 - Screen Q27</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
+    #stage {
+      position: absolute;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      background: url("/images/screen_q27.png") no-repeat;
+      background-size: 100% 100%;
+    }
+    #countdownWrapper {
+      position: absolute;
+      top: 824px;
+      left: 1611px; /* 数字が中央に来るように微調整 */
+      width: 220px;  /* 表示幅を固定 */
+      text-align: center;
+    }
+    #countdown-number {
+      font-size: 170px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+ .vote-count {
+      position: absolute;
+      color: #ffffff; font-size: 80px; padding: 7px 80px; 
+      border-radius: 20px 20px 20px 20px;
+      font-family: 'Inter', 'sans-serif';
+      z-index: 2; display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #vote1 { top: 430px; left: 678px; background-color: #1085E7; }
+    #vote2 { top: 430px; left: 1354px; background-color: #F24949; }
+    #vote3 { top: 891px; left: 678px; background-color: #06A912; }
+    #vote4 { top: 890px; left: 1354px; background-color: #F9BD12; }
+    
+    .answer-frame {
+      position: absolute;
+      width: 647px; height: 440px;
+      border: 9px solid rgba(255, 0, 0, 0.9);
+      border-radius: 40px;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+
+     .vote-correct {
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .blink-frame {
+      position: absolute; width: 665px; height: 454px;
+      border: 9px solid rgba(255, 255, 0, 0.9);
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+      display: none; z-index: 3;
+    }
+
+    @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.1; }
+    100% { opacity: 1; }
+  }
+
+    .blink {
+    animation: blink 1s infinite;
+  }
+    .dimmed {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 40px;
+      position: absolute;
+      width: 663px;
+      height: 446px;
+      z-index: 2;
+    }
+    
+  </style>
+</head>
+<body>
+  <div id="stage">
+      <div id="countdownWrapper">
+      <div id="countdown-number">10</div>
+    </div>
+    <div class="vote-count" id="vote1">0票</div>
+    <div class="vote-count" id="vote2">0票</div>
+    <div class="vote-count" id="vote3">0票</div>
+    <div class="vote-count" id="vote4">0票</div>
+    <div class="dimmed" id="dim1" style="display:none; top:5px; left:158px;"></div>
+    <div class="dimmed" id="dim2" style="display:none; top:5px; left:887px;"></div>
+    <div class="dimmed" id="dim3" style="display:none; top:708px; left:158px;"></div>
+    <div class="dimmed" id="dim4" style="display:none; top:708px; left:887px;"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
+      authDomain: "all-seikanshasai.firebaseapp.com",
+      databaseURL: "https://all-seikanshasai-default-rtdb.firebaseio.com",
+      projectId: "all-seikanshasai",
+      storageBucket: "all-seikanshasai.appspot.com",
+      messagingSenderId: "24572064606",
+      appId: "1:24572064606:web:a7f94b0561333f272055cf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let countdownDone = false;
+
+    function startCountdown() {
+      let count = 10;
+      countdownDone = false;
+      const countdownEl = document.getElementById('countdown-number');
+      countdownEl.textContent = count;
+      const interval = setInterval(() => {
+        count--;
+        countdownEl.textContent = count;
+        if (count === 0) {
+          clearInterval(interval);
+          setTimeout(() => {
+            countdownDone = true;
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    function showVotes(votes) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`vote${i + 1}`);
+        el.textContent = `${votes[i]}`;
+        el.style.display = 'block';
+        el.style.opacity = 1;
+        el.classList.remove('vote-correct');
+      }
+    }
+
+    window.onload = () => {
+      startCountdown();
+      resizeStage();
+      window.addEventListener('resize', resizeStage);
+    };
+
+    function resizeStage() {
+      const stage = document.getElementById('stage');
+      const ww = window.innerWidth;
+      const wh = window.innerHeight;
+      const scale = Math.min(ww / 1920, wh / 1080);
+      stage.style.transform = `scale(${scale})`;
+      stage.style.left = `${(ww - 1920 * scale) / 2}px`;
+      stage.style.top = `${(wh - 1080 * scale) / 2}px`;
+      stage.style.position = 'absolute';
+    }
+
+    onValue(ref(db, "showVotes"), (snapshot) => {
+      if (!snapshot.val() || !countdownDone) return;
+      get(ref(db, "answers")).then(snap => {
+        const answers = snap.val();
+        if (!answers) return;
+        const counts = [0, 0, 0, 0];
+    　　Object.values(answers).forEach(entry => {
+        const idx = Number(entry.choice);
+        if (!isNaN(idx) && idx >= 0 && idx < 4) {
+        counts[idx]++;
+      }
+    });
+
+    showVotes(counts);
+  });
+    });
+    
+    onValue(ref(db, "showCorrect"), async (snapshot) => {
+      if (!snapshot.val()) return;
+      document.querySelectorAll(".answer-frame").forEach(el => el.remove());
+      document.querySelectorAll(".dimmed").forEach(el => el.remove());
+      
+      const qSnap = await get(ref(db, "currentQuestion"));
+      const question = qSnap.val();
+      if (!question || !question.screen) return;
+      
+      // 正解番号を correctAnswers から取得
+      const key = question.screen.replace(/\./g, "_");
+      const correctSnap = await get(ref(db, `correctAnswers/${key}`));
+      const correct = correctSnap.val();
+      
+      if (typeof correct !== "number") return;
+      const index = correct - 1;
+      
+      const framePositions = [
+        { top: "103px", left: "243px" }, // 選択肢1
+        { top: "103px", left: "913px" }, // 選択肢2
+        { top: "558px", left: "245px" }, // 選択肢3
+        { top: "558px", left: "913px" }  // 選択肢4
+        ];
+      
+      const stage = document.getElementById("stage");
+      
+      const frame = document.createElement("div");
+      frame.className = "answer-frame blink";
+      frame.style.top = framePositions[index].top;
+      frame.style.left = framePositions[index].left;
+      stage.appendChild(frame);
+      
+      for (let i = 0; i < 4; i++) {
+        if (i === index) continue;
+        const dim = document.createElement("div");
+        dim.className = "dimmed";
+        dim.style.top = framePositions[i].top;
+        dim.style.left = framePositions[i].left;
+        stage.appendChild(dim);
+      }
+      
+      // 任意：票数表示エリアにも装飾
+      const el = document.getElementById(`vote${correct}`);
+      if (el) el.classList.add("vote-correct");
+    });
+
+  </script>
+</body>
+</html>
