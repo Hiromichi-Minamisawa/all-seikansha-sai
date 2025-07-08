@@ -188,6 +188,16 @@
       stage.style.top = `${(wh - 1080 * scale) / 2}px`;
       stage.style.position = 'absolute';
     }
+    document.querySelectorAll(".image-box").forEach((box, index) => {
+        box.addEventListener("click", () => {
+          set(ref(db, `answers/${userId}`), index).then(() => {
+            document.querySelectorAll(".image-box").forEach((b, i) => {
+              b.style.pointerEvents = "none";
+              b.style.opacity = i === index ? "1" : "0.4";
+            });
+          });
+        });
+      });
 
     onValue(ref(db, "showVotes"), (snapshot) => {
       if (!snapshot.val() || !countdownDone) return;
