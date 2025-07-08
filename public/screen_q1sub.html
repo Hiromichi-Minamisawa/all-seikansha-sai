@@ -87,42 +87,21 @@
       z-index: 2;
     }
     
-    .img1 img,
-    .img2 img,
-    .img3 img,
-    .img4 img {
-      transform-origin: center center;
-      transition: transform 3s ease-out;
-    }
-
-/* 最初は拡大（寄っている）状態 */
-.img1 img.zoomed-in { transform: scale(4.5) translate(-2%, 38%); }
-.img2 img.zoomed-in { transform: scale(2.7) translate(0%, 31%); }
-.img3 img.zoomed-in { transform: scale(6.5) translate(4%, 42%); }
-.img4 img.zoomed-in { transform: scale(6.7) translate(-1%, 42%); }
-
-/* ズームアウト後：元のサイズに戻す */
-.img1 img.zoomed-out,
-.img2 img.zoomed-out,
-.img3 img.zoomed-out,
-.img4 img.zoomed-out {
-  transform: scale(1) translate(0, 0);
-}
   </style>
 </head>
 <body>
   <div id="stage">
-    <div class="img1">
-    <img src="/images/sample_q1_1.png" class="zoom-image zoomed-in" id="zoom1" style="top: 100px; left: 200px; width: 300px;">
+    <div class="image-box img1 zoomed-out">
+      <img src="/images/sample_q1_1.png">
     </div>
-    <div class="img2">
-    <img src="/images/sample_q1_2.png" class="zoom-image zoomed-in" id="zoom2" style="top: 100px; left: 900px; width: 300px;">
+    <div class="image-box img2 zoomed-out">
+      <img src="/images/sample_q1_2.png">
     </div>
-    <div class="img3">
-    <img src="/images/sample_q1_3.png" class="zoom-image zoomed-in" id="zoom3" style="top: 600px; left: 200px; width: 300px;">
+    <div class="image-box img3 zoomed-out">
+      <img src="/images/sample_q1_3.png">
     </div>
-    <div class="img4">
-    <img src="/images/sample_q1_4.png" class="zoom-image zoomed-in" id="zoom4" style="top: 600px; left: 900px; width: 300px;">
+    <div class="image-box img1 zoomed-out">
+      <img src="/images/sample_q1_4.png">
     </div>
     <div id="countdownWrapper">
       <div id="countdown-number">10</div>
