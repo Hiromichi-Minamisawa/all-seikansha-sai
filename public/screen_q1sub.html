@@ -4,15 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>オールセイー感謝祭 - Screen Q1sub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-    }
-    
     body { margin: 0; background: black; overflow: hidden; font-family: 'Inter', sans-serif; }
     #stage {
       position: absolute;
@@ -22,156 +15,87 @@
       background: url("/images/screen_q1sub.png") no-repeat;
       background-size: 100% 100%;
     }
-    .image-box {
-      position: absolute; width: 672px; height: 378px; overflow: hidden; border-radius: 12px; z-index: 1;
-    }
-    .image-box img {
-      width: 100%; height: 100%; object-fit: cover; transform-origin: center; transition: transform 2s ease-out;
-    }
-    .img1 { top: 140px; left: 130px; }
-    .img2 { top: 140px; left: 870px; }
-    .img3 { top: 563px; left: 130px; }
-    .img4 { top: 563px; left: 870px; }
-    .img1.zoomed-out img { transform: scale(4.5) translate(-2%, 38%); }
-    .img2.zoomed-out img { transform: scale(2.7) translate(0%, 31%); }
-    .img3.zoomed-out img { transform: scale(6.5) translate(4%, 42%); }
-    .img4.zoomed-out img { transform: scale(6.7) translate(-1%, 42%); }
-    .image-box:not(.zoomed-out) img { transform: scale(1) translate(0%, 0%); }
-
-    .countdown-circle {
-      position: absolute; top: 770px; left: 1660px; width: 220px; height: 220px;
-      background: radial-gradient(circle at 30% 30%, #ff8080, #cc0000);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: inset -6px -6px 12px rgba(255,255,255,0.3), inset 6px 6px 12px rgba(0,0,0,0.4);
-      z-index: 10;
+    #countdownWrapper {
+      position: absolute;
+      top: 824px;
+      left: 1611px; /* 数字が中央に来るように微調整 */
+      width: 220px;  /* 表示幅を固定 */
+      text-align: center;
     }
     #countdown-number {
-      font-size: 140px;
+      font-size: 170px;
       font-weight: 900;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
-
-    .choice-number {
+ .vote-count {
       position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      font-family: 'Inter', sans-serif;
-      font-weight: 900;
-      font-size: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #F5F5F5;
-      z-index: 5;
-    }
-    
-    .num1 { background-color: #0B17FF; }
-    .num2 { background-color: #FF060A; }
-    .num3 { background-color: #028F0B; }
-    .num4 { background-color: #E4DD1D; }
-
-    .answer-frame {
-      position: absolute;
-      width: 668px;
-      height: 372px;
-      border: 9px solid rgba(0, 128, 255, 0.9);
-      border-radius: 12px;
-      pointer-events: none;
-      z-index: 2;
-      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
-    }
-    #frame1 { top: 140px; left: 130px; }
-    #frame2 { top: 140px; left: 870px; }
-    #frame3 { top: 563px; left: 130px; }
-    #frame4 { top: 563px; left: 870px; }
-
-    .vote-count {
-      position: absolute; background: #008CFF;
-      color: #DFFB0A; font-size: 80px; padding: 20px 40px;
-      border-radius: 12px 0 12px 0;
-      font-family: 'IBM Plex Sans JP', sans-serif;
+      color: #ffffff; font-size: 80px; padding: 7px 80px; 
+      border-radius: 20px 20px 20px 20px;
+      font-family: 'Inter', 'sans-serif';
       z-index: 2; display: none;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    #vote1 { top: 356px; left: 670px; }
-    #vote2 { top: 356px; left: 1412px; }
-    #vote3 { top: 783px;  left: 670px; }
-    #vote4 { top: 783px;  left: 1412px; }
+    #vote1 { top: 430px; left: 678px; background-color: #1085E7; }
+    #vote2 { top: 430px; left: 1354px; background-color: #F24949; }
+    #vote3 { top: 891px; left: 678px; background-color: #06A912; }
+    #vote4 { top: 890px; left: 1354px; background-color: #F9BD12; }
     
-    .vote-correct {
+    .answer-frame {
+      position: absolute;
+      width: 647px; height: 440px;
+      border: 9px solid rgba(255, 0, 0, 0.9);
+      border-radius: 40px;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+
+     .vote-correct {
     }
     @keyframes blink { 50% { opacity: 0; } }
     .blink-frame {
-      position: absolute; width: 668px; height: 372px;
-      border: 10px solid rgba(255, 255, 0, 0.9);
-      border-radius: 20px;
+      position: absolute; width: 665px; height: 454px;
+      border: 9px solid rgba(255, 255, 0, 0.9);
+      border-radius: 40px;
       box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
       display: none; z-index: 3;
     }
-    #frame1 { top: 138px; left: 128px; }
-    #frame2 { top: 138px; left: 868px; }
-    #frame3 { top: 561px; left: 128px; }
-    #frame4 { top: 561px; left: 868px; }
 
-      @keyframes blink {
+    @keyframes blink {
     0% { opacity: 1; }
     50% { opacity: 0.1; }
     100% { opacity: 1; }
   }
 
-  .blink {
-  animation: blink 1s infinite;
+    .blink {
+    animation: blink 1s infinite;
   }
-
     .dimmed {
       background-color: rgba(0, 0, 0, 0.4);
       border-radius: 40px;
       position: absolute;
-      width: 668px;
-      height: 372px;
-      z-index: 100;
+      width: 663px;
+      height: 446px;
+      z-index: 2;
     }
     
   </style>
 </head>
 <body>
   <div id="stage">
-    <div class="countdown-circle" id="countdownCircle">
+      <div id="countdownWrapper">
       <div id="countdown-number">10</div>
     </div>
-    <div class="image-box img1 zoomed-out">
-      <div class="choice-number num1">1</div>
-      <img src="/images/sample_q1_1.png">
-    </div>
     <div class="vote-count" id="vote1">0票</div>
-    <div class="image-box img2 zoomed-out">
-      <div class="choice-number num2">2</div>
-      <img src="/images/sample_q1_2.png">
-    </div>
     <div class="vote-count" id="vote2">0票</div>
-    <div class="image-box img3 zoomed-out">
-      <div class="choice-number num3">3</div>
-      <img src="/images/sample_q1_3.png">
-    </div>
     <div class="vote-count" id="vote3">0票</div>
-    <div class="image-box img4 zoomed-out">
-      <div class="choice-number num4">4</div>
-      <img src="/images/sample_q1_4.png">
-    </div>
-    <div class="answer-frame" id="frame1"></div>
-    <div class="answer-frame" id="frame2"></div>
-    <div class="answer-frame" id="frame3"></div>
-    <div class="answer-frame" id="frame4"></div>
     <div class="vote-count" id="vote4">0票</div>
-    <div class="blink-frame" id="frame1"></div>
-    <div class="blink-frame" id="frame2"></div>
-    <div class="blink-frame" id="frame3"></div>
-    <div class="blink-frame" id="frame4"></div>
+    <div class="dimmed" id="dim1" style="display:none; top:5px; left:158px;"></div>
+    <div class="dimmed" id="dim2" style="display:none; top:5px; left:887px;"></div>
+    <div class="dimmed" id="dim3" style="display:none; top:708px; left:158px;"></div>
+    <div class="dimmed" id="dim4" style="display:none; top:708px; left:887px;"></div>
   </div>
 
   <script type="module">
@@ -197,40 +121,17 @@
       let count = 10;
       countdownDone = false;
       const countdownEl = document.getElementById('countdown-number');
-      const circleEl = document.getElementById('countdownCircle');
       countdownEl.textContent = count;
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
-        if (count === 3) {
-          document.querySelectorAll('.image-box img').forEach(img => {
-            img.style.transition = "transform 3s ease-out";
-          });
-          document.querySelectorAll('.image-box').forEach(box => {
-            box.classList.remove('zoomed-out');
-          });
-        }
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
-            circleEl.style.display = 'none';
             countdownDone = true;
           }, 1000);
         }
       }, 1000);
-    }
-
-    function resizeStage() {
-      const stage = document.getElementById('stage');
-      const ww = window.innerWidth;
-      const wh = window.innerHeight;
-      const sw = 1920;
-      const sh = 1080;
-      const scale = Math.min(ww / sw, wh / sh);
-      stage.style.transform = `scale(${scale})`;
-      stage.style.left = `${(ww - sw * scale) / 2}px`;
-      stage.style.top = `${(wh - sh * scale) / 2}px`;
-      stage.style.position = 'absolute';
     }
 
     function showVotes(votes) {
@@ -247,35 +148,18 @@
       startCountdown();
       resizeStage();
       window.addEventListener('resize', resizeStage);
-
-      let userId = localStorage.getItem("quizUserId");
-      if (!userId) {
-        userId = "user_" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem("quizUserId", userId);
-      }
-
-      const answerRef = ref(db, `answers/${userId}`);
-      get(answerRef).then(snapshot => {
-        if (snapshot.exists()) {
-          const selected = snapshot.val();
-          document.querySelectorAll(".image-box").forEach((box, index) => {
-            box.style.pointerEvents = "none";
-            box.style.opacity = index === selected ? "1" : "0.4";
-          });
-        }
-      });
-
-      document.querySelectorAll(".image-box").forEach((box, index) => {
-        box.addEventListener("click", () => {
-          set(ref(db, `answers/${userId}`), index).then(() => {
-            document.querySelectorAll(".image-box").forEach((b, i) => {
-              b.style.pointerEvents = "none";
-              b.style.opacity = i === index ? "1" : "0.4";
-            });
-          });
-        });
-      });
     };
+
+    function resizeStage() {
+      const stage = document.getElementById('stage');
+      const ww = window.innerWidth;
+      const wh = window.innerHeight;
+      const scale = Math.min(ww / 1920, wh / 1080);
+      stage.style.transform = `scale(${scale})`;
+      stage.style.left = `${(ww - 1920 * scale) / 2}px`;
+      stage.style.top = `${(wh - 1080 * scale) / 2}px`;
+      stage.style.position = 'absolute';
+    }
 
     onValue(ref(db, "showVotes"), (snapshot) => {
       if (!snapshot.val() || !countdownDone) return;
@@ -293,47 +177,53 @@
     showVotes(counts);
   });
     });
+    
+    onValue(ref(db, "showCorrect"), async (snapshot) => {
+      if (!snapshot.val()) return;
+      document.querySelectorAll(".answer-frame").forEach(el => el.remove());
+      document.querySelectorAll(".dimmed").forEach(el => el.remove());
+      
+      const qSnap = await get(ref(db, "currentQuestion"));
+      const question = qSnap.val();
+      if (!question || !question.screen) return;
+      
+      // 正解番号を correctAnswers から取得
+      const key = question.screen.replace(/\./g, "_");
+      const correctSnap = await get(ref(db, `correctAnswers/${key}`));
+      const correct = correctSnap.val();
+      
+      if (typeof correct !== "number") return;
+      const index = correct - 1;
+      
+      const framePositions = [
+        { top: "103px", left: "243px" }, // 選択肢1
+        { top: "103px", left: "913px" }, // 選択肢2
+        { top: "558px", left: "245px" }, // 選択肢3
+        { top: "558px", left: "913px" }  // 選択肢4
+        ];
+      
+      const stage = document.getElementById("stage");
+      
+      const frame = document.createElement("div");
+      frame.className = "answer-frame blink";
+      frame.style.top = framePositions[index].top;
+      frame.style.left = framePositions[index].left;
+      stage.appendChild(frame);
+      
+      for (let i = 0; i < 4; i++) {
+        if (i === index) continue;
+        const dim = document.createElement("div");
+        dim.className = "dimmed";
+        dim.style.top = framePositions[i].top;
+        dim.style.left = framePositions[i].left;
+        stage.appendChild(dim);
+      }
+      
+      // 任意：票数表示エリアにも装飾
+      const el = document.getElementById(`vote${correct}`);
+      if (el) el.classList.add("vote-correct");
+    });
 
-onValue(ref(db, "showCorrect"), async (snapshot) => {
-  if (!snapshot.val()) return;
-
-  const qSnap = await get(ref(db, "currentQuestion"));
-  const question = qSnap.val();
-  if (!question || !question.screen) return;
-
-// 正解番号を correctAnswers から取得
-  const key = question.screen.replace(/\./g, "_");
-  const correctSnap = await get(ref(db, `correctAnswers/${key}`));
-  const correct = correctSnap.val();
-
-  if (typeof correct !== "number") return;
-  const index = correct - 1;
-
-  // 正解選択肢の枠を点滅させる
-  highlightCorrectFrame(index);
-  
-  document.querySelectorAll(".image-box").forEach((box, i) => {
-    if (i !== index) {
-      const dim = document.createElement("div");
-      dim.className = "dimmed";
-      box.appendChild(dim);
-    }
-  });
-
-  // 該当の票数表示エリアにも装飾を追加（任意）
-  const el = document.getElementById(`vote${correct}`);
-  if (el) el.classList.add('vote-correct');
-
-    function highlightCorrectFrame(index) {
-      const frame = document.getElementById(`frame${index + 1}`);
-      if (frame) {
-        frame.style.display = "block";
-        frame.classList.add("blink");
-  }
-}
-
-});
-  
-</script>
+  </script>
 </body>
 </html>
