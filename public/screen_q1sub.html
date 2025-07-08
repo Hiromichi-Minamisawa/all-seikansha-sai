@@ -18,8 +18,8 @@
     #countdownWrapper {
       position: absolute;
       top: 824px;
-      left: 1611px; /* 数字が中央に来るように微調整 */
-      width: 220px;  /* 表示幅を固定 */
+      left: 1611px;
+      width: 220px;
       text-align: center;
     }
     #countdown-number {
@@ -28,12 +28,15 @@
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
- .vote-count {
+    .vote-count {
       position: absolute;
-      color: #ffffff; font-size: 80px; padding: 7px 80px; 
-      border-radius: 20px 20px 20px 20px;
-      font-family: 'Inter', 'sans-serif';
-      z-index: 2; display: none;
+      color: #ffffff;
+      font-size: 80px;
+      padding: 7px 80px;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      z-index: 2;
+      display: none;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
@@ -41,7 +44,7 @@
     #vote2 { top: 430px; left: 1354px; background-color: #F24949; }
     #vote3 { top: 891px; left: 678px; background-color: #06A912; }
     #vote4 { top: 890px; left: 1354px; background-color: #F9BD12; }
-    
+
     .answer-frame {
       position: absolute;
       width: 647px; height: 440px;
@@ -52,26 +55,13 @@
       box-shadow: 0 0 20px rgba(0, 128, 255, 0.6), inset 0 0 10px rgba(0, 200, 255, 0.5);
     }
 
-     .vote-correct {
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-    .blink-frame {
-      position: absolute; width: 665px; height: 454px;
-      border: 9px solid rgba(255, 255, 0, 0.9);
-      border-radius: 40px;
-      box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-      display: none; z-index: 3;
-    }
+    .vote-correct {}
 
-    @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.1; }
-    100% { opacity: 1; }
-  }
-
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.1; } 100% { opacity: 1; } }
     .blink {
-    animation: blink 1s infinite;
-  }
+      animation: blink 1s infinite;
+    }
+
     .dimmed {
       background-color: rgba(0, 0, 0, 0.4);
       border-radius: 40px;
@@ -80,12 +70,33 @@
       height: 446px;
       z-index: 2;
     }
-    
+
+    .zoom-image {
+      position: absolute;
+      z-index: 4;
+      transition: transform 3s ease-out;
+    }
+    .zoom1.zoomed-out {
+      transform: scale(0.7);  /* 画像1のズーム倍率 */
+    }
+    .zoom2.zoomed-out {
+      transform: scale(0.5);  /* 画像2のズーム倍率 */
+    }
+    .zoom3.zoomed-out {
+      transform: scale(0.6);  /* 画像3のズーム倍率 */
+    }
+    .zoom4.zoomed-out {
+      transform: scale(0.8);  /* 画像4のズーム倍率 */
+    }
   </style>
 </head>
 <body>
   <div id="stage">
-      <div id="countdownWrapper">
+    <img src="/images/sample_q1_1.png" class="zoom-image" id="zoom1" style="top: 100px; left: 200px; width: 300px;">
+    <img src="/images/sample_q1_2.png" class="zoom-image" id="zoom2" style="top: 100px; left: 900px; width: 300px;">
+    <img src="/images/sample_q1_3.png" class="zoom-image" id="zoom3" style="top: 600px; left: 200px; width: 300px;">
+    <img src="/images/sample_q1_4.png" class="zoom-image" id="zoom4" style="top: 600px; left: 900px; width: 300px;">
+    <div id="countdownWrapper">
       <div id="countdown-number">10</div>
     </div>
     <div class="vote-count" id="vote1">0票</div>
@@ -100,7 +111,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAi5sKHLYDr_h4uq0AmLXTDD_hevG3kOJQ",
@@ -125,14 +136,14 @@
       const interval = setInterval(() => {
         count--;
         countdownEl.textContent = count;
+
         if (count === 3) {
-          document.querySelectorAll('.image-box img').forEach(img => {
-            img.style.transition = "transform 3s ease-out";
-          });
-          document.querySelectorAll('.image-box').forEach(box => {
-            box.classList.remove('zoomed-out');
-          });
+          document.getElementById('zoom1')?.classList.add('zoom1', 'zoomed-out');
+          document.getElementById('zoom2')?.classList.add('zoom2', 'zoomed-out');
+          document.getElementById('zoom3')?.classList.add('zoom3', 'zoomed-out');
+          document.getElementById('zoom4')?.classList.add('zoom4', 'zoomed-out');
         }
+
         if (count === 0) {
           clearInterval(interval);
           setTimeout(() => {
@@ -175,49 +186,45 @@
         const answers = snap.val();
         if (!answers) return;
         const counts = [0, 0, 0, 0];
-    　　Object.values(answers).forEach(entry => {
-        const idx = Number(entry.choice);
-        if (!isNaN(idx) && idx >= 0 && idx < 4) {
-        counts[idx]++;
-      }
+        Object.values(answers).forEach(entry => {
+          const idx = Number(entry.choice);
+          if (!isNaN(idx) && idx >= 0 && idx < 4) {
+            counts[idx]++;
+          }
+        });
+        showVotes(counts);
+      });
     });
 
-    showVotes(counts);
-  });
-    });
-    
     onValue(ref(db, "showCorrect"), async (snapshot) => {
       if (!snapshot.val()) return;
       document.querySelectorAll(".answer-frame").forEach(el => el.remove());
       document.querySelectorAll(".dimmed").forEach(el => el.remove());
-      
+
       const qSnap = await get(ref(db, "currentQuestion"));
       const question = qSnap.val();
       if (!question || !question.screen) return;
-      
-      // 正解番号を correctAnswers から取得
+
       const key = question.screen.replace(/\./g, "_");
       const correctSnap = await get(ref(db, `correctAnswers/${key}`));
       const correct = correctSnap.val();
-      
       if (typeof correct !== "number") return;
       const index = correct - 1;
-      
+
       const framePositions = [
-        { top: "103px", left: "243px" }, // 選択肢1
-        { top: "103px", left: "913px" }, // 選択肢2
-        { top: "558px", left: "245px" }, // 選択肢3
-        { top: "558px", left: "913px" }  // 選択肢4
-        ];
-      
+        { top: "103px", left: "243px" },
+        { top: "103px", left: "913px" },
+        { top: "558px", left: "245px" },
+        { top: "558px", left: "913px" }
+      ];
+
       const stage = document.getElementById("stage");
-      
       const frame = document.createElement("div");
       frame.className = "answer-frame blink";
       frame.style.top = framePositions[index].top;
       frame.style.left = framePositions[index].left;
       stage.appendChild(frame);
-      
+
       for (let i = 0; i < 4; i++) {
         if (i === index) continue;
         const dim = document.createElement("div");
@@ -226,12 +233,10 @@
         dim.style.left = framePositions[i].left;
         stage.appendChild(dim);
       }
-      
-      // 任意：票数表示エリアにも装飾
+
       const el = document.getElementById(`vote${correct}`);
       if (el) el.classList.add("vote-correct");
     });
-
   </script>
 </body>
 </html>
