@@ -145,9 +145,11 @@
         countdownEl.textContent = count;
 
         if (count === 3) {
-          document.querySelectorAll('.zoom-image').forEach(img => {
-            img.classList.remove('zoomed-in');
-            img.classList.add('zoomed-out');
+          document.querySelectorAll('.image-box img').forEach(img => {
+            img.style.transition = "transform 3s ease-out";
+          });
+          document.querySelectorAll('.image-box').forEach(box => {
+            box.classList.remove('zoomed-out');
           });
         }
 
