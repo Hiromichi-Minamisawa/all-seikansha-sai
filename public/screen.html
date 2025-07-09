@@ -12,6 +12,14 @@
     #ranking { display: flex; flex-direction: column; justify-content: center; align-items: center; }
     #ranking ol { list-style: none; padding: 0; margin: 0; width: 60%; }
     #ranking li { background: #222; margin: 0.5rem 0; padding: 1rem; font-size: 1.2rem; opacity: 0; transition: opacity 0.5s ease-in; border-radius: 6px; }
+    
+    .fullscreen-image {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
@@ -62,15 +70,16 @@
     onValue(ref(db, "currentScreen"), snap => {
       const val = snap.val();
       if (!val) return;
-      if(val?.endsWith(".html")){
+      
+      if (val.endsWith(".html")) {
         iframe.src = val;
-        window.switchMode("quiz"); // モードを明示的に quiz に
-  } else if(val?.endsWith(".png")){
-    iframe.src = "";
-    logo.innerHTML = `<img src="/images/${val}" alt="待機画面">`;
-    window.switchMode("logo");
-  }
-});
+        window.switchMode("quiz");
+      } else if (val.endsWith(".png")) {
+        iframe.src = "";
+        logo.innerHTML = `<img src="/images/${val}" alt="待機画面" class="fullscreen-image">`;
+        window.switchMode("logo");
+      }
+    });
 
 
     // ランキング読み込みと動的表示
