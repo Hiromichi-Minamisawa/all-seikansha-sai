@@ -75,11 +75,12 @@
   <button id="sendExplanationBtn">解説を送信</button>
   <button id="hideExplanationBtn">解説を非表示</button>
   <button id="resetQuestionBtn">問題をリセット（待機画面へ）</button>
+  <button id="playQuizAudioBtn">問題！</button>
   <button id="scoreBtn">スコア集計</button>
   <button id="resetParticipantsBtn">参加者リセット</button>
   <button id="resetScoresBtn">スコアリセット</button>
   <button id="setManualWinnerBtn">勝者を手動で設定</button>
-
+  
   <div style="margin-top: 1rem;">
     <button onclick="playAudio('q25audio')">🔊 Q25音声</button>
     <button onclick="playAudio('q26audio')">🔊 Q26音声</button>
@@ -127,6 +128,10 @@
       li.textContent = data.name;
       participantList.appendChild(li);
     });
+    
+    const quizAudio = new Audio("/quiz.mp3");
+    const answerCheckAudio = new Audio("/answercheck.mp3");
+    const correctAudio = new Audio("/correct.mp3");
 
  const questionList = [
       { file: "screen_q1.html", title: "Q1　社長はどれ？" },
@@ -197,6 +202,10 @@
         }
       });
     }
+    
+    document.getElementById("playQuizAudioBtn").addEventListener("click", () => {
+    quizAudio.play().catch(e => console.warn("quizAudio 再生エラー:", e));
+    });
 
     document.getElementById("sendBtn").onclick = async () => {
       if (selectedIndex === null) {
@@ -226,6 +235,8 @@
     };
 
     document.getElementById("showCorrectBtn").onclick = async () => {
+      correctAudio.play().catch(e => console.warn("correctAudio 再生エラー:", e));
+      
       const currentSnap = await get(ref(db, "currentQuestion"));
       const current = currentSnap.val();
       const startTime = current?.startTime || 0;
@@ -293,9 +304,10 @@
       set(ref(db, "showCorrect"), false);
     };
     
-    document.getElementById("showVotesBtn").onclick = () => {
+    document.getElementById("showVotesBtn").addEventListener("click", () => {
+      answerCheckAudio.play().catch(e => console.warn("answerCheckAudio 再生エラー:", e));
       set(ref(db, "showVotes"), true);
-    };
+    });
     document.getElementById("sendExplanationBtn").onclick = () => {
       if (selectedExplanationIndex === null) {
         alert("解説を選んでください");
