@@ -28,6 +28,9 @@
     <div id="quizFrame" style="display:none;"><!-- ここに quiz HTML を load --><iframe id="qframe"></iframe></div>
     <div id="ranking" style="display:none;"><ol id="rankingList"></ol></div>
   </div>
+  
+  <audio id="countdown10" src="/sounds/countdown10.mp3"></audio>
+  <audio id="countdown15" src="/sounds/countdown15.mp3"></audio>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -78,6 +81,22 @@
         iframe.src = "";
         logo.innerHTML = `<img src="/images/${val}" alt="待機画面" class="fullscreen-image">`;
         window.switchMode("logo");
+      }
+    });
+    
+    onValue(ref(db, "currentQuestion"), snap => {
+      const data = snap.val();
+      if (!data || !data.duration) return;
+      
+      const duration = data.duration;
+      const audioId = duration === 15000 ? "countdown15" : "countdown10";
+      const audioEl = document.getElementById(audioId);
+      
+      if (audioEl) {
+        audioEl.currentTime = 0;
+        audioEl.play().catch(err => {
+          console.warn("音声再生エラー:", err);
+        });
       }
     });
 
