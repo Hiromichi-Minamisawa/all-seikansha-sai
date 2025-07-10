@@ -85,8 +85,6 @@
     <button onclick="playAudio('q26audio')">🔊 Q26音声</button>
   </div>
   
-  <audio id="countdown10" src="countdown10.mp3"></audio>
-  <audio id="countdown15" src="countdown15.mp3"></audio>
   <audio id="q25audio" src="q25.mp3"></audio>
   <audio id="q26audio" src="q26.mp3"></audio>
 
@@ -208,14 +206,7 @@
       const q = questionList[selectedIndex];
       const specialDurationList = ["screen_q22.html","screen_q23.html", "screen_q24.html", "screen_q27.html", "screen_q30.html"];
       const duration = specialDurationList.includes(q.file) ? 15000 : 10000;
-      
-      const countdownAudioId = duration === 15000 ? "countdown15" : "countdown10";
-      const countdownAudio = document.getElementById(countdownAudioId);
-      if (countdownAudio) {
-        countdownAudio.currentTime = 0;
-        countdownAudio.play();
-      }
-      
+            
       await set(ref(db, "currentScreen"), q.file);
       await set(ref(db, "showCorrect"), false);
       await set(ref(db, "showVotes"), false);
